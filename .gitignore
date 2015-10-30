@@ -1,0 +1,20 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/dp/Debug
+/Debug
+/dplib/Debug
+/ipch/dp-1d0aa974
+/DaveParser.opensdf
+/DaveParser.sdf
+*.suo
+/dg/Debug
+/dglib/Debug
+/dl/Debug
+/dllib/Debug
+/ipch
+/DaveLexer.opensdf
+/DaveLexer.sdf
+/DaveScript.sdf
+/DaveScript.opensdf
