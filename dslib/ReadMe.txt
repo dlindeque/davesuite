@@ -2,35 +2,25 @@
 
 [IsDeterminstic = true]
 [Functoid = "op_add"]
-core function number +(number n1, number n2)
+[UniqueId = "op_add"]
+[Body =
 <#
-    struct op_add {
-        inline auto operator()(const equinox_value<double> &p1, const equinox_value<double> &p2) -> equinox_value<double> {
-            if (p1.has_value() && p2.has_value()) {
-                return equinox_value<double>(p1.value() + p2.value());
-            } else {
-                return equinox_value<double>::null;
+	template<typename ast> struct op_add {
+		inline auto operator()(const type_table *tt, const ast &p1, const ast &p2) -> ast {
+		    if (p1.has_static_value() && p2.has_static_value()) {
+                return ast::static(p1.get_static_value<double>() + p2.get_static_value<double>());
             }
-        }
-        inline auto operator()(const equinox_value<int> &p1, const equinox_value<int> &p2) -> equinox_value<int> {
-            if (p1.has_value() && p2.has_value()) {
-                return equinox_value<int>(p1.value() + p2.value());
-            } else {
-                return equinox_value<int>::null;
-            }
-        }
-    };
-#>;
-
--------------------------------------------------------------------------------------------------------------
-Optimization
--------------------------------------------------------------------------------------------------------------
+		}
+	};
+#>]
+external function number +(number n1, number n2);
 
 [IsDeterminstic = true]
 [Functoid = "op_and"]
-core function bool &(bool b1, bool b2)
+[UniqueId = "op_and"]
+[Body =
 <#
-    struct op_and {
+    template<typename ast> struct op_and {
         inline auto operator()(const type_table *tt, const ast &b1, const ast &b2) -> ast {
             if (b1.has_static_value()) {
                 if (b1.static_value() == false) {
@@ -41,27 +31,71 @@ core function bool &(bool b1, bool b2)
                     // true & b2
                     return b2;
                 }
-            } else {
-                if (b2.has_static_value()) {
-                    if (b2.static_value() == false) {
-                        null & false
-                        return ast::static(false);
-                    }
+            } else if (b2.has_static_value()) {
+                if (b2.static_value() == false) {
+                    b1 & false
+                    return ast::static(false);
                 }
-                return ast::null(tt->bool());
+                else {
+                    // b1 & true
+                    return b1;
+                }
+            }
+            else {
+                // Neither has a static value
+                return ast::cannot_optimize;
             }
         };
     };
 #>
+]
+external function bool &(bool b1, bool b2);
+
+[IsDeterminstic = true]
+[Functoid = "op_or"]
+[UniqueId = "op_or"]
+[Body =
+<#
+    template<typename ast> struct op_or {
+        inline auto operator()(const type_table *tt, const ast &b1, const ast &b2) -> ast {
+            if (b1.has_static_value()) {
+                if (b1.static_value() == true) {
+                    // true | b2
+                    return ast::static(true);
+                }
+                else {
+                    // false | b2
+                    return b2;
+                }
+            } else if (b2.has_static_value()) {
+                if (b2.static_value() == true) {
+                    b1 | true
+                    return ast::static(true);
+                }
+                else {
+                    // b1 | false
+                    return b1;
+                }
+            }
+            else {
+                // Neither has a static value
+                return ast::cannot_optimize;
+            }
+        };
+    };
+#>
+]
+external function bool &(bool b1, bool b2);
     
 [IsDeterminstic = true]
 [Functoid = "op_equal"]
-core function bool =<T>(T b1, T b2)
+[UniqueId = "op_equal"]
+[Body =
 <#
-    struct op_equal {
+    template<typename ast> struct op_equal {
         op_equal
-        inline auto operator()(const ast &b1, const ast &b2) -> ast {
-            switch(ast::compare(b1, b2)) {
+        inline auto operator()(const type_table *tt, const ast &b1, const ast &b2) -> ast {
+            switch(ast::compare_equality(b1, b2)) {
             case ast_compare::has_same_values:
                 return ast::static(true);
             case ast_compare::has_different_values:
@@ -72,17 +106,19 @@ core function bool =<T>(T b1, T b2)
         };
     };
 #>
+]
+external function bool =<T>(T b1, T b2);
 
 [IsDeterminstic = true]
 [Functoid = "op_if"]
 [UniqueId = "op_if"]
-core function bool if<T>(bool c, T t, T f)
+[Body =
 <#
-    struct op_if {
+    template<typename ast> struct op_if {
         inline auto operator()(const type_table *tt, const ast &c, const ast &t, const ast &f) -> ast {
             auto nt = t.assert_equal(c, ast::static(true));
             auto nf = f.assert_equal(c, ast::static(false));
-            if (ast::compare(nt, fn) == ast_compare::has_same_values) {
+            if (ast::compare_equality(nt, fn) == ast_compare::has_same_values) {
                 return nt;
             }
             if (c.has_static_value()) {
@@ -102,3 +138,5 @@ core function bool if<T>(bool c, T t, T f)
         };
     };
 #>
+]
+external function bool if<T>(bool c, T t, T f);

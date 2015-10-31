@@ -30,9 +30,6 @@
     <ClInclude Include="dfa.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="optional.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="re_lexer.h">
       <Filter>Header Files</Filter>
     </ClInclude>

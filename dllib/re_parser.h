@@ -12,6 +12,31 @@ using namespace davecommon;
 
 namespace davelexer
 {
+    typedef const std::wstring* token_id;
+
+    enum class nfa_action {
+        none,
+        reduce_token,
+        push_state,
+        pop_state
+    };
+
+    struct nfa_transition {
+        unsigned int from;
+
+        bool epsilon;
+        wchar_t first;
+        wchar_t last;
+        
+        unsigned int to;
+        
+        bool echo_matched;
+        std::wstring output;
+        
+        nfa_action action;
+        token_id reduce_token;
+    };
+
     class re_ast abstract {
     private:
         span _spn;

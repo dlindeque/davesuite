@@ -79,7 +79,6 @@
     <ClInclude Include="dfa.h" />
     <ClInclude Include="log.h" />
     <ClInclude Include="nfa.h" />
-    <ClInclude Include="optional.h" />
     <ClInclude Include="re_lexer.h" />
     <ClInclude Include="re_parser.h" />
     <ClInclude Include="stdafx.h" />

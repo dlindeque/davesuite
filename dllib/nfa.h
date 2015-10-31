@@ -5,22 +5,13 @@
 #include <ostream>
 #include <istream>
 #include <functional>
-#include "optional.h"
 #include "dfa.h"
 
 namespace davelexer
 {
     class nfa {
     private:
-        struct row {
-            unsigned int from;
-            bool epsilon;
-            wchar_t first;
-            wchar_t last;
-            unsigned int to;
-            optional<std::wstring> output;
-            const std::wstring *token;
-        };
+        
     private:
         std::vector<row> _transition_table;
         long _next_state;

@@ -2,7 +2,6 @@
 
 #include <memory>
 #include <vector>
-#include "optional.h"
 
 namespace davelexer
 {
@@ -14,8 +13,8 @@ namespace davelexer
             int from;
             wchar_t match;
             int to;
-            optional<std::wstring> output;
-            optional<std::wstring> token;
+            std::wstring output;
+            std::wstring token;
         };
     private:
         std::vector<row> _transition_table;
