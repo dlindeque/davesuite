@@ -77,6 +77,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="dfa.h" />
+    <ClInclude Include="lexer.h" />
     <ClInclude Include="log.h" />
     <ClInclude Include="nfa.h" />
     <ClInclude Include="re_lexer.h" />

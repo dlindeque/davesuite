@@ -33,7 +33,7 @@ namespace davelexer
         any
     };
 
-    struct token {
+    struct re_token {
         span spn;
         re_token_type type;
         wchar_t char_;
@@ -47,5 +47,5 @@ namespace davelexer
         std::wistream &src,
         register int &end_line, register int &end_column,
         register int &state,
-        token &token)->void;
+        re_token &token)->void;
 }

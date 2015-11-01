@@ -7,14 +7,14 @@
 
 namespace davelexer
 {    
-    auto nfa::try_add(const std::wstring &token, std::wistream &re, std::wostream &errors)->bool
+    auto nfa::try_add(const std::wstring &section, const std::wstring &token_name, nfa_action action, container *container, const token &re, logger *logger)->bool
     {
         //auto t = get_next_token(re);
         //while (t.type != re_token_type::eod) {
         //
         //    t = get_next_token(re, t.state);
         //}
-        errors << L"Not Implemented";
+        log::error::invalid_cardinality(logger, container, span(), 0, 1);
         return false;
     }
 

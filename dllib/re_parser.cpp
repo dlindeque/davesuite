@@ -8,7 +8,7 @@ namespace davelexer
 {
     class value {
     private:
-        token _token;
+        re_token _token;
         std::unique_ptr<re_ast> _ast;
     public:
         value() = delete;
@@ -16,15 +16,15 @@ namespace davelexer
         value(value &&c)
             : _token(std::move(c._token)), _ast(std::move(c._ast))
         {}
-        value(token &&t)
+        value(re_token &&t)
             : _token(std::move(t)), _ast()
         {}
         value(std::unique_ptr<re_ast> &&ast)
             : _token(), _ast(std::move(ast))
         {}
 
-        inline auto token() const -> const davelexer::token&{ return _token; }
-        inline auto token() -> davelexer::token& { return _token; }
+        inline auto token() const -> const davelexer::re_token&{ return _token; }
+        inline auto token() -> davelexer::re_token& { return _token; }
         inline auto ast() const -> const std::unique_ptr<re_ast>&{ return _ast; }
         inline auto ast() -> std::unique_ptr<re_ast>& { return _ast; }
     };
@@ -106,7 +106,7 @@ namespace davelexer
         }
     }
 
-    inline auto charset(const token &tkn)->std::vector < char_range > {
+    inline auto charset(const re_token &tkn)->std::vector < char_range > {
         std::vector<char_range> ranges;
         switch (tkn.cs) {
         case re_char_set::any:
@@ -161,7 +161,7 @@ namespace davelexer
         std::vector<int> states;
         std::vector<value> values;
         states.push_back(0);
-        token tkn;
+        re_token tkn;
         while (true) {
             if (read) {
                 davelexer::re_lex(src, end_line, end_column, lex_state, tkn);

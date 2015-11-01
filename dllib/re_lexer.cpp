@@ -10,7 +10,7 @@ namespace davelexer
         std::wistream &src,
         register int &end_line, register int &end_column,
         register int &state,
-        token &token)->void
+        re_token &token)->void
     {
         int begin_line = end_line, begin_column = end_column;
         while (true) {

@@ -1,40 +1,42 @@
 
 
 [IsDeterminstic = true]
-[Functoid = "op_add"]
 [UniqueId = "op_add"]
-[Body =
+[Implementation =
 <#
 	template<typename ast> struct op_add {
-		inline auto operator()(const type_table *tt, const ast &p1, const ast &p2) -> ast {
-		    if (p1.has_static_value() && p2.has_static_value()) {
-                return ast::static(p1.get_static_value<double>() + p2.get_static_value<double>());
+        inline auto operator()(const type_table *tt, const ast &p1, const ast &p2) -> ast {
+            if (p1.has_static_value() && p2.has_static_value()) {
+                return ast::static_value(static_value<ast, double>::get(p1) + static_value<ast, double>::get(p2));
             }
-		}
-	};
+            else {
+                return ast::cannot_optimize;
+            }
+        }
+    };
 #>]
 external function number +(number n1, number n2);
 
 [IsDeterminstic = true]
-[Functoid = "op_and"]
 [UniqueId = "op_and"]
-[Body =
+[Implementation =
 <#
     template<typename ast> struct op_and {
         inline auto operator()(const type_table *tt, const ast &b1, const ast &b2) -> ast {
             if (b1.has_static_value()) {
-                if (b1.static_value() == false) {
+                if (!static_value<ast, bool>::get(b1)) {
                     // false & b2
-                    return ast::static(false);
+                    return ast::static_value(false);
                 }
                 else {
                     // true & b2
                     return b2;
                 }
-            } else if (b2.has_static_value()) {
-                if (b2.static_value() == false) {
-                    b1 & false
-                    return ast::static(false);
+            }
+            else if (b2.has_static_value()) {
+                if (!static_value<ast, bool>::get(b2) == false) {
+                    // b1 & false
+                    return ast::static_value(false);
                 }
                 else {
                     // b1 & true
@@ -52,25 +54,25 @@ external function number +(number n1, number n2);
 external function bool &(bool b1, bool b2);
 
 [IsDeterminstic = true]
-[Functoid = "op_or"]
 [UniqueId = "op_or"]
-[Body =
+[Implementation =
 <#
     template<typename ast> struct op_or {
         inline auto operator()(const type_table *tt, const ast &b1, const ast &b2) -> ast {
             if (b1.has_static_value()) {
-                if (b1.static_value() == true) {
+                if (static_value<ast, bool>::get(b1)) {
                     // true | b2
-                    return ast::static(true);
+                    return ast::static_value(true);
                 }
                 else {
                     // false | b2
                     return b2;
                 }
-            } else if (b2.has_static_value()) {
-                if (b2.static_value() == true) {
-                    b1 | true
-                    return ast::static(true);
+            }
+            else if (b2.has_static_value()) {
+                if (static_value<ast, bool>::get(b2) == false) {
+                    // b1 | true
+                    return ast::static_value(true);
                 }
                 else {
                     // b1 | false
@@ -88,20 +90,20 @@ external function bool &(bool b1, bool b2);
 external function bool &(bool b1, bool b2);
     
 [IsDeterminstic = true]
-[Functoid = "op_equal"]
 [UniqueId = "op_equal"]
-[Body =
+[Implementation =
 <#
     template<typename ast> struct op_equal {
-        op_equal
         inline auto operator()(const type_table *tt, const ast &b1, const ast &b2) -> ast {
-            switch(ast::compare_equality(b1, b2)) {
+            switch (compare_equality<ast>::compare(b1, b2)) {
             case ast_compare::has_same_values:
-                return ast::static(true);
+                return ast::static_value(true);
             case ast_compare::has_different_values:
-                return ast::static(false);
+                return ast::static_value(false);
             case ast_compare::not_sure:
-                return ast::cannot_optimize;
+                return ast::get_null_ast();
+            default:
+                throw std::exception("Not implemented");
             }
         };
     };
@@ -110,31 +112,97 @@ external function bool &(bool b1, bool b2);
 external function bool =<T>(T b1, T b2);
 
 [IsDeterminstic = true]
-[Functoid = "op_if"]
 [UniqueId = "op_if"]
-[Body =
+[Implementation =
 <#
     template<typename ast> struct op_if {
         inline auto operator()(const type_table *tt, const ast &c, const ast &t, const ast &f) -> ast {
-            auto nt = t.assert_equal(c, ast::static(true));
-            auto nf = f.assert_equal(c, ast::static(false));
-            if (ast::compare_equality(nt, fn) == ast_compare::has_same_values) {
-                return nt;
-            }
             if (c.has_static_value()) {
-                if (c.get_static_value<bool>() == true) {
-                    return nt;
-                } else {
-                    return nf;
+                bool cv;
+                auto cvb = static_value<ast, bool>::try_get(c, cv);
+                assert(cvb);
+                if (cv == true) {
+                    // We don't have to assert here since we already know that c is static.
+                    return t;
+                }
+                else {
+                    return f;
                 }
             }
+            else {
+                // c does not have a static value, but we can assert it to be true for the true branch, and false for the false branch!
+                auto nt = t.assert_premise(equal_premise(c, ast::static(true)));
+                auto nf = f.assert_premise(equal_premise(c, ast::static(false)));
+                if (ast::compare_equality(nt, fn) == ast_compare::has_same_values) {
+                    return nt;
+                }
+                else {
+                    // We can continue - if the true branch is 'false' and false branch is 'true', then the function is actually just a 'not'
 
-            auto ab = asb_builder.function(functions::op_if);
-            ab.add_parameter(c);
-            ab.add_parameter(nt);
-            ab.add_parameter(nf);
+                    // c  tv  fv   result
+                    // 0  0   ?    ?    fv
+                    // 0  1   ?    ?    fv
+                    // 1  0   ?    0    !c
+                    // 1  1   ?    1    c
 
-            return ab.get_ast();
+                    // tv = 1: result = c | fv
+                    // tv = 0: result = !c | fv
+
+                    bool tv;
+                    auto tvb = static_value<ast, bool>::try_get(t, tv);
+                    if (tvb) {
+                        if (tv) {
+                            auto ab = ast_builder.function(functions::op_or);
+                            ab.add_parameter(c);
+                            ab.add_parameter(f);
+                            return ab.get_ast();
+                        }
+                        else {
+                            auto nab = ast_builder.function(functions::op_not);
+                            nab.add_parameter(c);
+                            auto ab = ast_builder.function(functions::op_or);
+                            ab.add_parameter(nab.get_ast());
+                            ab.add_parameter(f);
+                            return ab.get_ast();
+                        }
+                    }
+
+                    // c  tv  fv   result
+                    // 0  ?   0    0    c
+                    // 0  ?   1    1    !c
+                    // 1  ?   0    0    ?
+                    // 1  ?   1    1    ?
+
+                    // fv = 1: result = !c | tv
+                    // fv = 0: result = c | tv
+
+                    bool fv;
+                    auto fvb = static_value<ast, bool>::try_get(f, fv);
+                    if (fvb) {
+                        if (!fv) {
+                            auto ab = ast_builder.function(functions::op_or);
+                            ab.add_parameter(c);
+                            ab.add_parameter(t);
+                            return ab.get_ast();
+                        }
+                        else {
+                            auto nab = ast_builder.function(functions::op_not);
+                            nab.add_parameter(c);
+                            auto ab = ast_builder.function(functions::op_or);
+                            ab.add_parameter(nab.get_ast());
+                            ab.add_parameter(t);
+                            return ab.get_ast();
+                        }
+                    }
+
+                    auto ab = ast_builder.function(functions::op_if);
+                    ab.add_parameter(c);
+                    ab.add_parameter(nt);
+                    ab.add_parameter(nf);
+
+                    return ab.get_ast();
+                }
+            }
         };
     };
 #>
