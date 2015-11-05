@@ -3,6 +3,7 @@
 #include <istream>
 #include <memory>
 #include <vector>
+#include <map>
 #include "re_lexer.h"
 
 #include "..\common\logger.h"
@@ -12,51 +13,121 @@ using namespace davecommon;
 
 namespace davelexer
 {
-    typedef const std::wstring* token_id;
+    class nfa_transition_guard {
+    private:
+        bool _epsilon;
+        bool _exclude;
+        wchar_t _first;
+        wchar_t _last;
+    public:
+        nfa_transition_guard(const nfa_transition_guard &c)
+            : _epsilon(c._epsilon), _exclude(c._exclude), _first(c._first), _last(c._last)
+        {}
+        nfa_transition_guard(nfa_transition_guard &&c)
+            : _epsilon(c._epsilon), _exclude(c._exclude), _first(std::move(c._first)), _last(std::move(c._last))
+        {}
+        nfa_transition_guard()
+            : _epsilon(true)
+        {}
+        nfa_transition_guard(bool exclude, const wchar_t &first, const wchar_t &last)
+            : _epsilon(false), _exclude(exclude), _first(first), _last(last)
+        {}
 
-    enum class nfa_action {
-        none,
-        reduce_token,
-        push_state,
-        pop_state
+        inline auto epsilon() const -> bool { return _epsilon; }
+        inline auto exclude() const -> bool { return _exclude; }
+        inline auto first() const -> wchar_t { return _first; }
+        inline auto last() const -> wchar_t { return _last; }
     };
 
-    struct nfa_transition {
-        unsigned int from;
+    class nfa_transition_action {
+    private:
+        bool _output_matched;
+        std::wstring _output_alternate;
+        bool _reduce;
+        bool _pop;
+        bool _push;
+        std::wstring _reduce_token;
+        size_t _goto;
+    public:
+        nfa_transition_action() = delete;
+        nfa_transition_action(const nfa_transition_action&c)
+            : _output_matched(c._output_matched), _output_alternate(c._output_alternate), _reduce(c._reduce), _pop(c._pop), _push(c._push), _reduce_token(c._reduce_token), _goto(c._goto)
+        {}
+        nfa_transition_action(nfa_transition_action &&c)
+            : _output_matched(c._output_matched), _output_alternate(std::move(c._output_alternate)), _reduce(c._reduce), _pop(c._pop), _push(c._push), _reduce_token(std::move(c._reduce_token)), _goto(c._goto)
+        {}
+        nfa_transition_action(bool output_matched, const std::wstring &output_alternate, bool reduce, bool pop, bool push, const std::wstring &reduce_token, size_t goto_)
+            : _output_matched(output_matched), _output_alternate(output_alternate), _reduce(reduce), _pop(pop), _push(push), _reduce_token(reduce_token), _goto(goto_)
+        {}
+        nfa_transition_action(bool output_matched, std::wstring &&output_alternate, bool reduce, bool pop, bool push, const std::wstring &reduce_token, size_t goto_)
+            : _output_matched(output_matched), _output_alternate(std::move(output_alternate)), _reduce(reduce), _pop(pop), _push(push), _reduce_token(reduce_token), _goto(goto_)
+        {}
+        nfa_transition_action(bool output_matched, const std::wstring &output_alternate, bool reduce, bool pop, bool push, std::wstring &&reduce_token, size_t goto_)
+            : _output_matched(output_matched), _output_alternate(output_alternate), _reduce(reduce), _pop(pop), _push(push), _reduce_token(std::move(reduce_token)), _goto(goto_)
+        {}
+        nfa_transition_action(bool output_matched, std::wstring &&output_alternate, bool reduce, bool pop, bool push, std::wstring &&reduce_token, size_t goto_)
+            : _output_matched(output_matched), _output_alternate(std::move(output_alternate)), _reduce(reduce), _pop(pop), _push(push), _reduce_token(std::move(reduce_token)), _goto(goto_)
+        {}
 
-        bool epsilon;
-        wchar_t first;
-        wchar_t last;
-        
-        unsigned int to;
-        
-        bool echo_matched;
-        std::wstring output;
-        
-        nfa_action action;
-        token_id reduce_token;
+        inline auto output_matched() const -> bool { return _output_matched; }
+        inline auto output_alternate() const -> const std::wstring&{ return _output_alternate; }
+        inline auto reduce() const -> bool { return _reduce; }
+        inline auto pop() const -> bool { return _pop; }
+        inline auto push() const -> bool { return _push; }
+        inline auto reduce_token() const -> const std::wstring& { return _reduce_token; }
+        inline auto goto_state() const -> size_t { return _goto; }
+    };
+
+    class nfa_transition {
+    private:
+        size_t _from;
+        nfa_transition_guard _guard;       
+        size_t _to;
+        std::vector<nfa_transition_action> _actions;
+    public:
+        nfa_transition() = delete;
+        nfa_transition(const nfa_transition &c)
+            : _from(c._from), _guard(c._guard), _to(c._to), _actions(c._actions)
+        {}
+        nfa_transition(nfa_transition &&c)
+            : _from(c._from), _guard(std::move(c._guard)), _to(c._to), _actions(std::move(c._actions))
+        {}
+        nfa_transition(size_t from, nfa_transition_guard &&guard, size_t to, std::vector<nfa_transition_action> &&actions)
+            : _from(from), _guard(std::move(guard)), _to(to), _actions(std::move(actions))
+        {}
+
+        inline auto from() const -> size_t { return _from; }
+        inline auto to() const -> size_t { return _to; }
+        inline auto guard() const -> const nfa_transition_guard& { return _guard; }
+        inline auto actions() const -> const std::vector<nfa_transition_action>& { return _actions; }
     };
 
     class re_ast abstract {
     private:
+        const container *_cntr;
         span _spn;
     protected:
-        virtual auto write(std::wostream &os) const ->std::wostream& = 0;
+        virtual auto write(std::wostream &os) const->std::wostream& = 0;
     public:
         re_ast() = delete;
         re_ast(const re_ast &) = delete;
         re_ast(re_ast &&c)
             : _spn(std::move(c._spn))
         {}
-        re_ast(const span &spn)
-            : _spn(spn)
+        re_ast(const container *cntr, const span &spn)
+            : _cntr(cntr), _spn(spn)
         {}
-        re_ast(const span &&spn)
-            : _spn(std::move(spn))
+        re_ast(const container *cntr, const span &&spn)
+            : _cntr(cntr), _spn(std::move(spn))
         {}
         virtual ~re_ast() {}
 
         inline auto spn() const -> const span&{ return _spn; }
+        inline auto cntr() const -> const container*{ return _cntr; }
+
+        virtual auto try_add_transitions(const std::map<std::wstring, std::unique_ptr<re_ast>> &named, size_t from_state, size_t to_state, std::vector<nfa_transition> &table, logger *logger, size_t &next_state) -> bool = 0;
+
+        virtual auto null_transition_possible(const std::map<std::wstring, std::unique_ptr<re_ast>> &named) const -> bool = 0;
 
         friend auto operator << (std::wostream &os, const re_ast &ast) -> std::wostream& {
             return ast.write(os);
@@ -76,7 +147,7 @@ namespace davelexer
         wchar_t to;
     };
 
-    class re_ast_char_set_match sealed : public re_ast {
+    class re_ast_char_set_match sealed : public re_ast{
     private:
         bool _exclude;
         std::vector<char_range> _ranges;
@@ -120,13 +191,26 @@ namespace davelexer
         re_ast_char_set_match(re_ast_char_set_match &&c)
             : re_ast(std::move(c)), _exclude(c._exclude), _ranges(std::move(c._ranges))
         {}
-        re_ast_char_set_match(const span &spn, bool exclude, std::vector<char_range> &&ranges)
-            : re_ast(spn), _exclude(exclude), _ranges(std::move(ranges))
+        re_ast_char_set_match(const container *cntr, const span &spn, bool exclude, std::vector<char_range> &&ranges)
+            : re_ast(cntr, spn), _exclude(exclude), _ranges(std::move(ranges))
         {}
-        re_ast_char_set_match(span &&spn, bool exclude, std::vector<char_range> &&ranges)
-            : re_ast(std::move(spn)), _exclude(exclude), _ranges(std::move(ranges))
+        re_ast_char_set_match(const container *cntr, span &&spn, bool exclude, std::vector<char_range> &&ranges)
+            : re_ast(cntr, std::move(spn)), _exclude(exclude), _ranges(std::move(ranges))
         {}
         virtual ~re_ast_char_set_match() {}
+
+        virtual auto try_add_transitions(const std::map<std::wstring, std::unique_ptr<re_ast>> &named, size_t from_state, size_t to_state, std::vector<nfa_transition> &table, logger *logger, size_t &next_state) -> bool override {
+            for (auto &range : _ranges) {
+                std::vector<nfa_transition_action> actions;
+                actions.emplace_back(true, L"", false, false, false, L"", 0);
+                table.emplace_back(from_state, nfa_transition_guard(_exclude, range.from, range.to), to_state, std::move(actions));
+            }
+            return true;
+        }
+
+        virtual auto null_transition_possible(const std::map<std::wstring, std::unique_ptr<re_ast>> &named) const -> bool override {
+            return false;
+        }
 
         inline auto exclude() const -> bool { return _exclude; }
         inline auto exclude(bool value) -> void { _exclude = value; }
@@ -152,26 +236,47 @@ namespace davelexer
         re_ast_reference(re_ast_reference &&c)
             : re_ast(std::move(c)), _name(std::move(c._name))
         {}
-        re_ast_reference(const span &spn, const std::wstring &name)
-            : re_ast(spn), _name(name)
+        re_ast_reference(const container *cntr, const span &spn, const std::wstring &name)
+            : re_ast(cntr, spn), _name(name)
         {}
-        re_ast_reference(const span &spn, std::wstring &&name)
-            : re_ast(spn), _name(std::move(name))
+        re_ast_reference(const container *cntr, const span &spn, std::wstring &&name)
+            : re_ast(cntr, spn), _name(std::move(name))
         {}
-        re_ast_reference(span &&spn, const std::wstring &name)
-            : re_ast(std::move(spn)), _name(name)
+        re_ast_reference(const container *cntr, span &&spn, const std::wstring &name)
+            : re_ast(cntr, std::move(spn)), _name(name)
         {}
-        re_ast_reference(span &&spn, std::wstring &&name)
-            : re_ast(std::move(spn)), _name(std::move(name))
+        re_ast_reference(const container *cntr, span &&spn, std::wstring &&name)
+            : re_ast(cntr, std::move(spn)), _name(std::move(name))
         {}
         virtual ~re_ast_reference() {}
+
+        virtual auto try_add_transitions(const std::map<std::wstring, std::unique_ptr<re_ast>> &named, size_t from_state, size_t to_state, std::vector<nfa_transition> &table, logger *logger, size_t &next_state) -> bool override {
+            auto f = named.find(_name);
+            if (f == named.end()) {
+                log::error::expression_not_found(logger, cntr(), spn(), _name);
+                return false;
+            }
+            else {
+                return f->second->try_add_transitions(named, from_state, to_state, table, logger, next_state);
+            }
+        }
+
+        virtual auto null_transition_possible(const std::map<std::wstring, std::unique_ptr<re_ast>> &named) const -> bool override {
+            auto f = named.find(_name);
+            if (f == named.end()) {
+                return true;
+            }
+            else {
+                return f->second->null_transition_possible(named);
+            }
+        }
 
         friend auto operator << (std::wostream &os, const re_ast_reference &ast) -> std::wostream& {
             return ast.write(os);
         }
     };
 
-    class re_ast_then sealed : public re_ast {
+    class re_ast_then sealed : public re_ast{
     private:
         std::unique_ptr<re_ast> _re1;
         std::unique_ptr<re_ast> _re2;
@@ -185,17 +290,31 @@ namespace davelexer
         re_ast_then(re_ast_then &&c)
             : re_ast(std::move(c)), _re1(std::move(c._re1)), _re2(std::move(c._re2))
         {}
-        re_ast_then(const span &spn, std::unique_ptr<re_ast> &&re1, std::unique_ptr<re_ast> &&re2)
-            : re_ast(spn), _re1(std::move(re1)), _re2(std::move(re2))
+        re_ast_then(const container *cntr, const span &spn, std::unique_ptr<re_ast> &&re1, std::unique_ptr<re_ast> &&re2)
+            : re_ast(cntr, spn), _re1(std::move(re1)), _re2(std::move(re2))
         {}
         virtual ~re_ast_then() {}
+
+        virtual auto try_add_transitions(const std::map<std::wstring, std::unique_ptr<re_ast>> &named, size_t from_state, size_t to_state, std::vector<nfa_transition> &table, logger *logger, size_t &next_state) -> bool override {
+            size_t s = next_state++;
+            if (!_re1->try_add_transitions(named, from_state, s, table, logger, next_state)) {
+                return false;
+            }
+            else {
+                return _re2->try_add_transitions(named, s, to_state, table, logger, next_state);
+            }
+        }
+
+        virtual auto null_transition_possible(const std::map<std::wstring, std::unique_ptr<re_ast>> &named) const -> bool override {
+            return _re1->null_transition_possible(named) && _re2->null_transition_possible(named);
+        }
 
         friend auto operator << (std::wostream &os, const re_ast_then &ast) -> std::wostream& {
             return ast.write(os);
         }
     };
 
-    class re_ast_or sealed : public re_ast {
+    class re_ast_or sealed : public re_ast{
     private:
         std::unique_ptr<re_ast> _re1;
         std::unique_ptr<re_ast> _re2;
@@ -209,17 +328,28 @@ namespace davelexer
         re_ast_or(re_ast_or &&c)
             : re_ast(std::move(c)), _re1(std::move(c._re1)), _re2(std::move(c._re2))
         {}
-        re_ast_or(const span &spn, std::unique_ptr<re_ast> &&re1, std::unique_ptr<re_ast> &&re2)
-            : re_ast(spn), _re1(std::move(re1)), _re2(std::move(re2))
+        re_ast_or(const container *cntr, const span &spn, std::unique_ptr<re_ast> &&re1, std::unique_ptr<re_ast> &&re2)
+            : re_ast(cntr, spn), _re1(std::move(re1)), _re2(std::move(re2))
         {}
         virtual ~re_ast_or() {}
+
+        virtual auto try_add_transitions(const std::map<std::wstring, std::unique_ptr<re_ast>> &named, size_t from_state, size_t to_state, std::vector<nfa_transition> &table, logger *logger, size_t &next_state) -> bool override {
+            if (!_re1->try_add_transitions(named, from_state, to_state, table, logger, next_state)) {
+                return false;
+            }
+            return _re2->try_add_transitions(named, from_state, to_state, table, logger, next_state);
+        }
+
+        virtual auto null_transition_possible(const std::map<std::wstring, std::unique_ptr<re_ast>> &named) const -> bool override {
+            return _re1->null_transition_possible(named) || _re2->null_transition_possible(named);
+        }
 
         friend auto operator << (std::wostream &os, const re_ast_or &ast) -> std::wostream& {
             return ast.write(os);
         }
     };
 
-    class re_ast_output sealed : public re_ast {
+    class re_ast_output sealed : public re_ast{
     private:
         std::unique_ptr<re_ast> _re;
         std::wstring _output;
@@ -233,21 +363,37 @@ namespace davelexer
         re_ast_output(re_ast_output &&c)
             : re_ast(std::move(c)), _re(std::move(c._re)), _output(std::move(c._output))
         {}
-        re_ast_output(const span &spn, std::unique_ptr<re_ast> &&re, std::wstring &&output)
-            : re_ast(spn), _re(std::move(re)), _output(std::move(output))
+        re_ast_output(const container *cntr, const span &spn, std::unique_ptr<re_ast> &&re, std::wstring &&output)
+            : re_ast(cntr, spn), _re(std::move(re)), _output(std::move(output))
         {}
         virtual ~re_ast_output() {}
+
+        virtual auto try_add_transitions(const std::map<std::wstring, std::unique_ptr<re_ast>> &named, size_t from_state, size_t to_state, std::vector<nfa_transition> &table, logger *logger, size_t &next_state) -> bool override {
+            // from -> re -> e(output) -> to
+            size_t s = next_state++;
+            if (!_re->try_add_transitions(named, from_state, s, table, logger, next_state)) {
+                return false;
+            }
+            std::vector<nfa_transition_action> actions;
+            actions.emplace_back(false, std::move(_output), false, false, false, L"", 0);
+            table.emplace_back(s, nfa_transition_guard(), to_state, std::move(actions));
+            return true;
+        }
+
+        virtual auto null_transition_possible(const std::map<std::wstring, std::unique_ptr<re_ast>> &named) const -> bool override {
+            return _re->null_transition_possible(named);
+        }
 
         friend auto operator << (std::wostream &os, const re_ast_output &ast) -> std::wostream& {
             return ast.write(os);
         }
     };
 
-    class re_ast_cardinality sealed : public re_ast {
+    class re_ast_cardinality sealed : public re_ast{
     private:
         std::unique_ptr<re_ast> _re;
-        int _min;
-        int _max;
+        size_t _min;
+        size_t _max;
     protected:
         virtual auto write(std::wostream &os) const ->std::wostream& override {
             // 0..1
@@ -292,10 +438,60 @@ namespace davelexer
         re_ast_cardinality(re_ast_cardinality &&c)
             : re_ast(std::move(c)), _re(std::move(c._re)), _min(c._min), _max(c._max)
         {}
-        re_ast_cardinality(const span &spn, std::unique_ptr<re_ast> &&re, int min, int max)
-            : re_ast(spn), _re(std::move(re)), _min(min), _max(max)
+        re_ast_cardinality(const container *cntr, const span &spn, std::unique_ptr<re_ast> &&re, int min, int max)
+            : re_ast(cntr, spn), _re(std::move(re)), _min(min), _max(max)
         {}
         virtual ~re_ast_cardinality() {}
+
+        virtual auto try_add_transitions(const std::map<std::wstring, std::unique_ptr<re_ast>> &named, size_t from_state, size_t to_state, std::vector<nfa_transition> &table, logger *logger, size_t &next_state) -> bool override {
+            // X -E-> X --min*re--> X -E-> X
+            //                      X --min+1--> X
+            //                      X --min+2--> X
+            //                      ...
+            //                      X --max-min--> X
+
+            // re{2-4}: FROM -E-> S0 -re-> S1 -re-> S2 -E->           TO
+            //                                         -re->          TO
+            //                                         -re-> S3 -re-> TO
+            auto s = from_state;
+            // Add the '_min' transitions
+            for (size_t i = 0; i < _min; i++) {
+                auto t = next_state++;
+                if (!_re->try_add_transitions(named, s, t, table, logger, next_state)) return false;
+                s = t;
+            }
+            // If the max is infinate, then we recurse on the current state
+            if (_min == _max) {
+                // add an epsilon s -E-> to_state (no action)
+                table.emplace_back(s, nfa_transition_guard(), to_state, std::vector<nfa_transition_action>());
+            }
+            else if (_max == -1) {
+                // s-E->t1-re->t2-E->s-E->to_state
+                auto t1 = next_state++;
+                table.emplace_back(s, nfa_transition_guard(), t1, std::vector<nfa_transition_action>());
+                auto t2 = next_state++;
+                if (!_re->try_add_transitions(named, t1, t2, table, logger, next_state)) return false;
+                table.emplace_back(t2, nfa_transition_guard(), s, std::vector<nfa_transition_action>());
+                table.emplace_back(s, nfa_transition_guard(), to_state, std::vector<nfa_transition_action>());
+                return true;
+            }
+            else {
+                // Create _max-_min 'optional' transitions
+                table.emplace_back(s, nfa_transition_guard(), to_state, std::vector<nfa_transition_action>());
+                for (size_t i = _min; i < _max; i++) {
+                    auto t = next_state++;
+                    if (!_re->try_add_transitions(named, s, t, table, logger, next_state)) return false;
+                    s = t;
+                    table.emplace_back(s, nfa_transition_guard(), to_state, std::vector<nfa_transition_action>());
+                }
+            }
+
+            return true;
+        }
+
+        virtual auto null_transition_possible(const std::map<std::wstring, std::unique_ptr<re_ast>> &named) const -> bool override {
+            return _min == 0 || _re->null_transition_possible(named);
+        }
 
         friend auto operator << (std::wostream &os, const re_ast_cardinality &ast) -> std::wostream& {
             return ast.write(os);
@@ -303,7 +499,7 @@ namespace davelexer
     };
 
     auto re_try_parse(
-        container *container,
+        container *cntr,
         std::wistream &src,
         logger *logger,
         std::unique_ptr<re_ast> &ast)->bool;

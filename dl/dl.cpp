@@ -6,7 +6,7 @@
 #include <sstream>
 #include <iostream>
 
-#include "..\dllib\re_parser.h"
+#include "..\dllib\nfa.h"
 
 class text_container : public davecommon::container {
 public:
@@ -36,16 +36,32 @@ protected:
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-    std::wstringstream stm(L"(ab)|(cd){>jjj}");
-    std::unique_ptr<davelexer::re_ast> ast;
     text_container tc;
     console_logger cl;
-    if (!davelexer::re_try_parse(&tc, stm, &cl, ast)) {
-        std::wcout << "Failure during re parse" << std::endl;
-    }
-    else {
-        std::wcout << "AST:" << std::endl << ast << std::endl;
-    }
+
+    davelexer::nfa n;
+    auto builder = n.get_builder(&tc, &cl);
+    auto default_section = builder.get_section_builder(L"default");
+    default_section.try_add_token(token{ span(), token_type::regex, L"if" }, token{ span(), token_type::regex, L"if" });
+    default_section.try_add_token(token{ span(), token_type::regex, L"for" }, token{ span(), token_type::regex, L"for" });
+    default_section.try_add_token(token{ span(), token_type::regex, L"foreach" }, token{ span(), token_type::regex, L"foreach" });
+    default_section.try_add_goto(token{ span(), token_type::regex, L"comment" }, token{ span(), token_type::regex, L"/\\*" }, L"comment");
+
+    auto comment = builder.get_section_builder(L"comment");
+    comment.try_add_token(token{ span(), token_type::regex, L"comment" }, token{ span(), token_type::regex, L".+" });
+    comment.try_add_return(token{ span(), token_type::regex, L"comment" }, token{ span(), token_type::regex, L"\\*/+" });
+
+    std::wcout << n.strip_actions();
+
+    //std::wstringstream stm(L"(ab)|(cd){>jjj}");
+    //std::unique_ptr<davelexer::re_ast> ast;
+    //
+    //if (!davelexer::re_try_parse(&tc, stm, &cl, ast)) {
+    //    std::wcout << "Failure during re parse" << std::endl;
+    //}
+    //else {
+    //    std::wcout << "AST:" << std::endl << ast << std::endl;
+    //}
 
 	return 0;
 }

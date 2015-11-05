@@ -64,7 +64,7 @@ namespace davecommon
                 }
             }
 
-            static auto syntax_error(logger *logger, container *container, span &spn, const std::vector<re_token_type> &expected) -> void {
+            static auto syntax_error(logger *logger, const container *container, const span &spn, const std::vector<re_token_type> &expected) -> void {
                 std::wstringstream stm;
                 stm << L"Syntax error Expected one of ";
                 if (expected.size() == 0) {
@@ -79,17 +79,29 @@ namespace davecommon
                 logger->write(severity::error, container, spn, stm.str());
             }
 
-            static auto invalid_cardinality(logger *logger, container *container, span &spn, int min, int max) -> void {
+            static auto invalid_cardinality(logger *logger, const container *container, const span &spn, int min, int max) -> void {
                 std::wstringstream stm;
                 stm << L"Invalid cardinality (" << min << L'-' << max << L')';
                 logger->write(severity::error, container, spn, stm.str());
             }
 
-            static auto invalid_range(logger *logger, container *container, span &spn, wchar_t from, wchar_t to) -> void {
+            static auto invalid_range(logger *logger, const container *container, const span &spn, wchar_t from, wchar_t to) -> void {
                 std::wstringstream stm;
                 stm << L"Invalid range (";
                 char_friendly(from, stm) << L'-';
                 char_friendly(to, stm) << L')';
+                logger->write(severity::error, container, spn, stm.str());
+            }
+
+            static auto expression_not_found(logger *logger, const container *container, const span &spn, const std::wstring &name) -> void {
+                std::wstringstream stm;
+                stm << L"Expression '" << name << "' was not found";
+                logger->write(severity::error, container, spn, stm.str());
+            }
+
+            static auto re_must_process_something(logger *logger, const container *container, const span &spn, const std::wstring &name) -> void {
+                std::wstringstream stm;
+                stm << L"Expression '" << name << "' cannot be used as a token since it's possible to match zero characters.";
                 logger->write(severity::error, container, spn, stm.str());
             }
         };

@@ -151,7 +151,7 @@ namespace davelexer
     }
 
     auto re_try_parse(
-        container *container,
+        container *cntr,
         std::wistream &src,
         logger *logger,
         std::unique_ptr<re_ast> &ast)->bool
@@ -174,7 +174,7 @@ namespace davelexer
                 case re_token_type::char_: // s1
                     // R -> c
                     if (true) {
-                        values.emplace_back(std::unique_ptr<re_ast>(new re_ast_char_set_match(tkn.spn, false, chr(tkn.char_))));
+                        values.emplace_back(std::unique_ptr<re_ast>(new re_ast_char_set_match(cntr, tkn.spn, false, chr(tkn.char_))));
                         goto_r(states);
                         read = true;
                     }
@@ -182,7 +182,7 @@ namespace davelexer
                 case re_token_type::char_set: // s2
                     // R -> s
                     if (true) {
-                        values.emplace_back(std::unique_ptr<re_ast>(new re_ast_char_set_match(tkn.spn, false, charset(tkn))));
+                        values.emplace_back(std::unique_ptr<re_ast>(new re_ast_char_set_match(cntr, tkn.spn, false, charset(tkn))));
                         goto_r(states);
                         read = true;
                     }
@@ -190,7 +190,7 @@ namespace davelexer
                 case re_token_type::name: // s3
                     // R -> n
                     if (true) {
-                        values.emplace_back(std::unique_ptr<re_ast>(new re_ast_reference(tkn.spn, std::move(tkn.name_output_whitespace))));
+                        values.emplace_back(std::unique_ptr<re_ast>(new re_ast_reference(cntr, tkn.spn, std::move(tkn.name_output_whitespace))));
                         goto_r(states);
                         read = true;
                     }
@@ -198,7 +198,7 @@ namespace davelexer
                 case re_token_type::hyphen: // s4
                     // R -> -
                     if (true) {
-                        values.emplace_back(std::unique_ptr<re_ast>(new re_ast_char_set_match(tkn.spn, false, chr(L'-'))));
+                        values.emplace_back(std::unique_ptr<re_ast>(new re_ast_char_set_match(cntr, tkn.spn, false, chr(L'-'))));
                         goto_r(states);
                         read = true;
                     }
@@ -229,7 +229,7 @@ namespace davelexer
                         expected.emplace_back(re_token_type::bracket_left);
                         expected.emplace_back(re_token_type::ex_bracket_left);
                         expected.emplace_back(re_token_type::parenthesis_left);
-                        log::error::syntax_error(logger, container, tkn.spn, expected);
+                        log::error::syntax_error(logger, cntr, tkn.spn, expected);
                         return false;
                     }
                     break;
@@ -240,7 +240,7 @@ namespace davelexer
                 case re_token_type::char_: // s1
                     // R -> c
                     if (true) {
-                        values.emplace_back(std::unique_ptr<re_ast>(new re_ast_char_set_match(tkn.spn, false, chr(tkn.char_))));
+                        values.emplace_back(std::unique_ptr<re_ast>(new re_ast_char_set_match(cntr, tkn.spn, false, chr(tkn.char_))));
                         goto_r(states);
                         read = true;
                     }
@@ -248,7 +248,7 @@ namespace davelexer
                 case re_token_type::char_set: // s2
                     // R -> s
                     if (true) {
-                        values.emplace_back(std::unique_ptr<re_ast>(new re_ast_char_set_match(tkn.spn, false, charset(tkn))));
+                        values.emplace_back(std::unique_ptr<re_ast>(new re_ast_char_set_match(cntr, tkn.spn, false, charset(tkn))));
                         goto_r(states);
                         read = true;
                     }
@@ -256,7 +256,7 @@ namespace davelexer
                 case re_token_type::name: // s3
                     // R -> n
                     if (true) {
-                        values.emplace_back(std::unique_ptr<re_ast>(new re_ast_reference(tkn.spn, std::move(tkn.name_output_whitespace))));
+                        values.emplace_back(std::unique_ptr<re_ast>(new re_ast_reference(cntr, tkn.spn, std::move(tkn.name_output_whitespace))));
                         goto_r(states);
                         read = true;
                     }
@@ -264,7 +264,7 @@ namespace davelexer
                 case re_token_type::hyphen: // s4
                     // R -> -
                     if (true) {
-                        values.emplace_back(std::unique_ptr<re_ast>(new re_ast_char_set_match(tkn.spn, false, chr(L'-'))));
+                        values.emplace_back(std::unique_ptr<re_ast>(new re_ast_char_set_match(cntr, tkn.spn, false, chr(L'-'))));
                         goto_r(states);
                         read = true;
                     }
@@ -296,7 +296,7 @@ namespace davelexer
                         auto b = r->spn().begin;
                         values.pop_back();
                         states.pop_back();
-                        values.emplace_back(std::unique_ptr<re_ast>(new re_ast_output(span{ b, tkn.spn.end }, std::move(r), std::move(tkn.name_output_whitespace))));
+                        values.emplace_back(std::unique_ptr<re_ast>(new re_ast_output(cntr, span{ b, tkn.spn.end }, std::move(r), std::move(tkn.name_output_whitespace))));
                         goto_r(states);
                         read = true;
                     }
@@ -309,8 +309,8 @@ namespace davelexer
                             states.pop_back();
                             goto_r(states);
                         }
-                        else if ((tkn.cardinality_min == 0 && tkn.cardinality_max == 0) || (tkn.cardinality_max < tkn.cardinality_min)) {
-                            log::error::invalid_cardinality(logger, container, tkn.spn, tkn.cardinality_min, tkn.cardinality_max);
+                        else if ((tkn.cardinality_min == 0 && tkn.cardinality_max == 0) || (tkn.cardinality_max != -1 && tkn.cardinality_max < tkn.cardinality_min)) {
+                            log::error::invalid_cardinality(logger, cntr, tkn.spn, tkn.cardinality_min, tkn.cardinality_max);
                             return false;
                         }
                         else {
@@ -318,7 +318,7 @@ namespace davelexer
                             auto b = r->spn().begin;
                             values.pop_back();
                             states.pop_back();
-                            values.emplace_back(std::unique_ptr<re_ast>(new re_ast_cardinality(span{ b, tkn.spn.end }, std::move(r), tkn.cardinality_min, tkn.cardinality_max)));
+                            values.emplace_back(std::unique_ptr<re_ast>(new re_ast_cardinality(cntr, span{ b, tkn.spn.end }, std::move(r), tkn.cardinality_min, tkn.cardinality_max)));
                             goto_r(states);
                         }
                         read = true;
@@ -344,7 +344,7 @@ namespace davelexer
                         expected.emplace_back(re_token_type::output);
                         expected.emplace_back(re_token_type::cardinality);
                         expected.emplace_back(re_token_type::eod);
-                        log::error::syntax_error(logger, container, tkn.spn, expected);
+                        log::error::syntax_error(logger, cntr, tkn.spn, expected);
                         return false;
                     }
                     break;
@@ -370,7 +370,7 @@ namespace davelexer
                         auto r1 = std::move(values.back().ast());
                         auto spn = span{ r1->spn().begin, r2->spn().end };
                         values.pop_back();
-                        values.emplace_back(std::unique_ptr<re_ast>(new re_ast_then(spn, std::move(r1), std::move(r2))));
+                        values.emplace_back(std::unique_ptr<re_ast>(new re_ast_then(cntr, spn, std::move(r1), std::move(r2))));
                         goto_r(states);
                     }
                     break;
@@ -386,7 +386,7 @@ namespace davelexer
                         auto b = r->spn().begin;
                         values.pop_back();
                         states.pop_back();
-                        values.emplace_back(std::unique_ptr<re_ast>(new re_ast_output(span{ b, tkn.spn.end }, std::move(r), std::move(tkn.name_output_whitespace))));
+                        values.emplace_back(std::unique_ptr<re_ast>(new re_ast_output(cntr, span{ b, tkn.spn.end }, std::move(r), std::move(tkn.name_output_whitespace))));
                         goto_r(states);
                         read = true;
                     }
@@ -399,8 +399,8 @@ namespace davelexer
                             states.pop_back();
                             goto_r(states);
                         }
-                        else if ((tkn.cardinality_min == 0 && tkn.cardinality_max == 0) || (tkn.cardinality_max < tkn.cardinality_min)) {
-                            log::error::invalid_cardinality(logger, container, tkn.spn, tkn.cardinality_min, tkn.cardinality_max);
+                        else if ((tkn.cardinality_min == 0 && tkn.cardinality_max == 0) || (tkn.cardinality_max != -1 && tkn.cardinality_max < tkn.cardinality_min)) {
+                            log::error::invalid_cardinality(logger, cntr, tkn.spn, tkn.cardinality_min, tkn.cardinality_max);
                             return false;
                         }
                         else {
@@ -408,7 +408,7 @@ namespace davelexer
                             auto b = r->spn().begin;
                             values.pop_back();
                             states.pop_back();
-                            values.emplace_back(std::unique_ptr<re_ast>(new re_ast_cardinality(span{ b, tkn.spn.end }, std::move(r), tkn.cardinality_min, tkn.cardinality_max)));
+                            values.emplace_back(std::unique_ptr<re_ast>(new re_ast_cardinality(cntr, span{ b, tkn.spn.end }, std::move(r), tkn.cardinality_min, tkn.cardinality_max)));
                             goto_r(states);
                         }
                         read = true;
@@ -428,7 +428,7 @@ namespace davelexer
                         expected.emplace_back(re_token_type::pipe);
                         expected.emplace_back(re_token_type::output);
                         expected.emplace_back(re_token_type::cardinality);
-                        log::error::syntax_error(logger, container, tkn.spn, expected);
+                        log::error::syntax_error(logger, cntr, tkn.spn, expected);
                         return false;
                     }
                     break;
@@ -445,7 +445,7 @@ namespace davelexer
                 case re_token_type::hyphen: // s12
                     // T -> -
                     if (true) {
-                        values.emplace_back(std::unique_ptr<re_ast>(new re_ast_char_set_match(tkn.spn, false, chr(tkn.char_))));
+                        values.emplace_back(std::unique_ptr<re_ast>(new re_ast_char_set_match(cntr, tkn.spn, false, chr(tkn.char_))));
                         goto_t(states, values);
                         read = true;
                     }
@@ -456,7 +456,7 @@ namespace davelexer
                         std::vector<re_token_type> expected;
                         expected.emplace_back(re_token_type::char_);
                         expected.emplace_back(re_token_type::hyphen);
-                        log::error::syntax_error(logger, container, tkn.spn, expected);
+                        log::error::syntax_error(logger, cntr, tkn.spn, expected);
                         return false;
                     }
                     break;
@@ -473,7 +473,7 @@ namespace davelexer
                 case re_token_type::hyphen: // s12
                     // T -> -
                     if (true) {
-                        values.emplace_back(std::unique_ptr<re_ast>(new re_ast_char_set_match(tkn.spn, false, chr(tkn.char_))));
+                        values.emplace_back(std::unique_ptr<re_ast>(new re_ast_char_set_match(cntr, tkn.spn, false, chr(tkn.char_))));
                         goto_t(states, values);
                         read = true;
                     }
@@ -499,7 +499,7 @@ namespace davelexer
                         expected.emplace_back(re_token_type::char_);
                         expected.emplace_back(re_token_type::hyphen);
                         expected.emplace_back(re_token_type::bracket_right);
-                        log::error::syntax_error(logger, container, tkn.spn, expected);
+                        log::error::syntax_error(logger, cntr, tkn.spn, expected);
                         return false;
                     }
                     break;
@@ -510,7 +510,7 @@ namespace davelexer
                 case re_token_type::char_: // s1
                     // R -> c
                     if (true) {
-                        values.emplace_back(std::unique_ptr<re_ast>(new re_ast_char_set_match(tkn.spn, false, chr(tkn.char_))));
+                        values.emplace_back(std::unique_ptr<re_ast>(new re_ast_char_set_match(cntr, tkn.spn, false, chr(tkn.char_))));
                         goto_r(states);
                         read = true;
                     }
@@ -518,7 +518,7 @@ namespace davelexer
                 case re_token_type::char_set: // s2
                     // R -> s
                     if (true) {
-                        values.emplace_back(std::unique_ptr<re_ast>(new re_ast_char_set_match(tkn.spn, false, charset(tkn))));
+                        values.emplace_back(std::unique_ptr<re_ast>(new re_ast_char_set_match(cntr, tkn.spn, false, charset(tkn))));
                         goto_r(states);
                         read = true;
                     }
@@ -526,7 +526,7 @@ namespace davelexer
                 case re_token_type::name: // s3
                     // R -> n
                     if (true) {
-                        values.emplace_back(std::unique_ptr<re_ast>(new re_ast_reference(tkn.spn, std::move(tkn.name_output_whitespace))));
+                        values.emplace_back(std::unique_ptr<re_ast>(new re_ast_reference(cntr, tkn.spn, std::move(tkn.name_output_whitespace))));
                         goto_r(states);
                         read = true;
                     }
@@ -534,7 +534,7 @@ namespace davelexer
                 case re_token_type::hyphen: // s4
                     // R -> -
                     if (true) {
-                        values.emplace_back(std::unique_ptr<re_ast>(new re_ast_char_set_match(tkn.spn, false, chr(L'-'))));
+                        values.emplace_back(std::unique_ptr<re_ast>(new re_ast_char_set_match(cntr, tkn.spn, false, chr(L'-'))));
                         goto_r(states);
                         read = true;
                     }
@@ -579,7 +579,7 @@ namespace davelexer
                         auto b = r->spn().begin;
                         values.pop_back();
                         states.pop_back();
-                        values.emplace_back(std::unique_ptr<re_ast>(new re_ast_output(span{ b, tkn.spn.end }, std::move(r), std::move(tkn.name_output_whitespace))));
+                        values.emplace_back(std::unique_ptr<re_ast>(new re_ast_output(cntr, span{ b, tkn.spn.end }, std::move(r), std::move(tkn.name_output_whitespace))));
                         goto_r(states);
                         read = true;
                     }
@@ -592,8 +592,8 @@ namespace davelexer
                             states.pop_back();
                             goto_r(states);
                         }
-                        else if ((tkn.cardinality_min == 0 && tkn.cardinality_max == 0) || (tkn.cardinality_max < tkn.cardinality_min)) {
-                            log::error::invalid_cardinality(logger, container, tkn.spn, tkn.cardinality_min, tkn.cardinality_max);
+                        else if ((tkn.cardinality_min == 0 && tkn.cardinality_max == 0) || (tkn.cardinality_max != -1 && tkn.cardinality_max < tkn.cardinality_min)) {
+                            log::error::invalid_cardinality(logger, cntr, tkn.spn, tkn.cardinality_min, tkn.cardinality_max);
                             return false;
                         }
                         else {
@@ -601,7 +601,7 @@ namespace davelexer
                             auto b = r->spn().begin;
                             values.pop_back();
                             states.pop_back();
-                            values.emplace_back(std::unique_ptr<re_ast>(new re_ast_cardinality(span{ b, tkn.spn.end }, std::move(r), tkn.cardinality_min, tkn.cardinality_max)));
+                            values.emplace_back(std::unique_ptr<re_ast>(new re_ast_cardinality(cntr, span{ b, tkn.spn.end }, std::move(r), tkn.cardinality_min, tkn.cardinality_max)));
                             goto_r(states);
                         }
                         read = true;
@@ -622,7 +622,7 @@ namespace davelexer
                         expected.emplace_back(re_token_type::pipe);
                         expected.emplace_back(re_token_type::output);
                         expected.emplace_back(re_token_type::cardinality);
-                        log::error::syntax_error(logger, container, tkn.spn, expected);
+                        log::error::syntax_error(logger, cntr, tkn.spn, expected);
                         return false;
                     }
                     break;
@@ -650,7 +650,7 @@ namespace davelexer
                         states.pop_back();
                         states.pop_back();
                         states.pop_back();
-                        values.emplace_back(std::unique_ptr<re_ast>(new re_ast_or(span{ r1->spn().begin, r2->spn().end }, std::move(r1), std::move(r2))));
+                        values.emplace_back(std::unique_ptr<re_ast>(new re_ast_or(cntr, span{ r1->spn().begin, r2->spn().end }, std::move(r1), std::move(r2))));
                         goto_r(states);
                         read = false;
                     }
@@ -661,7 +661,7 @@ namespace davelexer
                         auto r = std::move(values.back().ast());
                         values.pop_back();
                         states.pop_back();
-                        values.emplace_back(std::unique_ptr<re_ast>(new re_ast_output(span{ r->spn().begin, tkn.spn.end }, std::move(r), std::move(tkn.name_output_whitespace))));
+                        values.emplace_back(std::unique_ptr<re_ast>(new re_ast_output(cntr, span{ r->spn().begin, tkn.spn.end }, std::move(r), std::move(tkn.name_output_whitespace))));
                         goto_r(states);
                         read = true;
                     }
@@ -674,8 +674,8 @@ namespace davelexer
                             states.pop_back();
                             goto_r(states);
                         }
-                        else if ((tkn.cardinality_min == 0 && tkn.cardinality_max == 0) || (tkn.cardinality_max < tkn.cardinality_min)) {
-                            log::error::invalid_cardinality(logger, container, tkn.spn, tkn.cardinality_min, tkn.cardinality_max);
+                        else if ((tkn.cardinality_min == 0 && tkn.cardinality_max == 0) || (tkn.cardinality_max != -1 && tkn.cardinality_max < tkn.cardinality_min)) {
+                            log::error::invalid_cardinality(logger, cntr, tkn.spn, tkn.cardinality_min, tkn.cardinality_max);
                             return false;
                         }
                         else {
@@ -683,7 +683,7 @@ namespace davelexer
                             auto b = r->spn().begin;
                             values.pop_back();
                             states.pop_back();
-                            values.emplace_back(std::unique_ptr<re_ast>(new re_ast_cardinality(span{ b, tkn.spn.end }, std::move(r), tkn.cardinality_min, tkn.cardinality_max)));
+                            values.emplace_back(std::unique_ptr<re_ast>(new re_ast_cardinality(cntr, span{ b, tkn.spn.end }, std::move(r), tkn.cardinality_min, tkn.cardinality_max)));
                             goto_r(states);
                         }
                         read = true;
@@ -703,7 +703,7 @@ namespace davelexer
                         expected.emplace_back(re_token_type::pipe);
                         expected.emplace_back(re_token_type::output);
                         expected.emplace_back(re_token_type::cardinality);
-                        log::error::syntax_error(logger, container, tkn.spn, expected);
+                        log::error::syntax_error(logger, cntr, tkn.spn, expected);
                         return false;
                     }
                     break;
@@ -723,7 +723,7 @@ namespace davelexer
                         auto c = std::move(values.back().token());
                         values.pop_back();
                         states.pop_back();
-                        values.emplace_back(std::unique_ptr<re_ast>(new re_ast_char_set_match(c.spn, false, chr(c.char_))));
+                        values.emplace_back(std::unique_ptr<re_ast>(new re_ast_char_set_match(cntr, c.spn, false, chr(c.char_))));
                         goto_t(states, values);
                         read = false;
                     }
@@ -734,7 +734,7 @@ namespace davelexer
                         std::vector<re_token_type> expected;
                         expected.emplace_back(re_token_type::hyphen);
                         expected.emplace_back(re_token_type::bracket_right);
-                        log::error::syntax_error(logger, container, tkn.spn, expected);
+                        log::error::syntax_error(logger, cntr, tkn.spn, expected);
                         return false;
                     }
                     break;
@@ -748,13 +748,13 @@ namespace davelexer
                         values.pop_back();
                         auto c1 = std::move(values.back().token());
                         if (c1.char_ > tkn.char_) {
-                            log::error::invalid_range(logger, container, span{ c1.spn.begin, tkn.spn.end }, c1.char_, tkn.char_);
+                            log::error::invalid_range(logger, cntr, span{ c1.spn.begin, tkn.spn.end }, c1.char_, tkn.char_);
                             return false;
                         }
                         values.pop_back();
                         states.pop_back();
                         states.pop_back();
-                        values.emplace_back(std::unique_ptr<re_ast>(new re_ast_char_set_match(span{ c1.spn.begin, tkn.spn.end }, false, chr(c1.char_, tkn.char_))));
+                        values.emplace_back(std::unique_ptr<re_ast>(new re_ast_char_set_match(cntr, span{ c1.spn.begin, tkn.spn.end }, false, chr(c1.char_, tkn.char_))));
                         goto_t(states, values);
                         read = true;
                     }
@@ -764,7 +764,7 @@ namespace davelexer
                     if (true) {
                         std::vector<re_token_type> expected;
                         expected.emplace_back(re_token_type::char_);
-                        log::error::syntax_error(logger, container, tkn.spn, expected);
+                        log::error::syntax_error(logger, cntr, tkn.spn, expected);
                         return false;
                     }
                     break;
