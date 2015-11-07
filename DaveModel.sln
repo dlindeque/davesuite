@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.31101.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dm", "dm\dm.vcxproj", "{DF37ED35-21F6-4758-A8EF-FF6F2925BE2C}"
+	ProjectSection(ProjectDependencies) = postProject
+		{96425F99-4A6E-4A60-8BE5-B8F2A84BAA00} = {96425F99-4A6E-4A60-8BE5-B8F2A84BAA00}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dmlib", "dmlib\dmlib.vcxproj", "{96425F99-4A6E-4A60-8BE5-B8F2A84BAA00}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DF37ED35-21F6-4758-A8EF-FF6F2925BE2C}.Debug|Win32.ActiveCfg = Debug|Win32
+		{DF37ED35-21F6-4758-A8EF-FF6F2925BE2C}.Debug|Win32.Build.0 = Debug|Win32
+		{DF37ED35-21F6-4758-A8EF-FF6F2925BE2C}.Release|Win32.ActiveCfg = Release|Win32
+		{DF37ED35-21F6-4758-A8EF-FF6F2925BE2C}.Release|Win32.Build.0 = Release|Win32
+		{96425F99-4A6E-4A60-8BE5-B8F2A84BAA00}.Debug|Win32.ActiveCfg = Debug|Win32
+		{96425F99-4A6E-4A60-8BE5-B8F2A84BAA00}.Debug|Win32.Build.0 = Debug|Win32
+		{96425F99-4A6E-4A60-8BE5-B8F2A84BAA00}.Release|Win32.ActiveCfg = Release|Win32
+		{96425F99-4A6E-4A60-8BE5-B8F2A84BAA00}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

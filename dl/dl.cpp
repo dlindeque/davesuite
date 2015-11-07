@@ -46,12 +46,16 @@ int _tmain(int argc, _TCHAR* argv[])
     default_section.try_add_token(token{ span(), token_type::regex, L"for" }, token{ span(), token_type::regex, L"for" });
     default_section.try_add_token(token{ span(), token_type::regex, L"foreach" }, token{ span(), token_type::regex, L"foreach" });
     default_section.try_add_goto(token{ span(), token_type::regex, L"comment" }, token{ span(), token_type::regex, L"/\\*" }, L"comment");
-
+    
     auto comment = builder.get_section_builder(L"comment");
     comment.try_add_token(token{ span(), token_type::regex, L"comment" }, token{ span(), token_type::regex, L".+" });
     comment.try_add_return(token{ span(), token_type::regex, L"comment" }, token{ span(), token_type::regex, L"\\*/+" });
+    
+    std::wcout << n.remove_epsilon_actions(); // .strip_actions();
 
-    std::wcout << n.strip_actions();
+    //auto n = nfa::test();
+    //auto o = n.remove_epsilon_actions();
+    //std::wcout << o;
 
     //std::wstringstream stm(L"(ab)|(cd){>jjj}");
     //std::unique_ptr<davelexer::re_ast> ast;

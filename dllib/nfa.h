@@ -31,6 +31,8 @@ namespace davelexer
         {}
 
         inline auto anchor() const -> size_t { return _anchor; }
+        inline auto recurse() const->size_t{ return _anchor + 1; }
+        inline auto end() const -> size_t{ return _anchor + 2; }
 
         auto try_add_token(const token &token_name, const token &token_value) -> bool;
         auto try_add_goto(const token &token_name, const token &token_value, const std::wstring &section_name) -> bool;
@@ -84,7 +86,7 @@ namespace davelexer
             : _next_state(c._next_state), _transition_table(std::move(c._transition_table)), _section_init_states(std::move(c._section_init_states)), _named_asts(std::move(c._named_asts))
         {}
 
-        auto strip_actions()->nfa;
+        auto remove_epsilon_actions()->nfa;
 
         auto try_compile(bool &good, std::wostream &errors)->dfa;
 
@@ -145,5 +147,26 @@ namespace davelexer
 
         friend nfa_builder;
         friend nfa_section_builder;
+
+        static inline auto test() -> nfa {
+            nfa n;
+            std::vector<nfa_transition_action> actions;
+            actions.emplace_back(false, L"a", false, false, false, L"", 0);
+            n._transition_table.emplace_back(0, nfa_transition_guard(), 1, std::move(actions));
+            actions.emplace_back(false, L"b", false, false, false, L"", 0);
+            n._transition_table.emplace_back(2, nfa_transition_guard(false, L'b', L'b'), 1, std::move(actions));
+            actions.emplace_back(false, L"c", false, false, false, L"", 0);
+            n._transition_table.emplace_back(3, nfa_transition_guard(false, L'c', L'c'), 1, std::move(actions));
+            actions.emplace_back(false, L"d", false, false, false, L"", 0);
+            n._transition_table.emplace_back(1, nfa_transition_guard(false, L'd', L'd'), 1, std::move(actions));
+            actions.emplace_back(false, L"e", false, false, false, L"", 0);
+            n._transition_table.emplace_back(1, nfa_transition_guard(false, L'e', L'e'), 1, std::move(actions));
+            actions.emplace_back(false, L"f", false, false, false, L"", 0);
+            n._transition_table.emplace_back(1, nfa_transition_guard(false, L'f', L'f'), 4, std::move(actions));
+            actions.emplace_back(false, L"g", false, false, false, L"", 0);
+            n._transition_table.emplace_back(1, nfa_transition_guard(false, L'g', L'g'), 5, std::move(actions));
+            n._next_state = 6;
+            return n;
+        }
     };
 }

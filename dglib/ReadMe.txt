@@ -42,133 +42,73 @@ Examples:
 
 --------------------------------------------------------------------------------------------------------------------------------
 Template File.
-The steps file are a template style file. The file contains a double 'mode' sections, it starts out with 'Template' mode.
-The mode is switched to 'Code' mode using '<#' and back to template mode using '#>'
+This file is a standard code-gen script (ds) file. 
+The file must have one root expression of type Feature->string
 --------------------------------------------------------------------------------------------------------------------------------
-// This is a comment in template mode
-File: Header // Specifies that we're targetting the header file
-<#
-// This is code mode - this code will be output directly
-#include "anything.h"
-// Any C++ code is valid
-
-struct scenario_details
+// This is a comment
+matchset formatStep(string multiline, Table table)
 {
-    std::string name;
-    int start_line;
+    'I have (>\d+) cars'  -> <"_cars = std::stoi(L"<# first #>")">;
+    'I have (>\d+) ports' -> <"_ports = std::stoi(L"<# first #>")">;
 };
+// formatStep: string,string,table->string
 
-class myfeature {
+let scenarioMethods =
+        map
+            <"
+            inline auto <# ScenarioName #>() -> bool {
+                _stm << L"Running <# ScenarioName #>";
+                try {
+                    <# Steps ~> map (s => formatStep s.StepText, s.Multiline, s.Table) ~> join "\n" #>
+                    _stm << L" - Pass" << std::endl;
+                    return true;
+                }
+                catch(std::exception &e) {
+                    _stm << L" - FAIL: " << e.what() << std::endl;
+                    return false;
+                }
+            }
+            ">
+        ~> join "\n";
+
+let rullAll =
+        map
+            <"
+                ok &= <# ScenarioName #>();
+            ">
+        ~> join "\n";
+
+let featureName : Feature->string = Name ~> cppIdentifier;
+
+set file = header; // Specifies that we're targetting the header file
+// The template body must be a function taking Feature as parameter, a partially applied text template will do the trick!
+<"
+#include <ostream>
+
+class <# featureName #> {
 private:
-    std::ostream &_stm;
-    std::string _scenarioName;
-    std::vector<scenario_details> _scenario_details;
-    inline auto assert(bool value, const std::string &expectation, const std::string &stepText) -> void {
-        if (!value) {
-            _stm << _scenarioName + << " failed. Expectation: '" << expectation << "'. See '" << stepText << "'" << std::endl;
-            throw std::exception("Assert Failed");
-        }
-    }
+    int _cars;
+    int _ports;
+    std::wostream &_stm;
 public:
-    myfeature(std::ostream &stm)
-        : _stm(stm)
-    {
-        <#= scenarioDefinitions #>;
-    }
+    <# featureName #>() = delete;
+    <# featureName #>(const <# featureName #> &) = delete;
+    <# featureName #>(<# featureName #> &&c)
+        : _cars(c._cars), _ports(c._ports), _stm(std::move(c._stm))
+    {} 
+    <# featureName #>(std::wostream &stm)
+        : _cars(0), _ports(0), _stm(stm)
+    {}
     
-    <#= scenarios #> // We can access the generated scenario code like this.
-};
+    <# Scenarios ~> scenarioMethods #>
 
-#>
-
-Scenario: scenarios // This is where we define the structure of a scenario. The name 'scenarios' is the name to be used for this template section (See Feature section)
-<#
-// Back in code mode. We can access scenario parameters like so: <#= scenarioName #>
-inline auto <#= scenarioName #>() -> bool {
-    _scenarioName = "<#= scenarioName #>";
-    _stm << "Running <#= scenarioName #>" << std::endl;
-    <# = steps #>
-}
-#>
-
-Scenario: scenarioDefinitions // We can format scenarios in multiple ways
-<#
-_scenario_details.push_back(scenario_details { std::string("<#= scenarioName #>"), <#= scenarioStartLine #> });
-#>
-
-// Back in template mode. I can create a function for a step using this syntax:
-Step: steps matching Given text // The text must be a regex that will match the text in the given step above.
-<#
-// Back in code mode. We can reference the literal parameters like so: <#= parameterName #>
-std::string somevar("<#= parameterName #>");
-#>
-
-Step: steps matching When text // The text must be a regex that will match the text in the given step above.
-<#
-// Back in code mode.
-auto somevarlen = somevar.size();
-#>
-
-Step: steps matching Then text // The text must be a regex that will match the text in the given step above.
-<#
-// Back in code mode. We can access scenario and step details like this;
-assert(somevarlen == 6, "<#= scenarioName #>", "<#= stepText #>");
-#>
-
---------------------------------------------------------------------------------------------------------------------------------
-
---------------------------------------------------------------------------------------------------------------------------------
-Sample output cpp file
---------------------------------------------------------------------------------------------------------------------------------
-// This is code mode - this code will be output directly
-#include "anything.h"
-// Any C++ code is valid
-
-struct scenario_details
-{
-    std::string name;
-    int start_line;
-};
-
-class myfeature {
-private:
-    std::ostream &_stm;
-    std::string _scenarioName;
-    std::vector<scenario_details> _scenario_details;
-    inline auto assert(bool value, const std::string &expectation, const std::string &stepText) -> void {
-        if (!value) {
-            _stm << _scenarioName + << " failed. Expectation: '" << expectation << "'. See '" << stepText << "'" << std::endl;
-            throw std::exception("Assert Failed");
-        }
-    }
-public:
-    myfeature(std::ostream &stm)
-        : _stm(stm)
-    {
-        _scenario_details.push_back(scenario_details { std::string("Scenario1"), 15 });
-        _scenario_details.push_back(scenario_details { std::string("Scenario2"), 28 });
-    }
-
-    // Back in code mode. We can access scenario parameters like so: Scenario1
-    inline auto Scenario1() -> bool {
-        _scenarioName = "Scenario1";
-        _stm << "Running Scenario1" << std::endl;
-        // Back in code mode. We can reference the literal parameters like so: <#= parameterName #>
-        std::string somevar("Hello world");
-        // Back in code mode.
-        auto somevarlen = somevar.size();
-        // Back in code mode. We can access scenario and step details like this;
-        assert(somevarlen == 6, "Scenario1", "Then I expect the length to be 6");
-    }
-
-    // Back in code mode. We can access scenario parameters like so: Scenario2
-    inline auto Scenario1() -> bool {
-        _scenarioName = "Scenario2";
-        _stm << "Running Scenario2" << std::endl;
-        // Etc..
+    inline auto operator()() -> bool {
+        bool ok = true;
+        <# runAll #>
+        return ok;
     }
 };
-
+">;
 --------------------------------------------------------------------------------------------------------------------------------
 
 ********************************************************************************************************************************
@@ -196,163 +136,188 @@ Scenario: Literal text
     | token type | token value       |
     | text       | This is some text |
 --------------------------------------------------------------------------------------------------------------------------------
+Template file (C++)
+--------------------------------------------------------------------------------------------------------------------------------
 
---------------------------------------------------------------------------------------------------------------------------------
-Template File: Simple_Expression_Lexer.dgt
---------------------------------------------------------------------------------------------------------------------------------
-File: Header
-<#
+matchset formatStep(string multiline, Table table)
+{
+    'the expression ''(>.*)'''      -> <"_expression = L"<# first ~> cppString #>";">;
+    'I analyse the expression'      -> <"
+                                       std::wstringstream src;
+                                       src << _expression;
+                                       src.seekg(0);
+                                       int end_line = 1, end_column = 1, lex_state = 0;
+                                       expression_token tkn;
+                                       while(true) {
+                                           davelexer::re_lex(src, end_line, end_column, lex_state, tkn);
+                                           if (tkn.type == expression_token_type::eod) {
+                                               break;
+                                           }
+                                           else {
+                                               _tokens.push_back(token { tkn.type, tkn.value });
+                                           }
+                                       }
+                                       ">;
+    'I expect no error'             -> <"if (_error) throw std::exception("Expected no errors");">;
+    'I expect the following tokens' -> <"
+                                       std::vector<token> expected_tokens;
+                                       <#= table.Rows
+                                            |> map <"expected_tokens.push_back(token{ expression_token_type::<# GetColumn("token type") #>, L"<# GetColumn("token value") #>" });">
+                                       #>
+                                       if (expected_tokens.size() != _tokens.size()) throw std::exception("Tokens mismatch");
+                                       // compare each row
+                                       ">;"
+};
+
+let featureName : Feature->string = Name ~> cppIdentifier;
+
+set file = header; // Specifies that we're targetting the header file
+
+<"
 #include <ostream>
 #include <string>
 #include <vector>
-#include "..\lexer.h"
-#include <utils> // vector equivalence
 
-class <#= identifier(featureName) #> {
+class <# featureName #> {
 private:
+    struct token {
+        expression_token_type type;
+        std::wstring value;
+    };
+    std::wstring _expression;
+    std::vector<token> _tokens;
+    bool _error;
     std::wostream &_stm;
 public:
-    <#= identifier(featureName) #>(std::wostream &stm)
+    <# featureName #>() = delete;
+    <# featureName #>(const <# featureName #> &) = delete;
+    <# featureName #>(<# featureName #> &&c)
+        : _cars(c._cars), _ports(c._ports), _stm(std::move(c._stm))
+    {} 
+    <# featureName #>(std::ostream &stm)
         : _stm(stm)
-    {
-    }
+    {}
+    
+    <# 
+        Scenarios 
+            ~> map
+                <"
+                inline auto <# ScenarioName #>() -> bool {
+                    _stm << L"Running <# ScenarioName #>";
+                    try {
+                        {<# Steps ~> map (s => formatStep s.StepText, s.Multiline, s.Table) ~> join "}\n{" #>}
+                        _stm << L" - Pass" << std::endl;
+                        return true;
+                    } catch(std::exception &e) {
+                        _stm << L" - FAIL: " << e.what() << std::endl;
+                        return false;
+                    }
+                }
+                ">
+            ~> join "\n"
+    #>
 
-    <#= scenarios #>
-
-    inline auto run_all() -> bool {
+    inline auto operator()() -> bool {
         bool ok = true;
-        <#= runscenarios #>
+        <#
+            Scenarios
+                ~> map
+                    <"
+                        ok &= <# ScenarioName #>();
+                    ">
+                ~> join "\n"
+        #>
         return ok;
     }
 };
-#>
-
-Scenario: runscenarios
-<#
-ok &= <#= identifier(scenarioName) #>();
-#>
-
-Scenario: scenarios
-<#
-inline auto <#= identifier(scenarioName) #>() -> bool {
-    _stm << L"<#= scenarioName #>";
-    bool ok = true;
-    <#= steps #>
-    if (ok) {
-        _stm << L" Pass" << std::endl;
-    } else {
-        _stm << L" Pass (Suspect)" << std::endl;
-    }
-    return true;
-}
-#>
-
-Step: steps matching Given the expression '(.*)'
-<#
-std::wstring expression(L"<#= cpp_text(match[1]) #>");
-#>
-
-Step: steps matching When I analyse the expression
-<#
-std::vector<token> actual_tokens;
-ok &= lexer::try_analyse(expression, &actual_tokens);
-#>
-
-Step: steps matching Then I expect no error
-<#
-if (!ok) {
-    _stm << L" FAILED: Lexer error";
-    return false;
-}
-#>
-
-Step: steps matching Then I expect the following tokens
-<#
-std::vector<token> expected_tokens;
-<#= tokenList #>
-if (!utils::is_equivalent(actual_tokens, expected_tokens)) {
-    _stm << L" FAILED: different tokens";
-    return false;
-}
-#>
-
-Table: tokenList
-<#
-tokenList.push_back(token { token_type::<# row["token type"] #>, "<# row["token value"] #>" });
-#>
+">;
 --------------------------------------------------------------------------------------------------------------------------------
-
+Template file (C#)
 --------------------------------------------------------------------------------------------------------------------------------
-When processed using: dg.exe /dgf:Simple_Expression_Lexer.dgf /dgt:Simple_Expression_Lexer.dgf /ouput:Header=Simple_Expression_Lexer.h
-Output: Simple_Expression_Lexer.h
---------------------------------------------------------------------------------------------------------------------------------
-#include <ostream>
-#include <string>
-#include <vector>
-#include "..\lexer.h"
-#include <utils> // vector equivalence
-
-class Simple_Expression_Lexer {
-private:
-    std::wostream &_stm;
-public:
-    Simple_Expression_Lexer(std::wostream &stm)
-        : _stm(stm)
-    {
-    }
-
-    inline auto Literal_number() -> bool {
-        _stm << L"Literal number";
-        bool ok = true;
-        std::wstring expression(L"45");
-        std::vector<token> actual_tokens;
-        ok &= lexer::try_analyse(expression, &actual_tokens);
-        if (!ok) {
-            _stm << L" FAILED: Lexer error";
-            return false;
-        }
-        std::vector<token> expected_tokens;
-        tokenList.push_back(token { token_type::number, "45" });
-        if (!utils::is_equivalent(actual_tokens, expected_tokens)) {
-            _stm << L" FAILED: different tokens";
-            return false;
-        }
-        if (ok) {
-            _stm << L" Pass" << std::endl;
-        } else {
-            _stm << L" Pass (Suspect)" << std::endl;
-        }
-        return true;
-    }
-    inline auto Literal_text() -> bool {
-        _stm << L"Literal text";
-        bool ok = true;
-        std::wstring expression(L"\"This is some text\"");
-        std::vector<token> actual_tokens;
-        ok &= lexer::try_analyse(expression, &actual_tokens);
-        if (!ok) {
-            _stm << L" FAILED: Lexer error";
-            return false;
-        }
-        std::vector<token> expected_tokens;
-        tokenList.push_back(token { token_type::text, "This is some text" });
-        if (!utils::is_equivalent(actual_tokens, expected_tokens)) {
-            _stm << L" FAILED: different tokens";
-            return false;
-        }
-        if (ok) {
-            _stm << L" Pass" << std::endl;
-        } else {
-            _stm << L" Pass (Suspect)" << std::endl;
-        }
-        return true;
-    }
-
-    inline auto run_all() -> bool {
-        bool ok = true;
-        ok &= Literal_number();
-        ok &= Literal_text();
-        return ok;
-    }
+matchset formatStep(string multiline, Table table)
+{
+    'the expression ''(.*)'''       -> <"_expression = "<# first ~> csString #>";">;
+    'I analyse the expression'      -> <"
+                                       // Run the C# lexer and add tokens to _tokens;
+                                       ">;
+    'I expect no error'             -> <"if (_error) throw new Exception("Expected no errors");">;
+    'I expect the following tokens' -> <"
+                                       List<Token> expectedTokens;
+                                       <#= table.Rows
+                                            |> map <"expectedTokens.Add(new Token { Type = expressionTokenType.<# GetColumn("token type") #>, Value = "<# GetColumn("token value") #>" });">
+                                       #>
+                                       if (expectedTokens.Count != _tokens.Count) throw new Exception("Tokens mismatch");
+                                       // compare each row
+                                       ">;"
 };
+
+let featureName : Feature->string = Name ~> csIdentifier;
+
+<"
+using System;
+using System.IO;
+
+namespace Test
+{
+    public class <# featureName #> 
+    {
+        private struct Token {
+            expression_token_type Type;
+            string Value;
+        };
+        private string _expression;
+        private List<Token> _tokens;
+        private bool _error;
+        private TextWriter _stm;
+
+        public <# featureName #>(TextWriter stm)
+        {
+            if(stm == null)
+            {
+                throw new ArgumentNullException()
+            }
+            _stm = stm;
+        }
+    
+        <# 
+            Scenarios 
+                ~> map
+                    <"
+                    public bool <# ScenarioName #>()
+                    {
+                        _stm.Write("Running <# ScenarioName #>");
+                        try 
+                        {
+                            {<# Steps ~> map (s => formatStep s.StepText, s.Multiline, s.Table) ~> join "}\n{" #>}
+                            _stm.WriteLine(" - Pass");
+                            return true;
+                        }
+                        catch(Exception ex) {
+                            _stm.WriteLine(" - FAIL: {0}", ex.Message);
+                            return false;
+                        }
+                    }
+                    ">
+                ~> join "\n"
+        #>
+
+        public bool RunAll()
+        {
+            bool ok = true;
+            <#
+                Scenarios
+                    ~> map
+                        <"
+                            ok &= <# ScenarioName #>();
+                        ">
+                    ~> join "\n"
+            #>
+            return ok;
+        }
+    }
+}
+">;
 --------------------------------------------------------------------------------------------------------------------------------
+
+Compiling:
+dg.exe \dg:test.dg \ds:test.ds

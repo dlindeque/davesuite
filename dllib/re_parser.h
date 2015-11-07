@@ -95,11 +95,23 @@ namespace davelexer
         nfa_transition(size_t from, nfa_transition_guard &&guard, size_t to, std::vector<nfa_transition_action> &&actions)
             : _from(from), _guard(std::move(guard)), _to(to), _actions(std::move(actions))
         {}
+        nfa_transition(size_t from, const nfa_transition_guard &guard, size_t to, std::vector<nfa_transition_action> &&actions)
+            : _from(from), _guard(guard), _to(to), _actions(std::move(actions))
+        {}
+        nfa_transition(size_t from, nfa_transition_guard &&guard, size_t to, const std::vector<nfa_transition_action> &actions)
+            : _from(from), _guard(std::move(guard)), _to(to), _actions(actions)
+        {}
+        nfa_transition(size_t from, const nfa_transition_guard &guard, size_t to, const std::vector<nfa_transition_action> &actions)
+            : _from(from), _guard(guard), _to(to), _actions(actions)
+        {}
 
         inline auto from() const -> size_t { return _from; }
+        inline auto from(size_t value) -> void { _from = value; }
         inline auto to() const -> size_t { return _to; }
+        inline auto to(size_t value) -> void { _to = value; }
         inline auto guard() const -> const nfa_transition_guard& { return _guard; }
         inline auto actions() const -> const std::vector<nfa_transition_action>& { return _actions; }
+        inline auto actions() -> std::vector<nfa_transition_action>& { return _actions; }
     };
 
     class re_ast abstract {

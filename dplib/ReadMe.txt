@@ -217,3 +217,112 @@ S: bBa ., $
 LALR(1) would've merged States 1 and 9
 
 ==============================================================================================================
+dp files
+==============================================================================================================
+Say we want to define the grammar for gherkin
+--------------------------------------------------------------------------------------------------------------
+
+namespace gherkin;
+
+using namespace core;
+using namespace davelexer;
+
+set ignore = [ whitespace, comment ];
+
+enum scenario_term_type
+{
+    given,
+    when,
+    then
+};
+
+type scenario_term
+{
+    span location,
+    string text,
+    scenario_term_type type,
+    string multilinetext,
+    string[][] table
+};
+
+type scenario
+{
+    bool is_background,
+    bool is_outline,
+    span name_location,
+    string name,
+    scenario_term[] terms,
+    string[][] examples
+};
+
+type feature
+{
+    span name_location,
+    string name,
+    scenario[] scenarios
+};
+
+set document = FEATURE;
+
+token pipe = "|";
+token colon = ":";
+
+production SIMPLETERM
+{
+    given termtext                    -> scenario_term { location = @$, text = $2, type = scenario_term_type.given };
+    when termtext                     -> scenario_term { location = @$, text = $2, type = scenario_term_type.when };
+    then termtext                     -> scenario_term { location = @$, text = $2, type = scenario_term_type.then };
+    and termtext                      -> scneario_term { location = @$, text = $2, type = scenario_term_type.and };
+};
+
+production TABLECOLS
+{
+    "|" "|"                           -> [ "" ];
+    "|" name "|"                      -> [ $2 ];
+    TABLECOLS name "|"                -> $1 |> append $2;
+    TABLECOLS "|"                     -> $1 |> append "";
+    "|" name error                    -> [ $2 ]
+                                            |> error $3 "Missing '|'";
+    TABLECOLS name error              -> $1 |> append $2
+                                            |> error $3 "Missing '|'";
+};
+
+production TABLEROWS
+{
+    TABLECOLS nl                      -> [ $1 ];
+    TABLEROWS TABLECOLS nl            -> $1 |> append $2;
+};
+
+production SCENARIOTERM
+{
+    SIMPLETERM                        -> $1;
+    SIMPLETERM multilinetext          -> $1 |> mapWith multilinetext $2;
+    SIMPLETERM TABLEROWS              -> $1 |> mapWith table $2;
+};
+
+production SCENARIOTERMS
+{
+    SCENARIOTERM                      -> [ $1 ];
+    SCENARIOTERMS SCENARIOTERM        -> $1 |> append $2;
+};
+
+production SCENARIO
+{
+    scenario ":" name SCENARIOTERMS   -> scenario { is_background = false, is_outline = false, name_location = @3, name = $3, terms = $4 };
+    background ":" SCENARIOTERMS      -> scenario { is_background = true, is_outline = false, terms = $4 };
+    scenario outline ":" SCENARIOTERMS examples ":" TABLEROWS
+                                      -> scenario { is_background = false, is_outline = true, terms = $4, examples = $5 };
+};
+
+production SCENARIOS
+{
+    SCENARIO                          -> [ $1 ];
+    SCENARIOS SCENARIO                -> $1 |> append $1;
+};
+
+production FEATURE
+{
+    feature ":" name SCENARIOS        -> feature { name_location = @3, name = $3, scenarios = $4 };
+};
+
+--------------------------------------------------------------------------------------------------------------
