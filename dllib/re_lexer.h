@@ -30,7 +30,8 @@ namespace davelexer
         lalpha,
         ualpha,
         space,
-        any
+        any,
+        eod
     };
 
     struct re_token {

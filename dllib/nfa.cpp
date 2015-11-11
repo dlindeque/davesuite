@@ -1,4 +1,7 @@
 #include "stdafx.h"
+
+#include <assert.h>
+
 #include "nfa.h"
 #include "re_lexer.h"
 #include "..\common\offset_logger.h"
@@ -12,10 +15,20 @@ namespace davelexer
         if (f == _nfa->_section_init_states.end()) {
             anchor = _nfa->_next_state;
             // We take three states, the start state, the 'recurse' state and the end state
-            _nfa->_next_state += 3;
+            if (anchor == 0) {
+                // For the first machine, we also and an ultimate final state, we get there when we see <eod>
+                _nfa->_next_state += 4;
+            }
+            else {
+                _nfa->_next_state += 3;
+            }
             _nfa->_section_init_states.emplace(name, anchor);
             // Add the epsilon transition from end to recurse (no action)
             _nfa->_transition_table.emplace_back(anchor + 2, nfa_transition_guard(), anchor + 1, std::vector<nfa_transition_action>());
+            // Add the <eod> transition
+            if (anchor == 0) {
+                _nfa->_transition_table.emplace_back(1, nfa_transition_guard(nfa_transition_guard(false, 0, 0)), 3, std::vector<nfa_transition_action>());
+            }
             // Add the epsilon transition from anchor to recurse
             _nfa->_transition_table.emplace_back(anchor, nfa_transition_guard(), anchor + 1, std::vector<nfa_transition_action>());
         }
@@ -60,10 +73,15 @@ namespace davelexer
 
         // add the reduce action (to_state -> end)
         std::vector<nfa_transition_action> actions;
-        actions.emplace_back(false, L"", true, false, false, token_name.value, 0);
+        auto tkn = _builder->_nfa->_tokens.find(token_name.value);
+        if (tkn == _builder->_nfa->_tokens.end()) {
+            log::error::re_token_not_found(_builder->_logger, _builder->_cntr, token_name.spn, token_name.value);
+            return false;
+        }
+        actions.emplace_back(false, L"", true, false, false, &(*tkn), 0);
         _builder->_nfa->_transition_table.emplace_back(to_state, nfa_transition_guard(), end(), std::move(actions));
         // add the re (recurse -> to_state)
-        return ast->try_add_transitions(_builder->_nfa->_named_asts, recurse(), to_state, _builder->_nfa->_transition_table, &ofslogger, _builder->_nfa->_next_state);
+        return ast->try_add_transitions(&(*tkn), _builder->_nfa->_named_asts, recurse(), to_state, _builder->_nfa->_transition_table, &ofslogger, _builder->_nfa->_next_state, true);
     }
 
     auto nfa_section_builder::try_add_goto(const token &token_name, const token &token_value, const std::wstring &section_name) -> bool
@@ -84,11 +102,16 @@ namespace davelexer
 
         size_t to_state = _builder->_nfa->_next_state++;
         std::vector<nfa_transition_action> actions;
-        actions.emplace_back(false, L"", true, false, false, token_name.value, 0);
-        actions.emplace_back(false, L"", false, false, true, L"", sb.anchor());
+        auto tkn = _builder->_nfa->_tokens.find(token_name.value);
+        if (tkn == _builder->_nfa->_tokens.end()) {
+            log::error::re_token_not_found(_builder->_logger, _builder->_cntr, token_name.spn, token_name.value);
+            return false;
+        }
+        actions.emplace_back(false, L"", true, false, false, &(*tkn), 0);
+        actions.emplace_back(false, L"", false, false, true, &(*tkn), sb.anchor());
         _builder->_nfa->_transition_table.emplace_back(to_state, nfa_transition_guard(), end(), std::move(actions));
 
-        return ast->try_add_transitions(_builder->_nfa->_named_asts, recurse(), to_state, _builder->_nfa->_transition_table, &ofslogger, _builder->_nfa->_next_state);
+        return ast->try_add_transitions(&(*tkn), _builder->_nfa->_named_asts, recurse(), to_state, _builder->_nfa->_transition_table, &ofslogger, _builder->_nfa->_next_state, true);
     }
 
     auto nfa_section_builder::try_add_return(const token &token_name, const token &token_value) -> bool
@@ -108,45 +131,69 @@ namespace davelexer
 
         size_t to_state = _builder->_nfa->_next_state++;
         std::vector<nfa_transition_action> actions;
-        actions.emplace_back(false, L"", true, false, false, token_name.value, 0);
-        actions.emplace_back(false, L"", false, true, false, L"", 0);
+        auto tkn = _builder->_nfa->_tokens.find(token_name.value);
+        if (tkn == _builder->_nfa->_tokens.end()) {
+            log::error::re_token_not_found(_builder->_logger, _builder->_cntr, token_name.spn, token_name.value);
+            return false;
+        }
+        actions.emplace_back(false, L"", true, false, false, &(*tkn), 0);
+        actions.emplace_back(false, L"", false, true, false, &(*tkn), 0);
         _builder->_nfa->_transition_table.emplace_back(to_state, nfa_transition_guard(), end(), std::move(actions));
 
-        return ast->try_add_transitions(_builder->_nfa->_named_asts, recurse(), to_state, _builder->_nfa->_transition_table, &ofslogger, _builder->_nfa->_next_state);
-    }
-
-    auto nfa::try_compile(bool &ok, std::wostream &errors) -> dfa {
-        throw std::exception("not implemented");
-
-        // 1. Split states so epsilon transition 'to state' have exits only (no inbound transitions must exist)
-        // 2. Copy all epsilon transition's actions to the next transition's as a pre-action
-        // 3. Build the DFA
+        return ast->try_add_transitions(&(*tkn), _builder->_nfa->_named_asts, recurse(), to_state, _builder->_nfa->_transition_table, &ofslogger, _builder->_nfa->_next_state, true);
     }
 
 #ifdef _DEBUG
-    auto assert_valid_nfa(const std::vector<nfa_transition> &transitions) -> void
+    auto assert_valid_nfa_1(const std::vector<nfa_transition> &transitions) -> void
     {
-        // Ensure we don't have any recursive epsilon transitions
+        // Ensure we don't have any recursive epsilon transitions with output
         std::set<size_t> states;
-        for(auto &t : transitions) {
+        for (auto &t : transitions) {
             states.emplace(t.from());
+            for (auto &a : t.actions()) {
+                assert(a.reduce_token() != nullptr);
+            }
         }
         for (auto &s : states) {
         }
     }
 #else
-    inline auto assert_valid_nfa(const std::vector<nfa_transition>&) -> void {}
+    inline auto assert_valid_nfa_1(const std::vector<nfa_transition>&) -> void {}
 #endif
 
-    auto nfa::remove_epsilon_actions()->nfa
+#ifdef _DEBUG
+    auto assert_valid_nfa_2(const std::vector<nfa_transition> &transitions) -> void
     {
-        assert_valid_nfa(_transition_table);
-        nfa n(_transition_table);
-        n._next_state = _next_state;
+        // Ensure we don't have any epsilon transitions with actions
+        for (auto &t : transitions) {
+            assert(!t.guard().epsilon() || t.actions().empty());
+        }
+    }
+#else
+    inline auto assert_valid_nfa_2(const std::vector<nfa_transition>&) -> void {}
+#endif
+
+#ifdef _DEBUG
+    auto assert_valid_nfa_3(const std::vector<nfa_transition> &transitions) -> void
+    {
+        // Ensure we don't have any epsilon transitions
+        for (auto &t : transitions) {
+            assert(!t.guard().epsilon());
+        }
+    }
+#else
+    inline auto assert_valid_nfa_3(const std::vector<nfa_transition>&) -> void {}
+#endif
+
+    auto nfa::try_compile(std::wostream &errors) -> bool
+    {
+        bool ok = true;
+
+#pragma region Clear Epsilon Transitions Of Actions
 
         std::vector<size_t> unprocessed;
-        for (size_t i = 0; i < n._transition_table.size();i++) {
-            if (n._transition_table[i].guard().epsilon() && !n._transition_table[i].actions().empty()) {
+        for (size_t i = 0; i < _transition_table.size(); i++) {
+            if (_transition_table[i].guard().epsilon() && !_transition_table[i].actions().empty()) {
                 unprocessed.push_back(i);
             }
         }
@@ -155,61 +202,97 @@ namespace davelexer
             auto p = unprocessed.back();
             unprocessed.pop_back();
 
-            std::vector<size_t> inbound;
+            std::vector<size_t> inbound, outbound, recursive;
             inbound.reserve(10);
-            for (size_t i = 0; i < n._transition_table.size(); i++) {
-                if (&n._transition_table[i] != &n._transition_table[p] && n._transition_table[i].to() == n._transition_table[p].to()) {
-                    inbound.push_back(i);
+            outbound.reserve(10);
+            recursive.reserve(10);
+            for (size_t i = 0; i < _transition_table.size(); i++) {
+                if (&_transition_table[i] != &_transition_table[p] && _transition_table[i].to() == _transition_table[p].to()) {
+                    inbound.push_back(i); // include recursive transitions
+                }
+                if (_transition_table[i].from() == _transition_table[p].to()) {
+                    if (_transition_table[i].from() != _transition_table[i].to())
+                    {
+                        outbound.push_back(i);
+                    }
+                    else {
+                        recursive.push_back(i);
+                    }
                 }
             }
 
-            if (!inbound.empty()) {
-                // Found an epsilon transition with some actions and some inbound transitions (all states will always have at least one outbound transition)
-                auto state = n._transition_table[p].to();
-                auto &actions = n._transition_table[p].actions();
-                std::vector<nfa_transition> new_txs;
-                while (!inbound.empty()) {
-                    auto p = inbound.back();
-                    inbound.pop_back();
-                    // Clone the state - copy all transitions from the original state
-                    size_t new_state = n._next_state++;
-                    for (auto &ct : n._transition_table) {
-                        if (ct.from() == n._transition_table[p].to()) {
-                            // ct is a transition from the state in question to some other, or same state
-                            if (ct.from() == ct.to()) {
-                                // recursive transition - copy the while thing
-                                new_txs.emplace_back(new_state, ct.guard(), new_state, ct.actions());
-                            }
-                            else {
-                                // not a recursive state - copy only the the 'to'
-                                new_txs.emplace_back(new_state, ct.guard(), ct.to(), ct.actions());
-                            }
-                        }
-                    }
-                    // Setup a new transition
-                    n._transition_table[p].to(new_state);
+            // For each inbound transition, clone the state, copy the transitions and redirect the transition
+            while (!inbound.empty()) {
+                auto ip = inbound.back();
+                inbound.pop_back();
+                // Generate a new state
+                size_t new_state = _next_state++;
+                // Change the transition to point to the new state
+                _transition_table[ip].to(new_state);
+                // Clone the state - copy all outbound transitions
+                for (auto &o : outbound) {
+                    auto g = _transition_table[o].guard();
+                    _transition_table.push_back(nfa_transition(new_state, g, _transition_table[o].to(), _transition_table[o].actions()));
                 }
-                // Move the epsilon transition's action(s) to the outbound transitions
-                for (auto &o : n._transition_table) {
-                    if (o.from() == state) {
-                        for (auto &ea : actions) {
-                            o.actions().insert(o.actions().cbegin(), ea);
-                        }
-                    }
+                // Also copy all recursive transitions
+                for (auto &r : recursive) {
+                    _transition_table.emplace_back(new_state, _transition_table[r].guard(), new_state, _transition_table[r].actions());
                 }
-                actions.clear();
-                for (auto &ct : new_txs) {
-                    n._transition_table.push_back(std::move(ct));
-                }
-                break;
             }
-            else {
-                t++;
+            // Move the epsilon transition's action(s) to the outbound transitions
+            for (auto &o : outbound) {
+                for (auto &a : _transition_table[p].actions()) {
+                    _transition_table[o].actions().insert(_transition_table[o].actions().cbegin(), a);
+                }
+                // check the output transitions, if it's a transition that qualifies for processing, then enqueue it.
+                if (_transition_table[o].guard().epsilon() && !_transition_table[o].actions().empty()) {
+                    unprocessed.push_back(o);
+                }
+            }
+            _transition_table[p].actions().clear();
+        }
+
+        assert_valid_nfa_1(_transition_table);
+        assert_valid_nfa_2(_transition_table);
+
+#pragma endregion
+
+#pragma region Delete Epsilon Transitions
+        std::vector<size_t> epsilon_transitions;
+        for (size_t i = 0; i < _transition_table.size(); i++) {
+            if (_transition_table[i].guard().epsilon()) {
+                epsilon_transitions.push_back(i);
             }
         }
 
+        size_t i = 0;
+        while (i < epsilon_transitions.size()) {
+            auto t = epsilon_transitions[i];
+            auto &et = _transition_table[t];
+            std::vector<nfa_transition> new_txs;
+            for (auto &t : _transition_table) {
+                if (et.to() == t.from()) {
+                    new_txs.emplace_back(et.from(), t.guard(), t.to(), t.actions());
+                }
+            }
+            for (auto &t : new_txs) {
+                if (t.guard().epsilon()) {
+                    epsilon_transitions.push_back(_transition_table.size());
+                }
+                _transition_table.push_back(std::move(t));
+            }
+            i++;
+        }
 
-        return n;
+        for (auto it = epsilon_transitions.rbegin(); it != epsilon_transitions.rend(); it++) {
+            _transition_table.erase(_transition_table.begin() + *it);
+        }
+
+        assert_valid_nfa_3(_transition_table);
+
+#pragma endregion
+
+        return ok;
     }
 }
 

@@ -42,16 +42,35 @@ int _tmain(int argc, _TCHAR* argv[])
     davelexer::nfa n;
     auto builder = n.get_builder(&tc, &cl);
     auto default_section = builder.get_section_builder(L"default");
-    default_section.try_add_token(token{ span(), token_type::regex, L"if" }, token{ span(), token_type::regex, L"if" });
-    default_section.try_add_token(token{ span(), token_type::regex, L"for" }, token{ span(), token_type::regex, L"for" });
-    default_section.try_add_token(token{ span(), token_type::regex, L"foreach" }, token{ span(), token_type::regex, L"foreach" });
-    default_section.try_add_goto(token{ span(), token_type::regex, L"comment" }, token{ span(), token_type::regex, L"/\\*" }, L"comment");
+    bool ok = true;
+    //ok &= default_section.try_add_token(token{ span(), token_type::regex, L"if" }, token{ span(), token_type::regex, L"if" });
+    //ok &= default_section.try_add_token(token{ span(), token_type::regex, L"for" }, token{ span(), token_type::regex, L"for" });
+    //ok &= default_section.try_add_token(token{ span(), token_type::regex, L"foreach" }, token{ span(), token_type::regex, L"foreach" });
+    //ok &= default_section.try_add_goto(token{ span(), token_type::regex, L"comment" }, token{ span(), token_type::regex, L"/\\*" }, L"comment");
+    //
+    //auto comment = builder.get_section_builder(L"comment");
+    //ok &= comment.try_add_token(token{ span(), token_type::regex, L"comment" }, token{ span(), token_type::regex, L".+" });
+    //ok &= comment.try_add_return(token{ span(), token_type::regex, L"comment" }, token{ span(), token_type::regex, L"\\*/+" });
     
-    auto comment = builder.get_section_builder(L"comment");
-    comment.try_add_token(token{ span(), token_type::regex, L"comment" }, token{ span(), token_type::regex, L".+" });
-    comment.try_add_return(token{ span(), token_type::regex, L"comment" }, token{ span(), token_type::regex, L"\\*/+" });
-    
-    std::wcout << n.remove_epsilon_actions(); // .strip_actions();
+    //n.add_token(L"t1").add_token(L"t2");
+    //ok &= default_section.try_add_token(token{ span(), token_type::regex, L"t1" }, token{ span(), token_type::regex, L"a{>x}" });
+    //ok &= default_section.try_add_token(token{ span(), token_type::regex, L"t2" }, token{ span(), token_type::regex, L"a{>y}" });
+
+    //auto n = ;
+    nfa x;
+    nfa::test(x);
+
+    if (!ok) {
+        std::wcout << "FAILED";
+        return 1;
+    }
+    else {
+        if (!x.try_compile(std::wcout)) {
+            std::wcout << "FAILED";
+            return 1;
+        }
+        std::wcout << x;
+    }
 
     //auto n = nfa::test();
     //auto o = n.remove_epsilon_actions();

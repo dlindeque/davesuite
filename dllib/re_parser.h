@@ -46,7 +46,7 @@ namespace davelexer
         bool _reduce;
         bool _pop;
         bool _push;
-        std::wstring _reduce_token;
+        const std::wstring* _reduce_token;
         size_t _goto;
     public:
         nfa_transition_action() = delete;
@@ -56,17 +56,11 @@ namespace davelexer
         nfa_transition_action(nfa_transition_action &&c)
             : _output_matched(c._output_matched), _output_alternate(std::move(c._output_alternate)), _reduce(c._reduce), _pop(c._pop), _push(c._push), _reduce_token(std::move(c._reduce_token)), _goto(c._goto)
         {}
-        nfa_transition_action(bool output_matched, const std::wstring &output_alternate, bool reduce, bool pop, bool push, const std::wstring &reduce_token, size_t goto_)
+        nfa_transition_action(bool output_matched, const std::wstring &output_alternate, bool reduce, bool pop, bool push, const std::wstring *reduce_token, size_t goto_)
             : _output_matched(output_matched), _output_alternate(output_alternate), _reduce(reduce), _pop(pop), _push(push), _reduce_token(reduce_token), _goto(goto_)
         {}
-        nfa_transition_action(bool output_matched, std::wstring &&output_alternate, bool reduce, bool pop, bool push, const std::wstring &reduce_token, size_t goto_)
+        nfa_transition_action(bool output_matched, std::wstring &&output_alternate, bool reduce, bool pop, bool push, const std::wstring *reduce_token, size_t goto_)
             : _output_matched(output_matched), _output_alternate(std::move(output_alternate)), _reduce(reduce), _pop(pop), _push(push), _reduce_token(reduce_token), _goto(goto_)
-        {}
-        nfa_transition_action(bool output_matched, const std::wstring &output_alternate, bool reduce, bool pop, bool push, std::wstring &&reduce_token, size_t goto_)
-            : _output_matched(output_matched), _output_alternate(output_alternate), _reduce(reduce), _pop(pop), _push(push), _reduce_token(std::move(reduce_token)), _goto(goto_)
-        {}
-        nfa_transition_action(bool output_matched, std::wstring &&output_alternate, bool reduce, bool pop, bool push, std::wstring &&reduce_token, size_t goto_)
-            : _output_matched(output_matched), _output_alternate(std::move(output_alternate)), _reduce(reduce), _pop(pop), _push(push), _reduce_token(std::move(reduce_token)), _goto(goto_)
         {}
 
         inline auto output_matched() const -> bool { return _output_matched; }
@@ -74,7 +68,7 @@ namespace davelexer
         inline auto reduce() const -> bool { return _reduce; }
         inline auto pop() const -> bool { return _pop; }
         inline auto push() const -> bool { return _push; }
-        inline auto reduce_token() const -> const std::wstring& { return _reduce_token; }
+        inline auto reduce_token() const -> const std::wstring* { return _reduce_token; }
         inline auto goto_state() const -> size_t { return _goto; }
     };
 
@@ -119,6 +113,7 @@ namespace davelexer
         const container *_cntr;
         span _spn;
     protected:
+        bool _output = true;
         virtual auto write(std::wostream &os) const->std::wostream& = 0;
     public:
         re_ast() = delete;
@@ -137,7 +132,11 @@ namespace davelexer
         inline auto spn() const -> const span&{ return _spn; }
         inline auto cntr() const -> const container*{ return _cntr; }
 
-        virtual auto try_add_transitions(const std::map<std::wstring, std::unique_ptr<re_ast>> &named, size_t from_state, size_t to_state, std::vector<nfa_transition> &table, logger *logger, size_t &next_state) -> bool = 0;
+        inline auto remove_output() -> void {
+            _output = false;
+        }
+
+        virtual auto try_add_transitions(const std::wstring* token, const std::map<std::wstring, std::unique_ptr<re_ast>> &named, size_t from_state, size_t to_state, std::vector<nfa_transition> &table, logger *logger, size_t &next_state, bool allow_output) -> bool = 0;
 
         virtual auto null_transition_possible(const std::map<std::wstring, std::unique_ptr<re_ast>> &named) const -> bool = 0;
 
@@ -211,10 +210,10 @@ namespace davelexer
         {}
         virtual ~re_ast_char_set_match() {}
 
-        virtual auto try_add_transitions(const std::map<std::wstring, std::unique_ptr<re_ast>> &named, size_t from_state, size_t to_state, std::vector<nfa_transition> &table, logger *logger, size_t &next_state) -> bool override {
+        virtual auto try_add_transitions(const std::wstring* token, const std::map<std::wstring, std::unique_ptr<re_ast>> &named, size_t from_state, size_t to_state, std::vector<nfa_transition> &table, logger *logger, size_t &next_state, bool allow_output) -> bool override {
             for (auto &range : _ranges) {
                 std::vector<nfa_transition_action> actions;
-                actions.emplace_back(true, L"", false, false, false, L"", 0);
+                actions.emplace_back(_output && allow_output , L"", false, false, false, token, 0);
                 table.emplace_back(from_state, nfa_transition_guard(_exclude, range.from, range.to), to_state, std::move(actions));
             }
             return true;
@@ -238,6 +237,7 @@ namespace davelexer
     class re_ast_reference sealed : public re_ast{
     private:
         std::wstring _name;
+        
     protected:
         virtual auto write(std::wostream &os) const ->std::wostream& override {
             return os << L'{' << _name << L'}';
@@ -262,14 +262,14 @@ namespace davelexer
         {}
         virtual ~re_ast_reference() {}
 
-        virtual auto try_add_transitions(const std::map<std::wstring, std::unique_ptr<re_ast>> &named, size_t from_state, size_t to_state, std::vector<nfa_transition> &table, logger *logger, size_t &next_state) -> bool override {
+        virtual auto try_add_transitions(const std::wstring* token, const std::map<std::wstring, std::unique_ptr<re_ast>> &named, size_t from_state, size_t to_state, std::vector<nfa_transition> &table, logger *logger, size_t &next_state, bool allow_output) -> bool override {
             auto f = named.find(_name);
             if (f == named.end()) {
                 log::error::expression_not_found(logger, cntr(), spn(), _name);
                 return false;
             }
             else {
-                return f->second->try_add_transitions(named, from_state, to_state, table, logger, next_state);
+                return f->second->try_add_transitions(token, named, from_state, to_state, table, logger, next_state, _output && allow_output);
             }
         }
 
@@ -307,13 +307,13 @@ namespace davelexer
         {}
         virtual ~re_ast_then() {}
 
-        virtual auto try_add_transitions(const std::map<std::wstring, std::unique_ptr<re_ast>> &named, size_t from_state, size_t to_state, std::vector<nfa_transition> &table, logger *logger, size_t &next_state) -> bool override {
+        virtual auto try_add_transitions(const std::wstring* token, const std::map<std::wstring, std::unique_ptr<re_ast>> &named, size_t from_state, size_t to_state, std::vector<nfa_transition> &table, logger *logger, size_t &next_state, bool allow_output) -> bool override {
             size_t s = next_state++;
-            if (!_re1->try_add_transitions(named, from_state, s, table, logger, next_state)) {
+            if (!_re1->try_add_transitions(token, named, from_state, s, table, logger, next_state, _output && allow_output)) {
                 return false;
             }
             else {
-                return _re2->try_add_transitions(named, s, to_state, table, logger, next_state);
+                return _re2->try_add_transitions(token, named, s, to_state, table, logger, next_state, _output && allow_output);
             }
         }
 
@@ -345,11 +345,11 @@ namespace davelexer
         {}
         virtual ~re_ast_or() {}
 
-        virtual auto try_add_transitions(const std::map<std::wstring, std::unique_ptr<re_ast>> &named, size_t from_state, size_t to_state, std::vector<nfa_transition> &table, logger *logger, size_t &next_state) -> bool override {
-            if (!_re1->try_add_transitions(named, from_state, to_state, table, logger, next_state)) {
+        virtual auto try_add_transitions(const std::wstring* token, const std::map<std::wstring, std::unique_ptr<re_ast>> &named, size_t from_state, size_t to_state, std::vector<nfa_transition> &table, logger *logger, size_t &next_state, bool allow_output) -> bool override {
+            if (!_re1->try_add_transitions(token, named, from_state, to_state, table, logger, next_state, _output && allow_output)) {
                 return false;
             }
-            return _re2->try_add_transitions(named, from_state, to_state, table, logger, next_state);
+            return _re2->try_add_transitions(token, named, from_state, to_state, table, logger, next_state, _output && allow_output);
         }
 
         virtual auto null_transition_possible(const std::map<std::wstring, std::unique_ptr<re_ast>> &named) const -> bool override {
@@ -380,16 +380,22 @@ namespace davelexer
         {}
         virtual ~re_ast_output() {}
 
-        virtual auto try_add_transitions(const std::map<std::wstring, std::unique_ptr<re_ast>> &named, size_t from_state, size_t to_state, std::vector<nfa_transition> &table, logger *logger, size_t &next_state) -> bool override {
+        virtual auto try_add_transitions(const std::wstring* token, const std::map<std::wstring, std::unique_ptr<re_ast>> &named, size_t from_state, size_t to_state, std::vector<nfa_transition> &table, logger *logger, size_t &next_state, bool allow_output) -> bool override {
             // from -> re -> e(output) -> to
-            size_t s = next_state++;
-            if (!_re->try_add_transitions(named, from_state, s, table, logger, next_state)) {
-                return false;
+            if (!re_ast::_output || !allow_output) {
+                // If we're not outputting anything, we might just as well delegate to the underlying re
+                return _re->try_add_transitions(token, named, from_state, to_state, table, logger, next_state, false);
             }
-            std::vector<nfa_transition_action> actions;
-            actions.emplace_back(false, std::move(_output), false, false, false, L"", 0);
-            table.emplace_back(s, nfa_transition_guard(), to_state, std::move(actions));
-            return true;
+            else {
+                size_t s = next_state++;
+                if (!_re->try_add_transitions(token, named, from_state, s, table, logger, next_state, false)) {
+                    return false;
+                }
+                std::vector<nfa_transition_action> actions;
+                actions.emplace_back(false, std::move(_output), false, false, false, token, 0);
+                table.emplace_back(s, nfa_transition_guard(), to_state, std::move(actions));
+                return true;
+            }
         }
 
         virtual auto null_transition_possible(const std::map<std::wstring, std::unique_ptr<re_ast>> &named) const -> bool override {
@@ -455,7 +461,7 @@ namespace davelexer
         {}
         virtual ~re_ast_cardinality() {}
 
-        virtual auto try_add_transitions(const std::map<std::wstring, std::unique_ptr<re_ast>> &named, size_t from_state, size_t to_state, std::vector<nfa_transition> &table, logger *logger, size_t &next_state) -> bool override {
+        virtual auto try_add_transitions(const std::wstring* token, const std::map<std::wstring, std::unique_ptr<re_ast>> &named, size_t from_state, size_t to_state, std::vector<nfa_transition> &table, logger *logger, size_t &next_state, bool allow_output) -> bool override {
             // X -E-> X --min*re--> X -E-> X
             //                      X --min+1--> X
             //                      X --min+2--> X
@@ -469,7 +475,7 @@ namespace davelexer
             // Add the '_min' transitions
             for (size_t i = 0; i < _min; i++) {
                 auto t = next_state++;
-                if (!_re->try_add_transitions(named, s, t, table, logger, next_state)) return false;
+                if (!_re->try_add_transitions(token, named, s, t, table, logger, next_state, _output && allow_output)) return false;
                 s = t;
             }
             // If the max is infinate, then we recurse on the current state
@@ -482,7 +488,7 @@ namespace davelexer
                 auto t1 = next_state++;
                 table.emplace_back(s, nfa_transition_guard(), t1, std::vector<nfa_transition_action>());
                 auto t2 = next_state++;
-                if (!_re->try_add_transitions(named, t1, t2, table, logger, next_state)) return false;
+                if (!_re->try_add_transitions(token, named, t1, t2, table, logger, next_state, _output && allow_output)) return false;
                 table.emplace_back(t2, nfa_transition_guard(), s, std::vector<nfa_transition_action>());
                 table.emplace_back(s, nfa_transition_guard(), to_state, std::vector<nfa_transition_action>());
                 return true;
@@ -492,7 +498,7 @@ namespace davelexer
                 table.emplace_back(s, nfa_transition_guard(), to_state, std::vector<nfa_transition_action>());
                 for (size_t i = _min; i < _max; i++) {
                     auto t = next_state++;
-                    if (!_re->try_add_transitions(named, s, t, table, logger, next_state)) return false;
+                    if (!_re->try_add_transitions(token, named, s, t, table, logger, next_state, _output && allow_output)) return false;
                     s = t;
                     table.emplace_back(s, nfa_transition_guard(), to_state, std::vector<nfa_transition_action>());
                 }

@@ -26,12 +26,12 @@ let string                  = "([^\\]|{controls})*";
 shared section base_section {
     token number            = {integer}|{float};
     token string            = {string};
-    start comment           = /\*;
+    token comment goto comment = /\*;
 };
 
 section default {
     include base_section;
-    start grammar           = '';
+    token grammar goto grammar = '';
 };
 
 section comment {
@@ -407,3 +407,7 @@ Actions:
 15. S -> T
 16. S -> ST
 
+===============================================================================================================================
+Non-lexer regular expressions
+In some cases, we want to be able to use a regular expression to match groups (extract parts of a text).
+===============================================================================================================================

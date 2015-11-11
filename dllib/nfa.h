@@ -70,6 +70,7 @@ namespace davelexer
 
     class nfa sealed {
     private:
+        std::set<std::wstring> _tokens;
         std::vector<nfa_transition> _transition_table;
         std::map<std::wstring, size_t> _section_init_states;
         size_t _next_state;
@@ -86,12 +87,45 @@ namespace davelexer
             : _next_state(c._next_state), _transition_table(std::move(c._transition_table)), _section_init_states(std::move(c._section_init_states)), _named_asts(std::move(c._named_asts))
         {}
 
-        auto remove_epsilon_actions()->nfa;
+        // the compile will destroy the nfa
+        auto try_compile(std::wostream &errors)->bool;
 
-        auto try_compile(bool &good, std::wostream &errors)->dfa;
-
+        inline auto add_token(const std::wstring &token) -> nfa& {
+            _tokens.emplace(token);
+            return *this;
+        }
         inline auto get_builder(container *cntr, logger *logger) -> nfa_builder {
             return nfa_builder(this, cntr, logger);
+        }
+
+        inline auto test_add(size_t from, wchar_t ch, size_t to, const std::wstring *tkn) -> void {
+            std::vector<nfa_transition_action> actions;
+            std::wstring s;
+            s += ch;
+            actions.emplace_back(false, std::move(s), false, false, false, tkn, 0);
+            _transition_table.emplace_back(from, nfa_transition_guard(false, ch, ch), to, std::move(actions));
+        }
+
+        static auto test(nfa &n) -> void {
+            n.add_token(L"x");
+            auto tkn = &(*n._tokens.find(L"x"));
+            n._next_state = 11;
+            n.test_add(0, L'a', 1, tkn);
+            n._transition_table.emplace_back(1, nfa_transition_guard(), 2, std::vector<nfa_transition_action>());
+            n.test_add(1, L'f', 1, tkn);
+            n._transition_table.emplace_back(1, nfa_transition_guard(), 6, std::vector<nfa_transition_action>());
+            n.test_add(1, L'l', 11, tkn);
+            n.test_add(2, L'd', 2, tkn);
+            n.test_add(2, L'c', 4, tkn);
+            n.test_add(3, L'b', 2, tkn);
+            n.test_add(5, L'e', 1, tkn);
+            n.test_add(6, L'g', 7, tkn);
+            n.test_add(6, L'h', 6, tkn);
+            n._transition_table.emplace_back(6, nfa_transition_guard(), 8, std::vector<nfa_transition_action>());
+            n.test_add(8, L'k', 8, tkn);
+            n.test_add(8, L'i', 10, tkn);
+            n.test_add(9, L'j', 8, tkn);
+            n.test_add(12, L'm', 6, tkn);
         }
 
         friend auto operator << (std::wostream &os, const nfa &nfa) -> std::wostream& {
@@ -108,35 +142,48 @@ namespace davelexer
                     if (t.guard().first() == 0 && t.guard().last() == WCHAR_MAX) {
                         os << L"<any>";
                     }
-                    else if (t.guard().first() == t.guard().last()) {
+                    else if (t.guard().first() == t.guard().last() && t.guard().first() != 0) {
                         os << t.guard().first();
+                    }
+                    else if (t.guard().first() == t.guard().last() && t.guard().first() == 0) {
+                        os << L"<eod>";
                     }
                     else {
                         os << t.guard().first() << L"-" << t.guard().last();
                     }
                 }
-                bool got_actions = false;
+                std::set<const std::wstring*> tokens;
                 for (auto &a : t.actions()) {
-                    got_actions |= a.pop() || a.push() || a.reduce() || !a.output_matched();
-                    if (got_actions) break;
+                    tokens.emplace(a.reduce_token());
                 }
-                if (got_actions) {
-                    os << L" (";
+                for (auto &tkn : tokens) {
+                    bool got_actions = false;
                     for (auto &a : t.actions()) {
-                        if (a.pop()) {
-                            os << L" p";
-                        }
-                        else if (a.push()) {
-                            os << L" g " << a.goto_state();
-                        }
-                        else if (a.reduce()) {
-                            os << L" r '" << a.reduce_token() << "'";
-                        }
-                        if (!a.output_matched()) {
-                            os << L" o '" << a.output_alternate() << "'";
+                        if (a.reduce_token() == tkn) {
+                            got_actions |= a.pop() || a.push() || a.reduce() || !a.output_matched();
+                            if (got_actions) break;
                         }
                     }
-                    os << L')';
+                    if (got_actions) {
+                        os << L" '" << *tkn << L"'(";
+                        for (auto &a : t.actions()) {
+                            if (a.reduce_token() == tkn) {
+                                if (a.pop()) {
+                                    os << L" p";
+                                }
+                                else if (a.push()) {
+                                    os << L" g " << a.goto_state();
+                                }
+                                else if (a.reduce()) {
+                                    os << L" r";
+                                }
+                                if (!a.output_matched()) {
+                                    os << L" o '" << a.output_alternate() << "'";
+                                }
+                            }
+                        }
+                        os << L')';
+                    }
                 }
                 os << L"\"]" << std::endl;
             }
@@ -147,26 +194,5 @@ namespace davelexer
 
         friend nfa_builder;
         friend nfa_section_builder;
-
-        static inline auto test() -> nfa {
-            nfa n;
-            std::vector<nfa_transition_action> actions;
-            actions.emplace_back(false, L"a", false, false, false, L"", 0);
-            n._transition_table.emplace_back(0, nfa_transition_guard(), 1, std::move(actions));
-            actions.emplace_back(false, L"b", false, false, false, L"", 0);
-            n._transition_table.emplace_back(2, nfa_transition_guard(false, L'b', L'b'), 1, std::move(actions));
-            actions.emplace_back(false, L"c", false, false, false, L"", 0);
-            n._transition_table.emplace_back(3, nfa_transition_guard(false, L'c', L'c'), 1, std::move(actions));
-            actions.emplace_back(false, L"d", false, false, false, L"", 0);
-            n._transition_table.emplace_back(1, nfa_transition_guard(false, L'd', L'd'), 1, std::move(actions));
-            actions.emplace_back(false, L"e", false, false, false, L"", 0);
-            n._transition_table.emplace_back(1, nfa_transition_guard(false, L'e', L'e'), 1, std::move(actions));
-            actions.emplace_back(false, L"f", false, false, false, L"", 0);
-            n._transition_table.emplace_back(1, nfa_transition_guard(false, L'f', L'f'), 4, std::move(actions));
-            actions.emplace_back(false, L"g", false, false, false, L"", 0);
-            n._transition_table.emplace_back(1, nfa_transition_guard(false, L'g', L'g'), 5, std::move(actions));
-            n._next_state = 6;
-            return n;
-        }
     };
 }

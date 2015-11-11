@@ -2,7 +2,8 @@
 Creating models made easy
 --------------------------------------------------------------------------------------------------------------------------------
 
-Standard code-gen script (ds)
+Double 'code-gen'. The model file can contain script to generate classes, then the classes are fed to the script to
+serialize to an underlying language.
 
 
 --------------------------------------------------------------------------------------------------------------------------------
@@ -10,8 +11,8 @@ Example: Model file (*.dm)
 --------------------------------------------------------------------------------------------------------------------------------
 
 // class's are 'model' code, but the 'attribute values' are 'script' code.
-[Visitor = true]
 abstract class Expression
+[Visitor = true]
 {
 };
 
@@ -20,16 +21,16 @@ type SomeType
 {
 };
 
-// root expression are 'script' code
+// root expression are 'script' code - output of the script code would be compiled as 'model' code.
 range 1 10
     |> map
         <"
-        sealed class PExpression<# id ~> fmt #> : Expression
+        sealed class PExpression<# fmt #> : Expression
         {
             <#
                 range 1
                     ~> map
-                        <"Expression _exp<# id #>;">
+                        <"Expression _exp<# fmt #>;">
             #>
         };
         ">;
@@ -43,6 +44,10 @@ template sealed class LiteralExpression<T>
 // template instantiations are 'model' code
 class IntExpression = LiteralExpression<int>;
 class DoubleExpression = LiteralExpression<double>;
+class DecimalExpression
+[Scale = 28] // Property attributes applied to a class/type will be applied to all properties in the class/type
+[Precision = 12]
+= LiteralExpression<decimal>;
 class StringExpression = LiteralExpression<string>;
 
 sealed class FunctionCallExpression : Expression
@@ -51,6 +56,49 @@ sealed class FunctionCallExpression : Expression
     Expression[] Parameters
 };
 
+namespace TermsAndConditions;
+
+[Mutable = false]
+[Observable = true]
+sealed class Instrument
+{
+    [IsPrimaryKey = true]
+    [Constraint = "PK_Instrument"]
+    [IndexType = IndexType.Clustered]
+    int InstrumentId,
+
+    [Length = 31]
+    [Unicode = false]
+    [VariableLength = true]
+    string ShortName,
+
+    [Length = 255]
+    string LongName,
+
+    Pricing.Price[] Prices
+};
+
+namespace Pricing;
+
+// 'model' code
+union class Expression
+{
+    StringExpression(string value),
+    IntExpression(int value),
+    BinaryExpression(Expression e1, Expression e2)
+};
+
+sealed class Price
+{
+    int InstrumentId,
+
+    [Constraint = "FK_Price_Instrument"]
+    TermsAndConditions.Instrument Instrument -> (p,i) => p.Instrument = i.Instrument,
+
+    [Scale = 28]
+    [Precision = 12]
+    decimal Close
+};
 
 --------------------------------------------------------------------------------------------------------------------------------
 Script (*.ds)
@@ -58,20 +106,23 @@ Script (*.ds)
 let cf : ('a->'b)->('a->bool)->'a->'b = (formatter:'a->'b, predicate:'a->bool, x:'a) => predicate x ? formatter x : null;
 let cf = (tf, ff, predicate, x) => predicate x ? tf x : tf x;
 
+let isReferenceType t =
+	t.MustBeReferenceType | t.Size > 100;
+
 let getPrimitiveType type =
     when type.Name = "string" then "std::wstring"
     when type.Name = "int" then "int"
     when type.Name = "double" then "double"
-    when type.IsReferenceType then <"std::shared_ptr<<#= getPrimitiveType type.UnderlyingType #>>">
+    when type |> isReferenceType then <"std::shared_ptr<<# Name #>>">
     when type.Name = "vector" then <"std::vector<<#= getPrimitiveType (first type.Arguments) #>>">
-    else failwith "Unknown type";
+    else type.Name;
 
 let formatForwards : Type->string =
     <"
     <# 
         HasRootVisitor |> cf 
         <"
-        class <# Name ~> cppIdentifier #>_visitor
+        class <# Name ~> cppIdentifier #>_visitor;
         class const_<# Name ~> cppIdentifier #>_visitor;
         "> 
     #>
@@ -141,4 +192,76 @@ let formatHierarchy : Type->string =
 ">;
 
 --------------------------------------------------------------------------------------------------------------------------------
+The script model has the following model
+--------------------------------------------------------------------------------------------------------------------------------
 
+enum class PrimitiveType
+{
+	na,
+	_string,
+	_int16,
+	_int32,
+	_int64,
+	_single,
+	_double,
+	_decimal
+};
+
+sealed class TypeReference
+{
+	PrimitiveType PrimitiveType,
+	Type ModelType,
+	TypeReference[] Arguments
+};
+
+enum class IndexType
+{
+	None,
+	Clustered,
+	NonClustered
+};
+
+sealed class ReferenceMap
+{
+	Property Foreign,
+	Property Primary
+};
+
+sealed class Property
+{
+	TypeReference Type,
+	string Name,
+	bool IsMutable,
+	bool IsObservable,
+	bool IsAbstract,
+	bool IsVirtual,
+	bool IsSealed,
+	int Precision,
+	int Scale,
+	bool Unicode,
+	bool VariableLength,
+	bool IsPrimaryKey,
+	int Length,
+	string ConstraintName,
+	IndexType IndexType,
+	ReferenceMap[] ReferenceMaps
+};
+
+sealed class Type
+{
+	string Name,
+	bool HasRootVisitor,
+	string RootVisitorName,
+	bool MustBeReferenceType,
+	bool IsMutable,
+	bool IsObservable,
+	bool IsAbstract,
+	bool IsSealed,
+	Type Parent,
+	Type[] Arguments,
+	Type[] Children
+};
+
+attribute bool IsPrimaryKey on [ Entity.ClassProperty ];
+attribute bool Mutable on [ Entity.Class, Entity.ClassProperty ];
+attribute bool Observable on [ Entity.Class, Entity.ClassProperty ];

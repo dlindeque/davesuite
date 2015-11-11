@@ -229,14 +229,15 @@ using namespace davelexer;
 
 set ignore = [ whitespace, comment ];
 
-enum scenario_term_type
+// We use classes for these types so we can generate a model directly
+enum class scenario_term_type
 {
     given,
     when,
     then
 };
 
-type scenario_term
+class scenario_term
 {
     span location,
     string text,
@@ -245,7 +246,7 @@ type scenario_term
     string[][] table
 };
 
-type scenario
+class scenario
 {
     bool is_background,
     bool is_outline,
@@ -255,12 +256,29 @@ type scenario
     string[][] examples
 };
 
-type feature
+class feature
 {
     span name_location,
     string name,
     scenario[] scenarios
 };
+
+// We can use root expressions to 'code-gen' productions etc
+range 1 10
+    |> map
+        <"
+        class someclass<# fmt #> {
+            string value
+        };
+        production PROD<# fmt #>
+        {
+            <#
+                range 1
+                    ~> map <"item<# fmt #>">
+                    ~> join " "
+            #> -> someclass<# fmt #> { location = @$ };
+        };
+        ">
 
 set document = FEATURE;
 
@@ -324,5 +342,39 @@ production FEATURE
 {
     feature ":" name SCENARIOS        -> feature { name_location = @3, name = $3, scenarios = $4 };
 };
+
+--------------------------------------------------------------------------------------------------------------
+Script to generate code
+We need a script to generate the models (same as for DaveModel - we can reuse)
+We also need a script to generate the PDA
+--------------------------------------------------------------------------------------------------------------
+
+<"
+auto parse(container *cntr, std::wistream &stm, davecommon::logger *logger) -> ast
+{
+    std::vector<int> states;
+    states.push_back(0);
+    std::vector<value> values;
+
+    bool rd = true;
+    while(true) {
+        if (rd) {
+            // read from lexer
+        }
+        switch(states.back()) {
+        <#
+            table.Rows
+                |> map
+                    <"
+                    case <# State ~> fmt #>:
+                        
+                        break;
+                    ">
+        #>
+        }
+    }
+}
+">;
+
 
 --------------------------------------------------------------------------------------------------------------
