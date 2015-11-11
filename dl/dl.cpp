@@ -59,6 +59,7 @@ int _tmain(int argc, _TCHAR* argv[])
     //auto n = ;
     nfa x;
     nfa::test(x);
+    //std::wcout << x;
 
     if (!ok) {
         std::wcout << "FAILED";

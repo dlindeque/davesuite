@@ -109,23 +109,16 @@ namespace davelexer
         static auto test(nfa &n) -> void {
             n.add_token(L"x");
             auto tkn = &(*n._tokens.find(L"x"));
-            n._next_state = 11;
+            n._next_state = 7;
             n.test_add(0, L'a', 1, tkn);
-            n._transition_table.emplace_back(1, nfa_transition_guard(), 2, std::vector<nfa_transition_action>());
-            n.test_add(1, L'f', 1, tkn);
-            n._transition_table.emplace_back(1, nfa_transition_guard(), 6, std::vector<nfa_transition_action>());
-            n.test_add(1, L'l', 11, tkn);
-            n.test_add(2, L'd', 2, tkn);
-            n.test_add(2, L'c', 4, tkn);
-            n.test_add(3, L'b', 2, tkn);
-            n.test_add(5, L'e', 1, tkn);
-            n.test_add(6, L'g', 7, tkn);
-            n.test_add(6, L'h', 6, tkn);
-            n._transition_table.emplace_back(6, nfa_transition_guard(), 8, std::vector<nfa_transition_action>());
-            n.test_add(8, L'k', 8, tkn);
-            n.test_add(8, L'i', 10, tkn);
-            n.test_add(9, L'j', 8, tkn);
-            n.test_add(12, L'm', 6, tkn);
+            n._transition_table.emplace_back(1, nfa_transition_guard(), 4, std::vector<nfa_transition_action>());
+            n.test_add(1, L'b', 2, tkn);
+            n.test_add(1, L'd', 1, tkn);
+            n.test_add(3, L'c', 1, tkn);
+            n.test_add(4, L'g', 4, tkn);
+            n.test_add(4, L'e', 5, tkn);
+            n.test_add(4, L'h', 1, tkn);
+            n.test_add(6, L'f', 4, tkn);
         }
 
         friend auto operator << (std::wostream &os, const nfa &nfa) -> std::wostream& {
