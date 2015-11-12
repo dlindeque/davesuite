@@ -7,6 +7,7 @@
 #include <iostream>
 
 #include "..\dllib\nfa.h"
+#include "..\dllib\dfa.h"
 
 class text_container : public davecommon::container {
 public:
@@ -66,11 +67,13 @@ int _tmain(int argc, _TCHAR* argv[])
         return 1;
     }
     else {
-        if (!x.try_compile(std::wcout)) {
+        bool ok;
+        auto dfa = dfa::try_compile(std::move(x), std::wcout, ok);
+        if (!ok) {
             std::wcout << "FAILED";
             return 1;
         }
-        std::wcout << x;
+        std::wcout << dfa;
     }
 
     //auto n = nfa::test();

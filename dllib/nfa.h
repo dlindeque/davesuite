@@ -6,7 +6,6 @@
 #include <istream>
 #include <map>
 #include <set>
-#include "dfa.h"
 #include "re_parser.h"
 #include "lexer.h"
 
@@ -68,6 +67,8 @@ namespace davelexer
         friend nfa_section_builder;
     };
 
+    class dfa;
+
     class nfa sealed {
     private:
         std::set<std::wstring> _tokens;
@@ -81,14 +82,13 @@ namespace davelexer
     public:
         nfa()
             : _next_state(0)
-        {}
+        {
+            _transition_table.reserve(256);
+        }
         nfa(const nfa &) = delete;
         nfa(nfa &&c)
             : _next_state(c._next_state), _transition_table(std::move(c._transition_table)), _section_init_states(std::move(c._section_init_states)), _named_asts(std::move(c._named_asts))
         {}
-
-        // the compile will destroy the nfa
-        auto try_compile(std::wostream &errors)->bool;
 
         inline auto add_token(const std::wstring &token) -> nfa& {
             _tokens.emplace(token);
@@ -98,27 +98,17 @@ namespace davelexer
             return nfa_builder(this, cntr, logger);
         }
 
-        inline auto test_add(size_t from, wchar_t ch, size_t to, const std::wstring *tkn) -> void {
+        inline auto test_add(size_t from, wchar_t first, wchar_t last, size_t to, const std::wstring *tkn) -> void {
             std::vector<nfa_transition_action> actions;
-            std::wstring s;
-            s += ch;
-            actions.emplace_back(false, std::move(s), false, false, false, tkn, 0);
-            _transition_table.emplace_back(from, nfa_transition_guard(false, ch, ch), to, std::move(actions));
+            _transition_table.emplace_back(from, nfa_transition_guard(first, last), to, std::move(actions));
         }
 
         static auto test(nfa &n) -> void {
             n.add_token(L"x");
             auto tkn = &(*n._tokens.find(L"x"));
-            n._next_state = 7;
-            n.test_add(0, L'a', 1, tkn);
-            n._transition_table.emplace_back(1, nfa_transition_guard(), 4, std::vector<nfa_transition_action>());
-            n.test_add(1, L'b', 2, tkn);
-            n.test_add(1, L'd', 1, tkn);
-            n.test_add(3, L'c', 1, tkn);
-            n.test_add(4, L'g', 4, tkn);
-            n.test_add(4, L'e', 5, tkn);
-            n.test_add(4, L'h', 1, tkn);
-            n.test_add(6, L'f', 4, tkn);
+            n._next_state = 3;
+            n.test_add(0, L'a', L'e', 1, tkn);
+            n.test_add(0, L'c', L'g', 2, tkn);
         }
 
         friend auto operator << (std::wostream &os, const nfa &nfa) -> std::wostream& {
@@ -129,9 +119,6 @@ namespace davelexer
                     os << L".";
                 }
                 else {
-                    if (t.guard().exclude()) {
-                        os << L"- ";
-                    }
                     if (t.guard().first() == 0 && t.guard().last() == WCHAR_MAX) {
                         os << L"<any>";
                     }
@@ -187,5 +174,6 @@ namespace davelexer
 
         friend nfa_builder;
         friend nfa_section_builder;
+        friend dfa;
     };
 }

@@ -86,6 +86,7 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="dfa.cpp" />
     <ClCompile Include="nfa.cpp" />
     <ClCompile Include="re_lexer.cpp" />
     <ClCompile Include="re_parser.cpp" />

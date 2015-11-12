@@ -16,25 +16,23 @@ namespace davelexer
     class nfa_transition_guard {
     private:
         bool _epsilon;
-        bool _exclude;
         wchar_t _first;
         wchar_t _last;
     public:
         nfa_transition_guard(const nfa_transition_guard &c)
-            : _epsilon(c._epsilon), _exclude(c._exclude), _first(c._first), _last(c._last)
+            : _epsilon(c._epsilon), _first(c._first), _last(c._last)
         {}
         nfa_transition_guard(nfa_transition_guard &&c)
-            : _epsilon(c._epsilon), _exclude(c._exclude), _first(std::move(c._first)), _last(std::move(c._last))
+            : _epsilon(c._epsilon), _first(std::move(c._first)), _last(std::move(c._last))
         {}
         nfa_transition_guard()
             : _epsilon(true)
         {}
-        nfa_transition_guard(bool exclude, const wchar_t &first, const wchar_t &last)
-            : _epsilon(false), _exclude(exclude), _first(first), _last(last)
+        nfa_transition_guard(const wchar_t &first, const wchar_t &last)
+            : _epsilon(false), _first(first), _last(last)
         {}
 
         inline auto epsilon() const -> bool { return _epsilon; }
-        inline auto exclude() const -> bool { return _exclude; }
         inline auto first() const -> wchar_t { return _first; }
         inline auto last() const -> wchar_t { return _last; }
     };
@@ -214,7 +212,30 @@ namespace davelexer
             for (auto &range : _ranges) {
                 std::vector<nfa_transition_action> actions;
                 actions.emplace_back(_output && allow_output , L"", false, false, false, token, 0);
-                table.emplace_back(from_state, nfa_transition_guard(_exclude, range.from, range.to), to_state, std::move(actions));
+                if (_exclude) {
+                    // if we exclude all chars, then it means we cannot make this transition - just ignore it.
+                    if (range.from != 0 || range.to != WCHAR_MAX) {
+                        // from->to
+                        // 1. exclude 0->t ::= include (t+1)->M
+                        // 2. exclude f->M ::= include 0->(f-1)
+                        // 3. exclude f->t ::= include 0->(f-1) & (t+1)->M
+                        if (range.from == 0) {
+                            table.emplace_back(from_state, nfa_transition_guard(range.to + 1, WCHAR_MAX), to_state, std::move(actions));
+                        }
+                        else {
+                            if (range.to == WCHAR_MAX) {
+                                table.emplace_back(from_state, nfa_transition_guard(0, range.from - 1), to_state, std::move(actions));
+                            }
+                            else {
+                                table.emplace_back(from_state, nfa_transition_guard(0, range.from - 1), to_state, std::move(actions));
+                                table.emplace_back(from_state, nfa_transition_guard(range.to + 1, WCHAR_MAX), to_state, std::move(actions));
+                            }
+                        }
+                    }
+                }
+                else {
+                    table.emplace_back(from_state, nfa_transition_guard(range.from, range.to), to_state, std::move(actions));
+                }
             }
             return true;
         }

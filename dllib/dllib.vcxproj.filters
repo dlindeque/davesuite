@@ -56,5 +56,8 @@
     <ClCompile Include="re_parser.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="dfa.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
