@@ -60,6 +60,7 @@ namespace TermsAndConditions;
 
 [Mutable = false]
 [Observable = true]
+[Managed = false] // True if it's a managed class (this is for c++/cli)
 sealed class Instrument
 {
     [IsPrimaryKey = true]

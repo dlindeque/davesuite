@@ -77,13 +77,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="dfa.h" />
-    <ClInclude Include="lexer.h" />
     <ClInclude Include="log.h" />
     <ClInclude Include="nfa.h" />
     <ClInclude Include="re_lexer.h" />
     <ClInclude Include="re_parser.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="transition.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dfa.cpp" />

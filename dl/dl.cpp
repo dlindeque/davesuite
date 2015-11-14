@@ -40,27 +40,29 @@ int _tmain(int argc, _TCHAR* argv[])
     text_container tc;
     console_logger cl;
 
+    bool ok = true;
+
     davelexer::nfa n;
     auto builder = n.get_builder(&tc, &cl);
     auto default_section = builder.get_section_builder(L"default");
-    bool ok = true;
-    //ok &= default_section.try_add_token(token{ span(), token_type::regex, L"if" }, token{ span(), token_type::regex, L"if" });
-    //ok &= default_section.try_add_token(token{ span(), token_type::regex, L"for" }, token{ span(), token_type::regex, L"for" });
-    //ok &= default_section.try_add_token(token{ span(), token_type::regex, L"foreach" }, token{ span(), token_type::regex, L"foreach" });
-    //ok &= default_section.try_add_goto(token{ span(), token_type::regex, L"comment" }, token{ span(), token_type::regex, L"/\\*" }, L"comment");
+    //// for + foreach + etc
+    //ok &= default_section.try_add_token(L"if", 1, L"if", span());
+    //ok &= default_section.try_add_token(L"for", 2, L"for", span());
+    //ok &= default_section.try_add_token(L"foreach", 3, L"foreach", span());
+    //ok &= default_section.try_add_goto(L"comment", 4, L"/\\*", span(), L"comment");
     //
     //auto comment = builder.get_section_builder(L"comment");
-    //ok &= comment.try_add_token(token{ span(), token_type::regex, L"comment" }, token{ span(), token_type::regex, L".+" });
-    //ok &= comment.try_add_return(token{ span(), token_type::regex, L"comment" }, token{ span(), token_type::regex, L"\\*/+" });
+    //ok &= comment.try_add_token(L"comment", 4, L".+", span());
+    //ok &= comment.try_add_return(L"comment", 4, L"\\*/+", span());
     
-    //n.add_token(L"t1").add_token(L"t2");
-    //ok &= default_section.try_add_token(token{ span(), token_type::regex, L"t1" }, token{ span(), token_type::regex, L"a{>x}" });
-    //ok &= default_section.try_add_token(token{ span(), token_type::regex, L"t2" }, token{ span(), token_type::regex, L"a{>y}" });
+    // t1 + t2
+    ok &= default_section.try_add_token(L"t1", 1, L"abc", span());
+    ok &= default_section.try_add_token(L"t2", 2, L"def", span());
+    ok &= default_section.try_add_token(L"err", 3, L".", span());
 
-    //auto n = ;
-    nfa x;
-    nfa::test(x);
-    //std::wcout << x;
+    //nfa n;
+    //nfa::test(n);
+    //std::wcout << n;
 
     if (!ok) {
         std::wcout << "FAILED";
@@ -68,7 +70,7 @@ int _tmain(int argc, _TCHAR* argv[])
     }
     else {
         bool ok;
-        auto dfa = dfa::try_compile(std::move(x), std::wcout, ok);
+        auto dfa = dfa::try_compile(std::move(n), std::wcout, ok);
         if (!ok) {
             std::wcout << "FAILED";
             return 1;

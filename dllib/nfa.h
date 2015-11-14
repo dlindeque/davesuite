@@ -6,8 +6,8 @@
 #include <istream>
 #include <map>
 #include <set>
+#include <sstream>
 #include "re_parser.h"
-#include "lexer.h"
 
 namespace davelexer
 {
@@ -33,9 +33,27 @@ namespace davelexer
         inline auto recurse() const->size_t{ return _anchor + 1; }
         inline auto end() const -> size_t{ return _anchor + 2; }
 
-        auto try_add_token(const token &token_name, const token &token_value) -> bool;
-        auto try_add_goto(const token &token_name, const token &token_value, const std::wstring &section_name) -> bool;
-        auto try_add_return(const token &token_name, const token &token_value) -> bool;
+        auto try_add_token(const std::wstring &tkn_name, size_t tkn, std::wistream &text, span text_spn) -> bool;
+        inline auto try_add_token(const std::wstring &tkn_name, size_t tkn, const std::wstring &text, span text_spn) -> bool {
+            std::wstringstream stm;
+            stm << text;
+            stm.seekg(0);
+            return try_add_token(tkn_name, tkn, stm, text_spn);
+        }
+        auto try_add_goto(const std::wstring &tkn_name, size_t tkn, std::wistream &text, span text_spn, const std::wstring &section_name) -> bool;
+        inline auto try_add_goto(const std::wstring &tkn_name, size_t tkn, const std::wstring &text, span text_spn, const std::wstring &section_name) -> bool {
+            std::wstringstream stm;
+            stm << text;
+            stm.seekg(0);
+            return try_add_goto(tkn_name, tkn, stm, text_spn, section_name);
+        }
+        auto try_add_return(const std::wstring &tkn_name, size_t tkn, std::wistream &text, span text_spn) -> bool;
+        inline auto try_add_return(const std::wstring &tkn_name, size_t tkn, const std::wstring &text, span text_spn) -> bool {
+            std::wstringstream stm;
+            stm << text;
+            stm.seekg(0);
+            return try_add_return(tkn_name, tkn, stm, text_spn);
+        }
 
         friend nfa_builder;
     };
@@ -61,7 +79,13 @@ namespace davelexer
 
         auto get_section_builder(const std::wstring &name)->nfa_section_builder;
 
-        auto try_add_binding(const token &binding_name, const token &binding_value) -> bool;
+        auto try_add_binding(const std::wstring &binding_name, std::wistream &text, span text_spn) -> bool;
+        inline auto try_add_binding(const std::wstring &binding_name, const std::wstring &text, span text_spn) -> bool {
+            std::wstringstream stm;
+            stm << text;
+            stm.seekg(0);
+            return try_add_binding(binding_name, stm, text_spn);
+        }
 
         friend nfa;
         friend nfa_section_builder;
@@ -71,7 +95,6 @@ namespace davelexer
 
     class nfa sealed {
     private:
-        std::set<std::wstring> _tokens;
         std::vector<nfa_transition> _transition_table;
         std::map<std::wstring, size_t> _section_init_states;
         size_t _next_state;
@@ -90,25 +113,26 @@ namespace davelexer
             : _next_state(c._next_state), _transition_table(std::move(c._transition_table)), _section_init_states(std::move(c._section_init_states)), _named_asts(std::move(c._named_asts))
         {}
 
-        inline auto add_token(const std::wstring &token) -> nfa& {
-            _tokens.emplace(token);
-            return *this;
-        }
         inline auto get_builder(container *cntr, logger *logger) -> nfa_builder {
             return nfa_builder(this, cntr, logger);
         }
 
-        inline auto test_add(size_t from, wchar_t first, wchar_t last, size_t to, const std::wstring *tkn) -> void {
-            std::vector<nfa_transition_action> actions;
+        inline auto test_add(size_t from, wchar_t first, wchar_t last, size_t to, size_t tkn) -> void {
+            std::vector<transition_action> actions;
             _transition_table.emplace_back(from, nfa_transition_guard(first, last), to, std::move(actions));
         }
 
         static auto test(nfa &n) -> void {
-            n.add_token(L"x");
-            auto tkn = &(*n._tokens.find(L"x"));
+            size_t tkn = 1;
             n._next_state = 3;
-            n.test_add(0, L'a', L'e', 1, tkn);
-            n.test_add(0, L'c', L'g', 2, tkn);
+            n.test_add(0, L'a', L'z', 1, tkn);
+            n.test_add(0, L'c', L'd', 2, tkn);
+            //n.test_add(0, L'b', L'b', 3, tkn);
+            //n.test_add(1, L'c', L'c', 4, tkn);
+            //n.test_add(1, L'd', L'd', 5, tkn);
+            //n.test_add(2, L'c', L'c', 6, tkn);
+            //n.test_add(2, L'e', L'e', 7, tkn);
+            //n.test_add(3, L'c', L'c', 8, tkn);
         }
 
         friend auto operator << (std::wostream &os, const nfa &nfa) -> std::wostream& {
@@ -132,33 +156,38 @@ namespace davelexer
                         os << t.guard().first() << L"-" << t.guard().last();
                     }
                 }
-                std::set<const std::wstring*> tokens;
+                std::set<size_t> tokens;
                 for (auto &a : t.actions()) {
-                    tokens.emplace(a.reduce_token());
+                    tokens.emplace(a.yield_token());
                 }
                 for (auto &tkn : tokens) {
                     bool got_actions = false;
                     for (auto &a : t.actions()) {
-                        if (a.reduce_token() == tkn) {
-                            got_actions |= a.pop() || a.push() || a.reduce() || !a.output_matched();
+                        if (a.yield_token() == tkn) {
+                            got_actions |= a.pop() || a.push() || a.yield() || a.output_matched() || !a.output_alternate().empty();
                             if (got_actions) break;
                         }
                     }
                     if (got_actions) {
-                        os << L" '" << *tkn << L"'(";
+                        os << L" " << (int)tkn << L"(";
                         for (auto &a : t.actions()) {
-                            if (a.reduce_token() == tkn) {
+                            if (a.yield_token() == tkn) {
                                 if (a.pop()) {
                                     os << L" p";
                                 }
                                 else if (a.push()) {
                                     os << L" g " << a.goto_state();
                                 }
-                                else if (a.reduce()) {
-                                    os << L" r";
+                                else if (a.yield()) {
+                                    os << L" y";
                                 }
-                                if (!a.output_matched()) {
-                                    os << L" o '" << a.output_alternate() << "'";
+                                if (a.output_matched()) {
+                                    os << L" m";
+                                }
+                                else {
+                                    if (!a.output_alternate().empty()) {
+                                        os << L" o '" << a.output_alternate() << "'";
+                                    }
                                 }
                             }
                         }

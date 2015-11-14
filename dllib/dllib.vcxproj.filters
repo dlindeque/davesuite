@@ -39,7 +39,7 @@
     <ClInclude Include="log.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="lexer.h">
+    <ClInclude Include="transition.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

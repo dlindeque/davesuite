@@ -104,12 +104,6 @@ namespace davecommon
                 stm << L"Expression '" << name << "' cannot be used as a token since it's possible to match zero characters.";
                 logger->write(severity::error, container, spn, stm.str());
             }
-
-            static auto re_token_not_found(logger *logger, const container *container, const span &spn, const std::wstring &name) -> void {
-                std::wstringstream stm;
-                stm << L"The token '" << name << "' could not be found.";
-                logger->write(severity::error, container, spn, stm.str());
-            }
         };
     };
 }
