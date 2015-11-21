@@ -3,29 +3,58 @@ Dave Lexer
 
 
 -------------------------------------------------------------------------------------------------------------------------------
-Lexer File
+Lexer File (*.dl)
 -------------------------------------------------------------------------------------------------------------------------------
+import "ds.dlh"; // We can import patterns, shared sections and script components from other sources
+
 // Settings
 set language = c++;
 set case-sensitive = off;
-set track-position = on;
 
 // Numbers
-let positivedigit           = [1-9];
-let digit                   = [0-9];
-let integer                 = {positivedigit}{digit}*;
-let float                   = {integer}\.{digit}+;
+pattern positivedigit           = [1-9];
+pattern digit                   = [0-9];
+pattern integer                 = {positivedigit}{digit}*;
+pattern float                   = {integer}\.{digit}+;
 
 // Strings
-let cr                      = (\\r){>\r};
-let nl                      = (\\n){>\n};
-let otherctrl               = \\{>}[^nr];
-let controls                = {cr}|{nl}|{otherctrl};
-let string                  = "([^\\]|{controls})*";
+pattern cr                      = (\\r);
+pattern nl                      = (\\n);
+pattern otherctrl               = \\[^nr];
+pattern controls                = {cr}|{nl}|{otherctrl};
+pattern string                  = "([^\\]|{controls})*";
+
+// Inline script will be evaluated and the output will form part of the compile like any other text, this means you can output more script!
+range "a" "d"
+    |> map
+        <"
+        pattern <# id #> = <# id #>;
+        ">;
+
+external function state append(char ch, mstr s, int state);
+
+let escape = transform(tochars)
+{
+    case 0:
+        ch => when ch = '"' then 1
+              else failwith "invalid";
+    case 1:
+        ch => when ch = '\\' then 2
+              else 1 |> append ch;
+    case 2:
+        ch => 1 |>
+                when ch = 'n' then append '\n'
+                when ch = 'r' then append '\r'
+                else append ch;
+};
+
+external function int atoi(string s); // Implemented in each language
+external function double atof(string s);
 
 shared section base_section {
-    token number            = {integer}|{float};
-    token string            = {string};
+    token number            = {integer} -> atoi;
+    token number            = {float}   -> atof;
+    token string            = {string}  -> escape;
     token comment goto comment = /\*;
 };
 

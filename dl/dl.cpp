@@ -70,7 +70,7 @@ int _tmain(int argc, _TCHAR* argv[])
     }
     else {
         bool ok;
-        auto dfa = dfa::try_compile(std::move(n), std::wcout, ok);
+        auto dfa = dfa::try_compile(std::move(n), std::wcout, ok, [](size_t y1, size_t y2) { return y1 < y2 ? y1 : y2; });
         if (!ok) {
             std::wcout << "FAILED";
             return 1;

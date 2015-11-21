@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <vector>
+#include <functional>
 
 #include "nfa.h"
 
@@ -21,7 +22,7 @@ namespace davelexer
         {}
 
         // the compile will destroy the nfa
-        static auto try_compile(nfa &&nfa, std::wostream &errors, bool &ok)->dfa;
+        static auto try_compile(nfa &&nfa, std::wostream &errors, bool &ok, const std::function<size_t(size_t, size_t)> &conflict_resolver)->dfa;
 
         friend auto operator << (std::wostream &os, const dfa &dfa) -> std::wostream& {
             os << L"digraph dfa{" << std::endl;
@@ -46,43 +47,8 @@ namespace davelexer
                     else {
                         os << t.guard().first() << L"-" << t.guard().last();
                     }
-                    std::set<size_t> tokens;
-                    for (auto &a : t.actions()) {
-                        tokens.emplace(a.yield_token());
-                    }
-                    for (auto &tkn : tokens) {
-                        bool got_actions = false;
-                        for (auto &a : t.actions()) {
-                            if (a.yield_token() == tkn) {
-                                got_actions |= a.pop() || a.push() || a.yield() || a.output_matched() || !a.output_alternate().empty();
-                                if (got_actions) break;
-                            }
-                        }
-                        if (got_actions) {
-                            os << L" " << (int)tkn << L"(";
-                            for (auto &a : t.actions()) {
-                                if (a.yield_token() == tkn) {
-                                    if (a.pop()) {
-                                        os << L"p";
-                                    }
-                                    else if (a.push()) {
-                                        os << L"g " << a.goto_state();
-                                    }
-                                    else if (a.yield()) {
-                                        os << L"y";
-                                    }
-                                    if (a.output_matched()) {
-                                        os << L"m";
-                                    }
-                                    else {
-                                        if (!a.output_alternate().empty()) {
-                                            os << L"o'" << a.output_alternate() << "'";
-                                        }
-                                    }
-                                }
-                            }
-                            os << L')';
-                        }
+                    if (t.yield() != 0) {
+                        os << L'(' << (int)t.yield() << L')';
                     }
                     os << L"\"]" << std::endl;
                 }

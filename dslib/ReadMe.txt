@@ -1,7 +1,7 @@
 
 
 [IsDeterminstic = true]
-[UniqueId = "op_add"]
+[Name = "op_add"]
 [Implementation =
 <#
 	template<typename ast> struct op_add {
@@ -18,7 +18,7 @@
 external function number +(number n1, number n2);
 
 [IsDeterminstic = true]
-[UniqueId = "op_and"]
+[Name = "op_and"]
 [Implementation =
 <#
     template<typename ast> struct op_and {
@@ -54,7 +54,7 @@ external function number +(number n1, number n2);
 external function bool &(bool b1, bool b2);
 
 [IsDeterminstic = true]
-[UniqueId = "op_or"]
+[Name = "op_or"]
 [Implementation =
 <#
     template<typename ast> struct op_or {
@@ -90,7 +90,7 @@ external function bool &(bool b1, bool b2);
 external function bool &(bool b1, bool b2);
     
 [IsDeterminstic = true]
-[UniqueId = "op_equal"]
+[Name = "op_equal"]
 [Implementation =
 <#
     template<typename ast> struct op_equal {
@@ -112,7 +112,7 @@ external function bool &(bool b1, bool b2);
 external function bool =<T>(T b1, T b2);
 
 [IsDeterminstic = true]
-[UniqueId = "op_if"]
+[Name = "op_if"]
 [Implementation =
 <#
     template<typename ast> struct op_if {

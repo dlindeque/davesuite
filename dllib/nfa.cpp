@@ -5,117 +5,244 @@
 #include "nfa.h"
 #include "re_lexer.h"
 #include "..\common\offset_logger.h"
+#include "log.h"
 
 namespace davelexer
 {
-    auto nfa_builder::get_section_builder(const std::wstring &name) -> nfa_section_builder {
-        // Find the anchor state
-        size_t anchor;
-        auto f = _nfa->_section_init_states.find(name);
-        if (f == _nfa->_section_init_states.end()) {
-            anchor = _nfa->_next_state;
-            // We take three states, the start state, the 'recurse' state and the end state
-            if (anchor == 0) {
-                // For the first machine, we also and an ultimate final state, we get there when we see <eod>
-                _nfa->_next_state += 4;
+    class re_ast_processor sealed : public const_re_ast_visitor{
+    private:
+        size_t &_next_state;
+        std::vector<fa_transition> &_transitions;
+        const std::map<std::wstring, std::unique_ptr<re_ast>> &_bindings;
+
+        size_t _from;
+        size_t _to;
+
+        bool &_ok;
+        logger *& _logger;
+        const container * _cntr;
+    public:
+        re_ast_processor(size_t &next_state, 
+            std::vector<fa_transition> &transitions, 
+            const std::map<std::wstring, std::unique_ptr<re_ast>> &bindings, 
+            size_t from, 
+            size_t to, 
+            bool &ok,
+            logger *&logger,
+            const container *cntr)
+            : _next_state(next_state), _transitions(transitions), _bindings(bindings), _from(from), _to(to), _ok(ok), _logger(logger), _cntr(cntr)
+        {}
+
+        virtual ~re_ast_processor() {}
+        virtual auto accept(const re_ast_char_set_match* ast) -> void override {
+            for (auto &range : ast->ranges()) {
+                if (ast->exclude()) {
+                    // if we exclude all chars, then it means we cannot make this transition - just ignore it.
+                    if (range.from != 0 || range.to != WCHAR_MAX) {
+                        // from->to
+                        // 1. exclude 0->t ::= include (t+1)->M
+                        // 2. exclude f->M ::= include 0->(f-1)
+                        // 3. exclude f->t ::= include 0->(f-1) & (t+1)->M
+                        if (range.from == 0) {
+                            _transitions.emplace_back(_from, false, false, range.to + 1, WCHAR_MAX, _to, 0);
+                        }
+                        else {
+                            if (range.to == WCHAR_MAX) {
+                                _transitions.emplace_back(_from, false, false, 0, range.from - 1, _to, 0);
+                            }
+                            else {
+                                _transitions.emplace_back(_from, false, false, 0, range.from - 1, _to, 0);
+                                _transitions.emplace_back(_from, false, false, range.to + 1, WCHAR_MAX, _to, 0);
+                            }
+                        }
+                    }
+                }
+                else {
+                    _transitions.emplace_back(_from, false, false, range.from, range.to, _to, 0);
+                }
+            }
+        }
+        virtual auto accept(const re_ast_reference* ast) -> void override {
+            auto f = _bindings.find(ast->name());
+            if (f == _bindings.end()) {
+                log::error::expression_not_found(_logger, _cntr, ast->spn(), ast->name());
+                _ok = false;
             }
             else {
-                _nfa->_next_state += 3;
+                ast->accept(this);
             }
-            _nfa->_section_init_states.emplace(name, anchor);
-            // Add the epsilon transition from end to recurse (no action)
-            _nfa->_transition_table.emplace_back(anchor + 2, nfa_transition_guard(), anchor + 1, std::vector<transition_action>());
-            // Add the <eod> transition
-            if (anchor == 0) {
-                _nfa->_transition_table.emplace_back(1, nfa_transition_guard(nfa_transition_guard(0, 0)), 3, std::vector<transition_action>());
+        }
+        virtual auto accept(const re_ast_then* ast) -> void override {
+            auto tt = _to;
+            auto tf = _from;
+            _to = _next_state++;
+            ast->re1()->accept(this);
+            _from = _to;
+            _to = tt;
+            ast->re2()->accept(this);
+            _from = tf;
+        }
+        virtual auto accept(const re_ast_or* ast) -> void override {
+            ast->re1()->accept(this);
+            ast->re2()->accept(this);
+        }
+        virtual auto accept(const re_ast_cardinality* ast) -> void override {
+            // X -E-> X --min*re--> X -E-> X
+            //                      X --min+1--> X
+            //                      X --min+2--> X
+            //                      ...
+            //                      X --max-min--> X
+
+            // re{2-4}: FROM -E-> S0 -re-> S1 -re-> S2 -E->           TO
+            //                                         -re->          TO
+            //                                         -re-> S3 -re-> TO
+            auto tt = _to;
+            auto tf = _from;
+            // Add the 'min' transitions
+            for (int i = 0; i < ast->min(); i++) {
+                _to = _next_state++;
+                ast->re()->accept(this);
+                _from = _to;
             }
-            // Add the epsilon transition from anchor to recurse
-            _nfa->_transition_table.emplace_back(anchor, nfa_transition_guard(), anchor + 1, std::vector<transition_action>());
+            
+            // If the max is infinate, then we recurse on the current state
+            if (ast->min() == ast->max()) {
+                // add an epsilon s -E-> to_state
+                _to = tt;
+                _transitions.emplace_back(_from, true, false, 0, 0, _to, 0);
+                _from = tf;
+            }
+            else if (ast->max() == -1) {
+                auto t1 = _next_state++;
+                auto t2 = _next_state++;
+                _transitions.emplace_back(_from, true, false, 0, 0, t1, 0);
+                _transitions.emplace_back(_from, true, false, 0, 0, tt, 0);
+                _transitions.emplace_back(t2, true, false, 0, 0, t1, 0);
+                _transitions.emplace_back(t2, true, false, 0, 0, tt, 0);
+                _from = t1;
+                _to = t2;
+                ast->re()->accept(this);
+                _from = tf;
+                _to = tt;
+            }
+            else {
+                _transitions.emplace_back(_from, true, false, 0, 0, tt, 0);
+                for (int i = ast->min(); i < ast->max(); i++) {
+                    _to = _next_state++;
+                    ast->re()->accept(this);
+                    _from = _to;
+                    _transitions.emplace_back(_from, true, false, 0, 0, tt, 0);
+                }
+                _from = tf;
+                _to = tt;
+            }
+        }
+    };
+
+    class lex_ast_section_item_processor sealed : public lex_ast_section_item_visitor{
+    private:
+        bool &_ok;
+        const container * _cntr;
+        logger *& _logger;
+        size_t &_next_state;
+        size_t &_next_yield;
+        const std::map<std::wstring, std::unique_ptr<re_ast>> &_bindings;
+        const std::map<std::wstring, std::vector<std::unique_ptr<lex_ast_section_item>>> &_shared_sections;
+        std::vector<fa_transition> &_transitions;
+        std::map<std::wstring, std::vector<token_yield>> &_token_yields;
+        inline auto get_yield_value(const std::wstring &token, const std::wstring &goto_section, bool pop) -> size_t {
+            auto f = _token_yields.find(token);
+            if (f == _token_yields.end()) {
+                // Create a yield
+                std::vector<token_yield> yields;
+                yields.push_back(token_yield{ _next_yield++, goto_section, pop });
+                _token_yields.emplace(token, std::move(yields));
+                return yields.back().yield;
+            }
+            else {
+                // See whether we can find this specific yield (it's the same yield if all fields are same value)
+                for (auto &yield : f->second) {
+                    if (yield.pop == yield.pop && yield.goto_section == yield.goto_section) {
+                        return yield.yield;
+                    }
+                }
+                // Not found
+                f->second.push_back(token_yield{ _next_yield++, goto_section, pop });
+                return f->second.back().yield;
+            }
+        }
+        inline auto add_token_transitions(const std::wstring &token, const std::wstring &goto_section, bool pop, const std::unique_ptr<re_ast> &ast) -> void {
+            // start - ast -> t - epsilon(yield) -> end
+            auto t = _next_state++;
+            re_ast_processor rep(_next_state, _transitions, _bindings, start, end, _ok, _logger, _cntr);
+            ast->accept(&rep);
+            _transitions.emplace_back(t, true, false, 0, 0, end, get_yield_value(token, goto_section, pop));
+        }
+    public:
+        lex_ast_section_item_processor(bool &ok, const container *cntr, logger *& logger, size_t &next_state, size_t &next_yield,
+            const std::map<std::wstring, std::unique_ptr<re_ast>> &bindings,
+            const std::map<std::wstring, std::vector<std::unique_ptr<lex_ast_section_item>>> &shared_sections,
+            std::vector<fa_transition> &transitions,
+            std::map<std::wstring, std::vector<token_yield>> &token_yields)
+            : _ok(ok), _cntr(cntr), _logger(logger), _next_state(next_state), _next_yield(next_yield),
+            _bindings(bindings), _shared_sections(shared_sections), _transitions(transitions),
+            _token_yields(token_yields)
+        {}
+        virtual ~lex_ast_section_item_processor() {}
+
+        size_t start;
+        size_t end;
+
+        virtual auto accept(lex_ast_import* ast) -> void override {
+            auto f = _shared_sections.find(ast->shared_section_to_import());
+            if (f == _shared_sections.end()) {
+                davecommon::log::error::imported_section_not_found(_logger, _cntr, ast->spn(), ast->shared_section_to_import());
+                _ok = false;
+            }
+            else {
+                for (auto &item : f->second) {
+                    item->accept(this);
+                }
+            }
+        }
+        virtual auto accept(lex_ast_token* ast) -> void override {
+            add_token_transitions(ast->token_name(), L"", false, ast->ast());
+        }
+        virtual auto accept(lex_ast_start* ast) -> void override {
+            add_token_transitions(ast->token_name(), ast->section_name(), false, ast->ast());
+        }
+        virtual auto accept(lex_ast_return* ast) -> void override {
+            add_token_transitions(ast->token_name(), L"", true, ast->ast());
+        }
+    };
+
+    auto lex_ast_nfa_generator::accept(lex_ast_section* ast) -> void
+    {
+        if (ast->is_shared()) {
+            _shared_sections.emplace(std::move(ast->name()), std::move(ast->items()));
         }
         else {
-            anchor = f->second;
+            lex_ast_section_item_processor item_processor(_ok, ast->ctnr(), _logger, _next_state, _next_yield, _bindings, _shared_sections, _transitions, _token_yields);
+            auto f = _sections.find(ast->name());
+            if (f == _sections.end()) {
+                // Create the section
+                auto s = _sections.emplace(ast->name(), section_anchors{ _next_state, _next_state + 1, _next_state + 2 });
+                // Setup the default transitions for the section
+                _transitions.emplace_back(s.first->second.start, true, false, 0, 0, s.first->second.recurse, 0);
+                _transitions.emplace_back(s.first->second.end, true, false, 0, 0, s.first->second.recurse, 0);
+                // Use it
+                _next_state += 3;
+                item_processor.start = s.first->second.recurse;
+                item_processor.end = s.first->second.end;
+            }
+            else {
+                item_processor.start = f->second.recurse;
+                item_processor.end = f->second.end;
+            }
+            for (auto &item : ast->items()) {
+                item->accept(&item_processor);
+            }
         }
-        return nfa_section_builder(this, anchor);
-    }
-
-    auto nfa_builder::try_add_binding(const std::wstring &binding_name, std::wistream &text, span text_spn) -> bool
-    {
-        offset_logger ofslogger(_logger, text_spn);
-        std::unique_ptr<re_ast> ast;
-        if (re_try_parse(_cntr, text, &ofslogger, ast)) {
-            _nfa->_named_asts.emplace(binding_name, std::move(ast));
-            return true;
-        }
-        else {
-            return false;
-        }
-    }
-
-    auto nfa_section_builder::try_add_token(const std::wstring &tkn_name, size_t tkn, std::wistream &text, span text_spn)->bool
-    {
-        offset_logger ofslogger(_builder->_logger, text_spn);
-        std::unique_ptr<re_ast> ast;
-        if (!re_try_parse(_builder->_cntr, text, &ofslogger, ast)) return false;
-        if (ast->null_transition_possible(_builder->_nfa->_named_asts)) {
-            log::error::re_must_process_something(_builder->_logger, _builder->_cntr, text_spn, tkn_name);
-            return false;
-        }
-
-        // All transitions in a section will start at the recurse, then transition to a new state, then to the end reducing the named token
-
-        size_t to_state = _builder->_nfa->_next_state++;
-
-        std::vector<transition_action> actions;
-        actions.emplace_back(false, std::wstring(), true, false, false, tkn, 0);
-        _builder->_nfa->_transition_table.emplace_back(to_state, nfa_transition_guard(), end(), std::move(actions));
-        // add the re (recurse -> to_state)
-        return ast->try_add_transitions(tkn, _builder->_nfa->_named_asts, recurse(), to_state, _builder->_nfa->_transition_table, &ofslogger, _builder->_nfa->_next_state, true);
-    }
-
-    auto nfa_section_builder::try_add_goto(const std::wstring &tkn_name, size_t tkn, std::wistream &text, span text_spn, const std::wstring &section_name) -> bool
-    {
-        offset_logger ofslogger(_builder->_logger, text_spn);
-        std::unique_ptr<re_ast> ast;
-        if (!re_try_parse(_builder->_cntr, text, &ofslogger, ast)) return false;
-        if (ast->null_transition_possible(_builder->_nfa->_named_asts)) {
-            log::error::re_must_process_something(_builder->_logger, _builder->_cntr, text_spn, tkn_name);
-            return false;
-        }
-
-        auto sb = _builder->get_section_builder(section_name);
-        // recurse ->re-> t -E->(yield,goto) end
-
-        size_t to_state = _builder->_nfa->_next_state++;
-        std::vector<transition_action> actions;
-        actions.reserve(2);
-        actions.emplace_back(false, std::wstring(), true, false, false, tkn, 0);
-        actions.emplace_back(false, std::wstring(), false, false, true, tkn, sb.anchor());
-        _builder->_nfa->_transition_table.emplace_back(to_state, nfa_transition_guard(), end(), std::move(actions));
-
-        return ast->try_add_transitions(tkn, _builder->_nfa->_named_asts, recurse(), to_state, _builder->_nfa->_transition_table, &ofslogger, _builder->_nfa->_next_state, true);
-    }
-
-    auto nfa_section_builder::try_add_return(const std::wstring &tkn_name, size_t tkn, std::wistream &text, span text_spn) -> bool
-    {
-        offset_logger ofslogger(_builder->_logger, text_spn);
-        std::unique_ptr<re_ast> ast;
-        if (!re_try_parse(_builder->_cntr, text, &ofslogger, ast)) return false;
-        if (ast->null_transition_possible(_builder->_nfa->_named_asts)) {
-            log::error::re_must_process_something(_builder->_logger, _builder->_cntr, text_spn, tkn_name);
-            return false;
-        }
-
-        // recurse ->re-> t -E->(yield,pop) end
-
-        size_t to_state = _builder->_nfa->_next_state++;
-
-        std::vector<transition_action> actions;
-        actions.reserve(2);
-        actions.emplace_back(false, std::wstring(), true, false, false, tkn, 0);
-        actions.emplace_back(false, std::wstring(), false, true, false, tkn, 0);
-        _builder->_nfa->_transition_table.emplace_back(to_state, nfa_transition_guard(), end(), std::move(actions));
-
-        return ast->try_add_transitions(tkn, _builder->_nfa->_named_asts, recurse(), to_state, _builder->_nfa->_transition_table, &ofslogger, _builder->_nfa->_next_state, true);
     }
 }
 

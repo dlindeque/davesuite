@@ -10,7 +10,7 @@ using namespace davelexer;
 
 namespace davecommon
 {
-    inline auto char_friendly(wchar_t ch, std::wostream &os) -> std::wostream& {
+    inline auto wchar_friendly(wchar_t ch, std::wostream &os) -> std::wostream& {
         switch (ch) {
         case L' ':
             os << L"<space>";
@@ -88,8 +88,8 @@ namespace davecommon
             static auto invalid_range(logger *logger, const container *container, const span &spn, wchar_t from, wchar_t to) -> void {
                 std::wstringstream stm;
                 stm << L"Invalid range (";
-                char_friendly(from, stm) << L'-';
-                char_friendly(to, stm) << L')';
+                wchar_friendly(from, stm) << L'-';
+                wchar_friendly(to, stm) << L')';
                 logger->write(severity::error, container, spn, stm.str());
             }
 
@@ -102,6 +102,12 @@ namespace davecommon
             static auto re_must_process_something(logger *logger, const container *container, const span &spn, const std::wstring &name) -> void {
                 std::wstringstream stm;
                 stm << L"Expression '" << name << "' cannot be used as a token since it's possible to match zero characters.";
+                logger->write(severity::error, container, spn, stm.str());
+            }
+
+            static auto imported_section_not_found(logger *logger, const container *container, const span &spn, const std::wstring &name) -> void {
+                std::wstringstream stm;
+                stm << L"The imported section '" << name << "' could not be found.";
                 logger->write(severity::error, container, spn, stm.str());
             }
         };

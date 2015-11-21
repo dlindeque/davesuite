@@ -106,32 +106,32 @@ namespace davelexer
         }
     }
 
-    inline auto charset(const re_token &tkn)->std::vector < char_range > {
-        std::vector<char_range> ranges;
+    inline auto charset(const re_token &tkn)->std::vector < wchar_range > {
+        std::vector<wchar_range> ranges;
         switch (tkn.cs) {
         case re_char_set::any:
-            ranges.push_back(char_range{ L'\x0', WCHAR_MAX });
+            ranges.push_back(wchar_range{ L'\x0', WCHAR_MAX });
             break;
         case re_char_set::digit:
-            ranges.push_back(char_range{ L'0', L'9' });
+            ranges.push_back(wchar_range{ L'0', L'9' });
             break;
         case re_char_set::lalpha:
-            ranges.push_back(char_range{ L'a', L'z' });
+            ranges.push_back(wchar_range{ L'a', L'z' });
             break;
         case re_char_set::ualpha:
-            ranges.push_back(char_range{ L'A', L'Z' });
+            ranges.push_back(wchar_range{ L'A', L'Z' });
             break;
         case re_char_set::space:
-            ranges.push_back(char_range{ L' ', L' ' });
-            ranges.push_back(char_range{ L'\t', L'\t' });
-            ranges.push_back(char_range{ L'\v', L'\v' });
-            ranges.push_back(char_range{ L'\n', L'\n' });
-            ranges.push_back(char_range{ L'\r', L'\r' });
-            ranges.push_back(char_range{ L'\f', L'\f' });
+            ranges.push_back(wchar_range{ L' ', L' ' });
+            ranges.push_back(wchar_range{ L'\t', L'\t' });
+            ranges.push_back(wchar_range{ L'\v', L'\v' });
+            ranges.push_back(wchar_range{ L'\n', L'\n' });
+            ranges.push_back(wchar_range{ L'\r', L'\r' });
+            ranges.push_back(wchar_range{ L'\f', L'\f' });
             break;
         case re_char_set::word:
-            ranges.push_back(char_range{ L'a', L'z' });
-            ranges.push_back(char_range{ L'A', L'Z' });
+            ranges.push_back(wchar_range{ L'a', L'z' });
+            ranges.push_back(wchar_range{ L'A', L'Z' });
             break;
         default:
             assert(false);
@@ -140,13 +140,13 @@ namespace davelexer
         return ranges;
     }
 
-    inline auto chr(wchar_t from, wchar_t to) -> std::vector < char_range > {
-        std::vector<char_range> ranges;
-        ranges.push_back(char_range{ from, to });
+    inline auto chr(wchar_t from, wchar_t to) -> std::vector < wchar_range > {
+        std::vector<wchar_range> ranges;
+        ranges.push_back(wchar_range{ from, to });
         return ranges;
     }
 
-    inline auto chr(wchar_t ch) -> std::vector < char_range > {
+    inline auto chr(wchar_t ch) -> std::vector < wchar_range > {
         return chr(ch, ch);
     }
 
@@ -174,7 +174,7 @@ namespace davelexer
                 case re_token_type::char_: // s1
                     // R -> c
                     if (true) {
-                        values.emplace_back(std::unique_ptr<re_ast>(new re_ast_char_set_match(cntr, tkn.spn, false, chr(tkn.char_))));
+                        values.emplace_back(std::unique_ptr<re_ast>(new re_ast_char_set_match(tkn.spn, false, chr(tkn.char_))));
                         goto_r(states);
                         read = true;
                     }
@@ -182,7 +182,7 @@ namespace davelexer
                 case re_token_type::char_set: // s2
                     // R -> s
                     if (true) {
-                        values.emplace_back(std::unique_ptr<re_ast>(new re_ast_char_set_match(cntr, tkn.spn, false, charset(tkn))));
+                        values.emplace_back(std::unique_ptr<re_ast>(new re_ast_char_set_match(tkn.spn, false, charset(tkn))));
                         goto_r(states);
                         read = true;
                     }
@@ -190,7 +190,7 @@ namespace davelexer
                 case re_token_type::name: // s3
                     // R -> n
                     if (true) {
-                        values.emplace_back(std::unique_ptr<re_ast>(new re_ast_reference(cntr, tkn.spn, std::move(tkn.name_output_whitespace))));
+                        values.emplace_back(std::unique_ptr<re_ast>(new re_ast_reference(tkn.spn, std::move(tkn.name_output_whitespace))));
                         goto_r(states);
                         read = true;
                     }
@@ -198,7 +198,7 @@ namespace davelexer
                 case re_token_type::hyphen: // s4
                     // R -> -
                     if (true) {
-                        values.emplace_back(std::unique_ptr<re_ast>(new re_ast_char_set_match(cntr, tkn.spn, false, chr(L'-'))));
+                        values.emplace_back(std::unique_ptr<re_ast>(new re_ast_char_set_match(tkn.spn, false, chr(L'-'))));
                         goto_r(states);
                         read = true;
                     }
@@ -240,7 +240,7 @@ namespace davelexer
                 case re_token_type::char_: // s1
                     // R -> c
                     if (true) {
-                        values.emplace_back(std::unique_ptr<re_ast>(new re_ast_char_set_match(cntr, tkn.spn, false, chr(tkn.char_))));
+                        values.emplace_back(std::unique_ptr<re_ast>(new re_ast_char_set_match(tkn.spn, false, chr(tkn.char_))));
                         goto_r(states);
                         read = true;
                     }
@@ -248,7 +248,7 @@ namespace davelexer
                 case re_token_type::char_set: // s2
                     // R -> s
                     if (true) {
-                        values.emplace_back(std::unique_ptr<re_ast>(new re_ast_char_set_match(cntr, tkn.spn, false, charset(tkn))));
+                        values.emplace_back(std::unique_ptr<re_ast>(new re_ast_char_set_match(tkn.spn, false, charset(tkn))));
                         goto_r(states);
                         read = true;
                     }
@@ -256,7 +256,7 @@ namespace davelexer
                 case re_token_type::name: // s3
                     // R -> n
                     if (true) {
-                        values.emplace_back(std::unique_ptr<re_ast>(new re_ast_reference(cntr, tkn.spn, std::move(tkn.name_output_whitespace))));
+                        values.emplace_back(std::unique_ptr<re_ast>(new re_ast_reference(tkn.spn, std::move(tkn.name_output_whitespace))));
                         goto_r(states);
                         read = true;
                     }
@@ -264,7 +264,7 @@ namespace davelexer
                 case re_token_type::hyphen: // s4
                     // R -> -
                     if (true) {
-                        values.emplace_back(std::unique_ptr<re_ast>(new re_ast_char_set_match(cntr, tkn.spn, false, chr(L'-'))));
+                        values.emplace_back(std::unique_ptr<re_ast>(new re_ast_char_set_match(tkn.spn, false, chr(L'-'))));
                         goto_r(states);
                         read = true;
                     }
@@ -296,7 +296,7 @@ namespace davelexer
                         auto b = r->spn().begin;
                         values.pop_back();
                         states.pop_back();
-                        values.emplace_back(std::unique_ptr<re_ast>(new re_ast_output(cntr, span{ b, tkn.spn.end }, std::move(r), std::move(tkn.name_output_whitespace))));
+                        values.emplace_back(std::unique_ptr<re_ast>());
                         goto_r(states);
                         read = true;
                     }
@@ -318,7 +318,7 @@ namespace davelexer
                             auto b = r->spn().begin;
                             values.pop_back();
                             states.pop_back();
-                            values.emplace_back(std::unique_ptr<re_ast>(new re_ast_cardinality(cntr, span{ b, tkn.spn.end }, std::move(r), tkn.cardinality_min, tkn.cardinality_max)));
+                            values.emplace_back(std::unique_ptr<re_ast>(new re_ast_cardinality(span{ b, tkn.spn.end }, std::move(r), tkn.cardinality_min, tkn.cardinality_max)));
                             goto_r(states);
                         }
                         read = true;
@@ -370,7 +370,7 @@ namespace davelexer
                         auto r1 = std::move(values.back().ast());
                         auto spn = span{ r1->spn().begin, r2->spn().end };
                         values.pop_back();
-                        values.emplace_back(std::unique_ptr<re_ast>(new re_ast_then(cntr, spn, std::move(r1), std::move(r2))));
+                        values.emplace_back(std::unique_ptr<re_ast>(new re_ast_then(spn, std::move(r1), std::move(r2))));
                         goto_r(states);
                     }
                     break;
@@ -386,7 +386,7 @@ namespace davelexer
                         auto b = r->spn().begin;
                         values.pop_back();
                         states.pop_back();
-                        values.emplace_back(std::unique_ptr<re_ast>(new re_ast_output(cntr, span{ b, tkn.spn.end }, std::move(r), std::move(tkn.name_output_whitespace))));
+                        values.emplace_back(std::unique_ptr<re_ast>());
                         goto_r(states);
                         read = true;
                     }
@@ -408,7 +408,7 @@ namespace davelexer
                             auto b = r->spn().begin;
                             values.pop_back();
                             states.pop_back();
-                            values.emplace_back(std::unique_ptr<re_ast>(new re_ast_cardinality(cntr, span{ b, tkn.spn.end }, std::move(r), tkn.cardinality_min, tkn.cardinality_max)));
+                            values.emplace_back(std::unique_ptr<re_ast>(new re_ast_cardinality(span{ b, tkn.spn.end }, std::move(r), tkn.cardinality_min, tkn.cardinality_max)));
                             goto_r(states);
                         }
                         read = true;
@@ -445,7 +445,7 @@ namespace davelexer
                 case re_token_type::hyphen: // s12
                     // T -> -
                     if (true) {
-                        values.emplace_back(std::unique_ptr<re_ast>(new re_ast_char_set_match(cntr, tkn.spn, false, chr(tkn.char_))));
+                        values.emplace_back(std::unique_ptr<re_ast>(new re_ast_char_set_match(tkn.spn, false, chr(tkn.char_))));
                         goto_t(states, values);
                         read = true;
                     }
@@ -473,7 +473,7 @@ namespace davelexer
                 case re_token_type::hyphen: // s12
                     // T -> -
                     if (true) {
-                        values.emplace_back(std::unique_ptr<re_ast>(new re_ast_char_set_match(cntr, tkn.spn, false, chr(tkn.char_))));
+                        values.emplace_back(std::unique_ptr<re_ast>(new re_ast_char_set_match(tkn.spn, false, chr(tkn.char_))));
                         goto_t(states, values);
                         read = true;
                     }
@@ -510,7 +510,7 @@ namespace davelexer
                 case re_token_type::char_: // s1
                     // R -> c
                     if (true) {
-                        values.emplace_back(std::unique_ptr<re_ast>(new re_ast_char_set_match(cntr, tkn.spn, false, chr(tkn.char_))));
+                        values.emplace_back(std::unique_ptr<re_ast>(new re_ast_char_set_match(tkn.spn, false, chr(tkn.char_))));
                         goto_r(states);
                         read = true;
                     }
@@ -518,7 +518,7 @@ namespace davelexer
                 case re_token_type::char_set: // s2
                     // R -> s
                     if (true) {
-                        values.emplace_back(std::unique_ptr<re_ast>(new re_ast_char_set_match(cntr, tkn.spn, false, charset(tkn))));
+                        values.emplace_back(std::unique_ptr<re_ast>(new re_ast_char_set_match(tkn.spn, false, charset(tkn))));
                         goto_r(states);
                         read = true;
                     }
@@ -526,7 +526,7 @@ namespace davelexer
                 case re_token_type::name: // s3
                     // R -> n
                     if (true) {
-                        values.emplace_back(std::unique_ptr<re_ast>(new re_ast_reference(cntr, tkn.spn, std::move(tkn.name_output_whitespace))));
+                        values.emplace_back(std::unique_ptr<re_ast>(new re_ast_reference(tkn.spn, std::move(tkn.name_output_whitespace))));
                         goto_r(states);
                         read = true;
                     }
@@ -534,7 +534,7 @@ namespace davelexer
                 case re_token_type::hyphen: // s4
                     // R -> -
                     if (true) {
-                        values.emplace_back(std::unique_ptr<re_ast>(new re_ast_char_set_match(cntr, tkn.spn, false, chr(L'-'))));
+                        values.emplace_back(std::unique_ptr<re_ast>(new re_ast_char_set_match(tkn.spn, false, chr(L'-'))));
                         goto_r(states);
                         read = true;
                     }
@@ -579,7 +579,7 @@ namespace davelexer
                         auto b = r->spn().begin;
                         values.pop_back();
                         states.pop_back();
-                        values.emplace_back(std::unique_ptr<re_ast>(new re_ast_output(cntr, span{ b, tkn.spn.end }, std::move(r), std::move(tkn.name_output_whitespace))));
+                        values.emplace_back(std::unique_ptr<re_ast>());
                         goto_r(states);
                         read = true;
                     }
@@ -601,7 +601,7 @@ namespace davelexer
                             auto b = r->spn().begin;
                             values.pop_back();
                             states.pop_back();
-                            values.emplace_back(std::unique_ptr<re_ast>(new re_ast_cardinality(cntr, span{ b, tkn.spn.end }, std::move(r), tkn.cardinality_min, tkn.cardinality_max)));
+                            values.emplace_back(std::unique_ptr<re_ast>(new re_ast_cardinality(span{ b, tkn.spn.end }, std::move(r), tkn.cardinality_min, tkn.cardinality_max)));
                             goto_r(states);
                         }
                         read = true;
@@ -650,7 +650,7 @@ namespace davelexer
                         states.pop_back();
                         states.pop_back();
                         states.pop_back();
-                        values.emplace_back(std::unique_ptr<re_ast>(new re_ast_or(cntr, span{ r1->spn().begin, r2->spn().end }, std::move(r1), std::move(r2))));
+                        values.emplace_back(std::unique_ptr<re_ast>(new re_ast_or(span{ r1->spn().begin, r2->spn().end }, std::move(r1), std::move(r2))));
                         goto_r(states);
                         read = false;
                     }
@@ -661,7 +661,7 @@ namespace davelexer
                         auto r = std::move(values.back().ast());
                         values.pop_back();
                         states.pop_back();
-                        values.emplace_back(std::unique_ptr<re_ast>(new re_ast_output(cntr, span{ r->spn().begin, tkn.spn.end }, std::move(r), std::move(tkn.name_output_whitespace))));
+                        values.emplace_back(std::unique_ptr<re_ast>());
                         goto_r(states);
                         read = true;
                     }
@@ -683,7 +683,7 @@ namespace davelexer
                             auto b = r->spn().begin;
                             values.pop_back();
                             states.pop_back();
-                            values.emplace_back(std::unique_ptr<re_ast>(new re_ast_cardinality(cntr, span{ b, tkn.spn.end }, std::move(r), tkn.cardinality_min, tkn.cardinality_max)));
+                            values.emplace_back(std::unique_ptr<re_ast>(new re_ast_cardinality(span{ b, tkn.spn.end }, std::move(r), tkn.cardinality_min, tkn.cardinality_max)));
                             goto_r(states);
                         }
                         read = true;
@@ -723,7 +723,7 @@ namespace davelexer
                         auto c = std::move(values.back().token());
                         values.pop_back();
                         states.pop_back();
-                        values.emplace_back(std::unique_ptr<re_ast>(new re_ast_char_set_match(cntr, c.spn, false, chr(c.char_))));
+                        values.emplace_back(std::unique_ptr<re_ast>(new re_ast_char_set_match(c.spn, false, chr(c.char_))));
                         goto_t(states, values);
                         read = false;
                     }
@@ -754,7 +754,7 @@ namespace davelexer
                         values.pop_back();
                         states.pop_back();
                         states.pop_back();
-                        values.emplace_back(std::unique_ptr<re_ast>(new re_ast_char_set_match(cntr, span{ c1.spn.begin, tkn.spn.end }, false, chr(c1.char_, tkn.char_))));
+                        values.emplace_back(std::unique_ptr<re_ast>(new re_ast_char_set_match(span{ c1.spn.begin, tkn.spn.end }, false, chr(c1.char_, tkn.char_))));
                         goto_t(states, values);
                         read = true;
                     }
