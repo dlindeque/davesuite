@@ -33,6 +33,11 @@ namespace davecommon
         case L'\b':
             os << L"\\b";
             break;
+        case 0:
+            os << L"<start>";
+            break;
+        case WCHAR_MAX:
+            os << L"<end>";
         default:
             os << ch;
             break;

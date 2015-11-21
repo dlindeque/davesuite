@@ -45,6 +45,9 @@
     <ClInclude Include="lex_ast_validator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="graphviz.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

@@ -15,8 +15,7 @@ using namespace davecommon;
 namespace davelexer
 {
     auto re_try_parse(
-        container *cntr,
+        const container *cntr,
         std::wistream &src,
-        logger *logger,
-        std::unique_ptr<re_ast> &ast)->bool;
+        logger *logger)->std::unique_ptr<re_ast>;
 }

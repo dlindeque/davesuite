@@ -8,6 +8,8 @@
 
 #include "..\dllib\nfa.h"
 #include "..\dllib\dfa.h"
+#include "..\dllib\model.h"
+#include "..\dllib\graphviz.h"
 
 class text_container : public davecommon::container {
 public:
@@ -35,62 +37,36 @@ protected:
     }
 };
 
+auto compile_re_ast(const container *cntr, logger *logger, const std::wstring &re)->std::unique_ptr < re_ast > {
+    std::wstringstream src;
+    src << re;
+    src.seekg(0);
+    return re_try_parse(cntr, src, logger);
+}
+
 int _tmain(int argc, _TCHAR* argv[])
 {
     text_container tc;
     console_logger cl;
 
     bool ok = true;
-
-    davelexer::nfa n;
-    auto builder = n.get_builder(&tc, &cl);
-    auto default_section = builder.get_section_builder(L"default");
-    //// for + foreach + etc
-    //ok &= default_section.try_add_token(L"if", 1, L"if", span());
-    //ok &= default_section.try_add_token(L"for", 2, L"for", span());
-    //ok &= default_section.try_add_token(L"foreach", 3, L"foreach", span());
-    //ok &= default_section.try_add_goto(L"comment", 4, L"/\\*", span(), L"comment");
-    //
-    //auto comment = builder.get_section_builder(L"comment");
-    //ok &= comment.try_add_token(L"comment", 4, L".+", span());
-    //ok &= comment.try_add_return(L"comment", 4, L"\\*/+", span());
     
-    // t1 + t2
-    ok &= default_section.try_add_token(L"t1", 1, L"abc", span());
-    ok &= default_section.try_add_token(L"t2", 2, L"def", span());
-    ok &= default_section.try_add_token(L"err", 3, L".", span());
+    auto re1 = compile_re_ast(&tc, &cl, L"a+");
+    if (re1 != nullptr) {
+        lex_ast_nfa_generator g(&cl);
 
-    //nfa n;
-    //nfa::test(n);
-    //std::wcout << n;
-
-    if (!ok) {
-        std::wcout << "FAILED";
-        return 1;
-    }
-    else {
-        bool ok;
-        auto dfa = dfa::try_compile(std::move(n), std::wcout, ok, [](size_t y1, size_t y2) { return y1 < y2 ? y1 : y2; });
-        if (!ok) {
-            std::wcout << "FAILED";
-            return 1;
+        std::vector<std::unique_ptr<lex_ast_section_item>> items;
+        items.push_back(std::unique_ptr<lex_ast_section_item>(new lex_ast_token(span(), L"t1", span(), std::move(re1))));
+        lex_ast_section d(&tc, span(), false, L"default", std::move(items));
+        d.accept(&g);
+        if (!g._ok) {
+            std::wcout << "ERROR";
         }
-        std::wcout << dfa;
+        else {
+            auto yd = g.compile_yield_details();
+            graphviz::write_graph(std::wcout, yd, g._transitions);
+        }
     }
-
-    //auto n = nfa::test();
-    //auto o = n.remove_epsilon_actions();
-    //std::wcout << o;
-
-    //std::wstringstream stm(L"(ab)|(cd){>jjj}");
-    //std::unique_ptr<davelexer::re_ast> ast;
-    //
-    //if (!davelexer::re_try_parse(&tc, stm, &cl, ast)) {
-    //    std::wcout << "Failure during re parse" << std::endl;
-    //}
-    //else {
-    //    std::wcout << "AST:" << std::endl << ast << std::endl;
-    //}
 
 	return 0;
 }

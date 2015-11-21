@@ -35,29 +35,61 @@ namespace davelexer
 
         virtual ~re_ast_processor() {}
         virtual auto accept(const re_ast_char_set_match* ast) -> void override {
-            for (auto &range : ast->ranges()) {
-                if (ast->exclude()) {
-                    // if we exclude all chars, then it means we cannot make this transition - just ignore it.
-                    if (range.from != 0 || range.to != WCHAR_MAX) {
-                        // from->to
-                        // 1. exclude 0->t ::= include (t+1)->M
-                        // 2. exclude f->M ::= include 0->(f-1)
-                        // 3. exclude f->t ::= include 0->(f-1) & (t+1)->M
-                        if (range.from == 0) {
-                            _transitions.emplace_back(_from, false, false, range.to + 1, WCHAR_MAX, _to, 0);
-                        }
-                        else {
-                            if (range.to == WCHAR_MAX) {
-                                _transitions.emplace_back(_from, false, false, 0, range.from - 1, _to, 0);
+            if (ast->exclude()) {
+                // Build the include ranges by excluding the ranges from the universe
+                std::vector<wchar_range> universe;
+                universe.push_back(wchar_range{ 0, WCHAR_MAX });
+                for (auto &range : ast->ranges()) {
+                    register size_t i = 0;
+                    std::vector<wchar_range> new_ranges;
+                    while (i < universe.size()) {
+                        if (range.from <= universe[i].from) {
+                            if (range.to >= universe[i].to) {
+                                // delete the whole universe item
+                                universe.erase(universe.begin() + i);
+                            }
+                            else if (range.to >= universe[i].from) {
+                                // trim the front
+                                universe[i].from = range.to + 1;
+                                i++;
                             }
                             else {
-                                _transitions.emplace_back(_from, false, false, 0, range.from - 1, _to, 0);
-                                _transitions.emplace_back(_from, false, false, range.to + 1, WCHAR_MAX, _to, 0);
+                                // the whole range is in front of the universe item
+                                i++;
                             }
                         }
+                        else if (range.to >= universe[i].to) {
+                            // range.from > universe[i].from
+                            if (range.from <= universe[i].to) {
+                                // trim the end
+                                universe[i].to = range.from - 1;
+                                i++;
+                            }
+                            else {
+                                // the whole range is beyond the universe item
+                                i++;
+                            }
+                        }
+                        else {
+                            // range.from > universe[i].from & range.to < universe[i].to
+                            // split the universe item
+                            new_ranges.push_back(wchar_range{ range.to + 1, universe[i].to });
+                            universe[i].to = range.from - 1;
+                            i++;
+                        }
+                    }
+                    for (auto &nr : new_ranges) {
+                        universe.push_back(std::move(nr));
                     }
                 }
-                else {
+                // Include the universe
+                for (auto &range : universe) {
+                    _transitions.emplace_back(_from, false, false, range.from, range.to, _to, 0);
+                }
+            }
+            else {
+                // Include all the ranges
+                for (auto &range : ast->ranges()) {
                     _transitions.emplace_back(_from, false, false, range.from, range.to, _to, 0);
                 }
             }
@@ -69,7 +101,7 @@ namespace davelexer
                 _ok = false;
             }
             else {
-                ast->accept(this);
+                f->second->accept(this);
             }
         }
         virtual auto accept(const re_ast_then* ast) -> void override {
@@ -155,9 +187,10 @@ namespace davelexer
             if (f == _token_yields.end()) {
                 // Create a yield
                 std::vector<token_yield> yields;
-                yields.push_back(token_yield{ _next_yield++, goto_section, pop });
+                auto y = _next_yield++;
+                yields.push_back(token_yield{ y, goto_section, pop });
                 _token_yields.emplace(token, std::move(yields));
-                return yields.back().yield;
+                return y;
             }
             else {
                 // See whether we can find this specific yield (it's the same yield if all fields are same value)
@@ -174,7 +207,7 @@ namespace davelexer
         inline auto add_token_transitions(const std::wstring &token, const std::wstring &goto_section, bool pop, const std::unique_ptr<re_ast> &ast) -> void {
             // start - ast -> t - epsilon(yield) -> end
             auto t = _next_state++;
-            re_ast_processor rep(_next_state, _transitions, _bindings, start, end, _ok, _logger, _cntr);
+            re_ast_processor rep(_next_state, _transitions, _bindings, start, t, _ok, _logger, _cntr);
             ast->accept(&rep);
             _transitions.emplace_back(t, true, false, 0, 0, end, get_yield_value(token, goto_section, pop));
         }
