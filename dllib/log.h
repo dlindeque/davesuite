@@ -115,6 +115,12 @@ namespace davecommon
                 stm << L"The imported section '" << name << "' could not be found.";
                 logger->write(severity::error, container, spn, stm.str());
             }
+
+            static auto binding_already_defined(logger *logger, const container *container, const span &spn, const std::wstring &name) -> void {
+                std::wstringstream stm;
+                stm << L"The binding '" << name << "' was previously defined.";
+                logger->write(severity::error, container, spn, stm.str());
+            }
         };
     };
 }

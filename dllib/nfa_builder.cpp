@@ -2,7 +2,7 @@
 
 #include <assert.h>
 
-#include "nfa.h"
+#include "nfa_builder.h"
 #include "re_lexer.h"
 #include "..\common\offset_logger.h"
 #include "log.h"
@@ -249,7 +249,7 @@ namespace davelexer
         }
     };
 
-    auto lex_ast_nfa_generator::accept(lex_ast_section* ast) -> void
+    auto nfa_builder::accept(lex_ast_section* ast) -> void
     {
         if (ast->is_shared()) {
             _shared_sections.emplace(std::move(ast->name()), std::move(ast->items()));

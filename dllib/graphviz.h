@@ -5,7 +5,7 @@
 #include <vector>
 #include "model.h"
 #include "log.h"
-#include "nfa.h"
+#include "nfa_builder.h"
 
 namespace davelexer
 {
@@ -54,6 +54,18 @@ namespace davelexer
                 os << L"  ";
                 write_transition(os, yield_details, t);
                 os << std::endl;
+            }
+            os << L'}' << std::endl;
+            return os;
+        }
+        static inline auto write_graph(std::wostream &os, const std::map<size_t, yield_details> &yield_details, const std::vector<std::vector<fa_transition>> &map) -> std::wostream& {
+            os << L"digraph fa {" << std::endl;
+            for (auto &transitions : map) {
+                for (auto &t : transitions) {
+                    os << L"  ";
+                    write_transition(os, yield_details, t);
+                    os << std::endl;
+                }
             }
             os << L'}' << std::endl;
             return os;

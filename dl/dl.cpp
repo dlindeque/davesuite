@@ -6,7 +6,7 @@
 #include <sstream>
 #include <iostream>
 
-#include "..\dllib\nfa.h"
+#include "..\dllib\nfa_builder.h"
 #include "..\dllib\dfa.h"
 #include "..\dllib\model.h"
 #include "..\dllib\graphviz.h"
@@ -51,20 +51,23 @@ int _tmain(int argc, _TCHAR* argv[])
 
     bool ok = true;
     
-    auto re1 = compile_re_ast(&tc, &cl, L"a+");
-    if (re1 != nullptr) {
-        lex_ast_nfa_generator g(&cl);
+    auto re1 = compile_re_ast(&tc, &cl, L"b+");
+    auto re2 = compile_re_ast(&tc, &cl, L".");
+    if (re1 != nullptr && re2 != nullptr) {
+        nfa_builder g(&cl);
 
         std::vector<std::unique_ptr<lex_ast_section_item>> items;
         items.push_back(std::unique_ptr<lex_ast_section_item>(new lex_ast_token(span(), L"t1", span(), std::move(re1))));
+        items.push_back(std::unique_ptr<lex_ast_section_item>(new lex_ast_token(span(), L"t2", span(), std::move(re2))));
         lex_ast_section d(&tc, span(), false, L"default", std::move(items));
         d.accept(&g);
         if (!g._ok) {
             std::wcout << "ERROR";
         }
         else {
-            auto yd = g.compile_yield_details();
-            graphviz::write_graph(std::wcout, yd, g._transitions);
+            auto dfa = dfa::try_compile(std::move(g), [](size_t s1, size_t s2) { return s1 < s2; });
+
+            graphviz::write_graph(std::wcout, dfa.token_yields(), dfa.tmap());
         }
     }
 

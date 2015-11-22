@@ -33,7 +33,9 @@ namespace davelexer
         bool pop;
     };
 
-    class lex_ast_nfa_generator sealed : public lex_ast_visitor{
+    class dfa;
+
+    class nfa_builder sealed : public lex_ast_visitor{
     private:
         logger *_logger;
         size_t _next_state;
@@ -43,8 +45,9 @@ namespace davelexer
 
         std::map<std::wstring, section_anchors> _sections;
         std::map<std::wstring, std::vector<token_yield>> _token_yields;
+        std::vector<fa_transition> _transitions;
     public:
-        lex_ast_nfa_generator(logger *logger)
+        nfa_builder(logger *logger)
             : _logger(logger), _ok(true), _next_state(0), _next_yield(1)
         {
             // We immediately take states 0, 1, 2 & 3 as default section states
@@ -58,10 +61,9 @@ namespace davelexer
             // 1 - eod -> 3
             _transitions.emplace_back(1, false, true, 0, 0, 3, 0);
         }
-        virtual ~lex_ast_nfa_generator() {}
+        virtual ~nfa_builder() {}
 
         bool _ok;
-        std::vector<fa_transition> _transitions;
 
         inline auto compile_yield_details() const->std::map < size_t, yield_details > {
             std::map<size_t, yield_details> m;
@@ -78,10 +80,16 @@ namespace davelexer
             }
             return m;
         }
+        inline auto transitions() const -> const std::vector<fa_transition>& { return  _transitions; }
 
         virtual auto accept(lex_ast_binding* ast) -> void override {
-            _bindings.emplace(std::move(ast->name()), std::move(ast->ast()));
+            if (!_bindings.emplace(std::move(ast->name()), std::move(ast->ast())).second) {
+                log::error::binding_already_defined(_logger, ast->ctnr(), ast->spn(), ast->name());
+                _ok = false;
+            }
         }
         virtual auto accept(lex_ast_section* ast) -> void override;
+
+        friend dfa;
     };
 }

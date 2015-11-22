@@ -81,7 +81,7 @@
     <ClInclude Include="lex_ast_validator.h" />
     <ClInclude Include="log.h" />
     <ClInclude Include="model.h" />
-    <ClInclude Include="nfa.h" />
+    <ClInclude Include="nfa_builder.h" />
     <ClInclude Include="re_lexer.h" />
     <ClInclude Include="re_parser.h" />
     <ClInclude Include="stdafx.h" />
@@ -90,7 +90,7 @@
   <ItemGroup>
     <ClCompile Include="dfa.cpp" />
     <ClCompile Include="model.cpp" />
-    <ClCompile Include="nfa.cpp" />
+    <ClCompile Include="nfa_builder.cpp" />
     <ClCompile Include="re_lexer.cpp" />
     <ClCompile Include="re_parser.cpp" />
     <ClCompile Include="stdafx.cpp">

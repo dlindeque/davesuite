@@ -473,5 +473,18 @@ namespace davelexer
         inline auto last() const -> wchar_t { return _last; }
         inline auto to() const -> size_t { return _to; }
         inline auto yield() const -> size_t { return _yield; }
+
+        inline auto to(size_t value) -> void { _to = value; }
+        inline auto yield(size_t value) -> void { _yield = value; }
+
+        friend inline auto operator <(const fa_transition &t1, const fa_transition &t2) -> bool {
+            if (t1.from() != t2.from()) return t1.from() < t2.from();
+            if (t1.epsilon() != t2.epsilon()) return t2.epsilon();
+            if (t1.eod() != t2.eod()) return t2.eod();
+            if (t1.first() != t2.first()) return t1.first() < t2.first();
+            if (t1.last() != t2.last()) return t1.last() < t2.last();
+            if (t1.to() != t2.to()) return t1.to() < t2.to();
+            return t1.yield() < t2.yield();
+        }
     };
 }
