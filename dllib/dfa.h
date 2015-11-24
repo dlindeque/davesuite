@@ -3,6 +3,7 @@
 #include <memory>
 #include <vector>
 #include <functional>
+#include <unordered_map>
 
 #include "nfa_builder.h"
 
@@ -11,23 +12,22 @@ namespace davelexer
     class dfa {
     public:
     private:
-        std::vector<std::vector<fa_transition>> _tmap;
-        std::map<size_t, yield_details> _token_yields;
-        dfa(std::map<size_t, yield_details> &&token_yields)
-            : _token_yields(std::move(token_yields))
-        {}
+        std::unordered_map<size_t, std::vector<fa_transition>> _tmap;
+        std::unordered_map<size_t, state_yield> _state_yields;
+        dfa() {}
     public:
         dfa(const dfa &) = delete;
         dfa(dfa &&c)
-            : _tmap(std::move(c._tmap)), _token_yields(std::move(c._token_yields))
+            : _tmap(std::move(c._tmap)), _state_yields(std::move(c._state_yields))
         {}
 
-        inline auto token_yields() const -> const std::map<size_t, yield_details>& { return _token_yields; }
-        inline auto tmap() const -> const std::vector<std::vector<fa_transition>>& {
+        inline auto tmap() const -> const std::unordered_map<size_t, std::vector<fa_transition>>& {
             return _tmap;
         }
 
+        inline auto state_yields() const -> const std::unordered_map<size_t, state_yield>& { return _state_yields; }
+
         // The compile will destroy the nfa
-        static auto try_compile(nfa_builder &&nfa, const std::function<size_t(size_t, size_t)> &conflict_resolver)->dfa;
+        static auto try_compile(nfa_builder &&nfa, const std::function<state_yield(const state_yield&, const state_yield&)> &conflict_resolver)->dfa;
     };
 }

@@ -154,7 +154,7 @@ namespace davelexer
             : _os(os)
         {}
         virtual ~lex_ast_wformat() {}
-        virtual auto accept(const lex_ast_binding* ast) -> void override {
+        virtual auto accept(const lex_ast_pattern* ast) -> void override {
             _os << L"pattern " << ast->name() << L" = " << ast->ast();
         }
         virtual auto accept(const lex_ast_section* ast) -> void override {

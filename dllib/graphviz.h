@@ -1,7 +1,7 @@
 #pragma once
 
 #include <ostream>
-#include <map>
+#include <unordered_map>
 #include <vector>
 #include "model.h"
 #include "log.h"
@@ -10,7 +10,7 @@
 namespace davelexer
 {
     struct graphviz {
-        static inline auto write_transition(std::wostream &os, const std::map<size_t, yield_details> &yield_details, const fa_transition &transition) -> std::wostream& {
+        static inline auto write_transition(std::wostream &os, const fa_transition &transition) -> std::wostream& {
             os << L"\"" << transition.from() << L"\"->\"" << transition.to() << L"\" [label=\"";
             if (transition.epsilon()) {
                 os << L'.';
@@ -29,41 +29,45 @@ namespace davelexer
                 wchar_friendly(transition.last(), os);
                 
             }
-            if (transition.yield() != 0) {
-                auto f = yield_details.find(transition.yield());
-                if (f == yield_details.end()) {
-                    os << L"(Yield " << (int)transition.yield() << " not found)";
-                }
-                else {
-                    os << L'(' << f->second.token;
-                    if (f->second.goto_state != 0) {
-                        os << L" g " << (int)f->second.goto_state;
-                    }
-                    if (f->second.pop) {
-                        os << L" p";
-                    }
-                    os << L')';
-                }
-            }
             return os << L"\"]";
         }
 
-        static inline auto write_graph(std::wostream &os, const std::map<size_t, yield_details> &yield_details, const std::vector<fa_transition> &transitions) -> std::wostream& {
+        static inline auto write_graph(std::wostream &os, const std::vector<fa_transition> &transitions, const std::unordered_map<size_t, state_yield> &state_yields) -> std::wostream& {
             os << L"digraph fa {" << std::endl;
+            for (auto &sy : state_yields) {
+                os << L"  \"" << (int)sy.first << L"\" [color=blue,label=\"" << (int)sy.first << L"\\n" << sy.second.token;
+                if (!sy.second.goto_section.empty()) {
+                    os << L"\ng " << sy.second.goto_section;
+                }
+                if (sy.second.pop) {
+                    os << L"\npop";
+                }
+                os << L"\"]" << std::endl;
+            }
             for (auto &t : transitions) {
                 os << L"  ";
-                write_transition(os, yield_details, t);
+                write_transition(os, t);
                 os << std::endl;
             }
             os << L'}' << std::endl;
             return os;
         }
-        static inline auto write_graph(std::wostream &os, const std::map<size_t, yield_details> &yield_details, const std::vector<std::vector<fa_transition>> &map) -> std::wostream& {
+        static inline auto write_graph(std::wostream &os, const std::unordered_map<size_t, std::vector<fa_transition>> &map, const std::unordered_map<size_t, state_yield> &state_yields) -> std::wostream& {
             os << L"digraph fa {" << std::endl;
-            for (auto &transitions : map) {
-                for (auto &t : transitions) {
+            for (auto &sy : state_yields) {
+                os << L"  \"" << (int)sy.first << L"\" [color=blue,label=\"" << (int)sy.first << L"\\n" << sy.second.token;
+                if (!sy.second.goto_section.empty()) {
+                    os << L"\ng " << sy.second.goto_section;
+                }
+                if (sy.second.pop) {
+                    os << L"\npop";
+                }
+                os << L"\"]" << std::endl;
+            }
+            for (auto &s : map) {
+                for (auto &t : s.second) {
                     os << L"  ";
-                    write_transition(os, yield_details, t);
+                    write_transition(os, t);
                     os << std::endl;
                 }
             }

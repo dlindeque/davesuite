@@ -15,7 +15,7 @@
         }
     };
 #>]
-external function number +(number n1, number n2);
+external function number add(number n1, number n2);
 
 [IsDeterminstic = true]
 [Name = "op_and"]
@@ -51,7 +51,7 @@ external function number +(number n1, number n2);
     };
 #>
 ]
-external function bool &(bool b1, bool b2);
+external function bool and(bool b1, bool b2);
 
 [IsDeterminstic = true]
 [Name = "op_or"]
@@ -87,7 +87,7 @@ external function bool &(bool b1, bool b2);
     };
 #>
 ]
-external function bool &(bool b1, bool b2);
+external function bool or(bool b1, bool b2);
     
 [IsDeterminstic = true]
 [Name = "op_equal"]
@@ -109,7 +109,7 @@ external function bool &(bool b1, bool b2);
     };
 #>
 ]
-external function bool =<T>(T b1, T b2);
+external function bool equal<T>(T b1, T b2);
 
 [IsDeterminstic = true]
 [Name = "op_if"]

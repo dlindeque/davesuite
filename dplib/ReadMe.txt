@@ -229,7 +229,7 @@ using namespace davelexer;
 
 set ignore = [ whitespace, comment ];
 
-// We use classes for these types so we can generate a model directly
+// We use classes for these types so we can generate a model directly (see davemodel)
 enum class scenario_term_type
 {
     given,
@@ -263,6 +263,13 @@ class feature
     scenario[] scenarios
 };
 
+class re_tag;
+enum class outline_type {
+    simpleterm
+};
+class begin_outline_tag { outline_type @type };
+class end_outline_tag { outline_type @type };
+
 // We can use root expressions to 'code-gen' productions etc
 range 1 10
     |> map
@@ -280,6 +287,9 @@ range 1 10
         };
         ">
 
+external function tag<TTag, TValue>(TTag tag, span spn, TValue value);
+external function tag<TTag, TValue>(TTag tag, point pnt, TValue value);
+
 set document = FEATURE;
 
 token pipe = "|";
@@ -287,10 +297,22 @@ token colon = ":";
 
 production SIMPLETERM
 {
-    given termtext                    -> scenario_term { location = @$, text = $2, type = scenario_term_type.given };
-    when termtext                     -> scenario_term { location = @$, text = $2, type = scenario_term_type.when };
-    then termtext                     -> scenario_term { location = @$, text = $2, type = scenario_term_type.then };
-    and termtext                      -> scneario_term { location = @$, text = $2, type = scenario_term_type.and };
+    given termtext                    -> scenario_term { location = @$, text = $2, type = scenario_term_type.given }
+                                            |> tag(re_tag {}, @2)
+                                            |> tag(begin_outline_tag { @type = outline_type.simpleterm }, @1.begin)
+                                            |> tag(end_outline_tag { @type = outline_type.simpleterm }, @2.end);
+    when termtext                     -> scenario_term { location = @$, text = $2, type = scenario_term_type.when }
+                                            |> tag(re_tag {}, @2)
+                                            |> tag(begin_outline_tag { @type = outline_type.simpleterm }, @1.begin)
+                                            |> tag(end_outline_tag { @type = outline_type.simpleterm }, @2.end);
+    then termtext                     -> scenario_term { location = @$, text = $2, type = scenario_term_type.then }
+                                            |> tag(re_tag {}, @2)
+                                            |> tag(begin_outline_tag { @type = outline_type.simpleterm }, @1.begin)
+                                            |> tag(end_outline_tag { @type = outline_type.simpleterm }, @2.end);
+    and termtext                      -> scneario_term { location = @$, text = $2, type = scenario_term_type.and }
+                                            |> tag(re_tag {}, @2)
+                                            |> tag(begin_outline_tag { @type = outline_type.simpleterm }, @1.begin)
+                                            |> tag(end_outline_tag { @type = outline_type.simpleterm }, @2.end);
 };
 
 production TABLECOLS
@@ -335,7 +357,7 @@ production SCENARIO
 production SCENARIOS
 {
     SCENARIO                          -> [ $1 ];
-    SCENARIOS SCENARIO                -> $1 |> append $1;
+    SCENARIOS SCENARIO                -> $1 |> append $2;
 };
 
 production FEATURE

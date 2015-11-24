@@ -17,7 +17,7 @@ namespace davelexer
     class re_ast_or;
     class re_ast_cardinality;
     class lex_ast;
-    class lex_ast_binding;
+    class lex_ast_pattern;
     class lex_ast_section;
     class lex_ast_section_item;
     class lex_ast_import;
@@ -56,14 +56,14 @@ namespace davelexer
     class lex_ast_visitor abstract {
     public:
         virtual ~lex_ast_visitor() {}
-        virtual auto accept(lex_ast_binding*) -> void = 0;
+        virtual auto accept(lex_ast_pattern*) -> void = 0;
         virtual auto accept(lex_ast_section*) -> void = 0;
     };
 
     class const_lex_ast_visitor abstract {
     public:
         virtual ~const_lex_ast_visitor() {}
-        virtual auto accept(const lex_ast_binding*) -> void = 0;
+        virtual auto accept(const lex_ast_pattern*) -> void = 0;
         virtual auto accept(const lex_ast_section*) -> void = 0;
     };
 
@@ -254,20 +254,20 @@ namespace davelexer
         virtual auto accept(const_lex_ast_visitor *visitor) const -> void = 0;
     };
 
-    class lex_ast_binding sealed : public lex_ast{
+    class lex_ast_pattern sealed : public lex_ast{
     private:
         std::wstring _name;
         std::unique_ptr<re_ast> _ast;
     public:
-        lex_ast_binding() = delete;
-        lex_ast_binding(const lex_ast_binding&) = delete;
-        lex_ast_binding(lex_ast_binding&& c) 
+        lex_ast_pattern() = delete;
+        lex_ast_pattern(const lex_ast_pattern&) = delete;
+        lex_ast_pattern(lex_ast_pattern&& c) 
             : lex_ast(std::move(c)), _name(std::move(c._name)), _ast(std::move(c._ast))
         {}
-        lex_ast_binding(const container *cntr, const span &spn, const std::wstring &name, std::unique_ptr<re_ast> &&ast)
+        lex_ast_pattern(const container *cntr, const span &spn, const std::wstring &name, std::unique_ptr<re_ast> &&ast)
             : lex_ast(cntr, spn), _name(name), _ast(std::move(ast))
         {}
-        lex_ast_binding(const container *cntr, const span &spn, std::wstring &&name, std::unique_ptr<re_ast> &&ast)
+        lex_ast_pattern(const container *cntr, const span &spn, std::wstring &&name, std::unique_ptr<re_ast> &&ast)
             : lex_ast(cntr, spn), _name(std::move(name)), _ast(std::move(ast))
         {}
 
@@ -453,17 +453,16 @@ namespace davelexer
         wchar_t _first;
         wchar_t _last;
         size_t _to;
-        size_t _yield;
     public:
         fa_transition() = delete;
         fa_transition(const fa_transition &c)
-            : _from(c._from), _epsilon(c._epsilon), _eod(c._eod), _first(c._first), _last(c._last), _to(c._to), _yield(c._yield)
+            : _from(c._from), _epsilon(c._epsilon), _eod(c._eod), _first(c._first), _last(c._last), _to(c._to)
         {}
         fa_transition(fa_transition &&c)
-            : _from(c._from), _epsilon(c._epsilon), _eod(c._eod), _first(c._first), _last(c._last), _to(c._to), _yield(c._yield)
+            : _from(c._from), _epsilon(c._epsilon), _eod(c._eod), _first(c._first), _last(c._last), _to(c._to)
         {}
-        fa_transition(size_t from, bool epsilon, bool eod, wchar_t first, wchar_t last, size_t to, size_t yield)
-            : _from(from), _epsilon(epsilon), _eod(eod), _first(first), _last(last), _to(to), _yield(yield)
+        fa_transition(size_t from, bool epsilon, bool eod, wchar_t first, wchar_t last, size_t to)
+            : _from(from), _epsilon(epsilon), _eod(eod), _first(first), _last(last), _to(to)
         {}
 
         inline auto from() const -> size_t { return _from; }
@@ -472,10 +471,8 @@ namespace davelexer
         inline auto first() const -> wchar_t { return _first; }
         inline auto last() const -> wchar_t { return _last; }
         inline auto to() const -> size_t { return _to; }
-        inline auto yield() const -> size_t { return _yield; }
 
         inline auto to(size_t value) -> void { _to = value; }
-        inline auto yield(size_t value) -> void { _yield = value; }
 
         friend inline auto operator <(const fa_transition &t1, const fa_transition &t2) -> bool {
             if (t1.from() != t2.from()) return t1.from() < t2.from();
@@ -483,8 +480,7 @@ namespace davelexer
             if (t1.eod() != t2.eod()) return t2.eod();
             if (t1.first() != t2.first()) return t1.first() < t2.first();
             if (t1.last() != t2.last()) return t1.last() < t2.last();
-            if (t1.to() != t2.to()) return t1.to() < t2.to();
-            return t1.yield() < t2.yield();
+            return t1.to() < t2.to();
         }
     };
 }

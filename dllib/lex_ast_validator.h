@@ -13,7 +13,7 @@ namespace davelexer
     class lex_ast_validator sealed : public const_lex_ast_visitor{
     private:
         logger *_logger;
-        std::map<std::wstring, std::unique_ptr<re_ast>> _bindings;
+        std::map<std::wstring, std::unique_ptr<re_ast>> _patterns;
     public:
         lex_ast_validator(logger *logger)
             : _logger(logger), _ok(true)
@@ -22,8 +22,8 @@ namespace davelexer
 
         bool _ok;
 
-        virtual auto accept(const lex_ast_binding* ast) -> void override {
-            _bindings.emplace(std::move(ast->name()), std::move(ast->ast()));
+        virtual auto accept(const lex_ast_pattern* ast) -> void override {
+            _patterns.emplace(std::move(ast->name()), std::move(ast->ast()));
         }
         virtual auto accept(const lex_ast_section* ast) -> void override {
             class section_item_validator sealed : public const_lex_ast_section_item_visitor{
@@ -33,18 +33,18 @@ namespace davelexer
                     logger *_logger;
                     bool &_ok;
                     const container *_cntr;
-                    const std::map<std::wstring, std::unique_ptr<re_ast>> &_bindings;
+                    const std::map<std::wstring, std::unique_ptr<re_ast>> &_patterns;
                 public:
-                    re_validator(logger *logger, bool &ok, const container *cntr, const std::map<std::wstring, std::unique_ptr<re_ast>> &bindings)
-                        : _logger(logger), _ok(ok), _cntr(cntr), _bindings(bindings)
+                    re_validator(logger *logger, bool &ok, const container *cntr, const std::map<std::wstring, std::unique_ptr<re_ast>> &patterns)
+                        : _logger(logger), _ok(ok), _cntr(cntr), _patterns(patterns)
                     {}
                     virtual ~re_validator() {}
 
                     virtual auto accept(const re_ast_char_set_match* ast) -> void override {
                     }
                     virtual auto accept(const re_ast_reference* ast) -> void override {
-                        auto f = _bindings.find(ast->name());
-                        if (f == _bindings.end()) {
+                        auto f = _patterns.find(ast->name());
+                        if (f == _patterns.end()) {
                             log::error::expression_not_found(_logger, _cntr, ast->spn(), ast->name());
                             _ok = false;
                         }
@@ -67,10 +67,10 @@ namespace davelexer
 
                 class re_can_be_epsilon_only sealed : public const_re_ast_visitor{
                 private:
-                    const std::map<std::wstring, std::unique_ptr<re_ast>> &_bindings;
+                    const std::map<std::wstring, std::unique_ptr<re_ast>> &_patterns;
                 public:
-                    re_can_be_epsilon_only(const std::map<std::wstring, std::unique_ptr<re_ast>> &bindings)
-                        : _bindings(bindings)
+                    re_can_be_epsilon_only(const std::map<std::wstring, std::unique_ptr<re_ast>> &patterns)
+                        : _patterns(patterns)
                     {}
                     virtual ~re_can_be_epsilon_only() {}
 
@@ -80,8 +80,8 @@ namespace davelexer
                         _result = false;
                     }
                     virtual auto accept(const re_ast_reference* ast) -> void override {
-                        auto f = _bindings.find(ast->name());
-                        if (f == _bindings.end()) {
+                        auto f = _patterns.find(ast->name());
+                        if (f == _patterns.end()) {
                             _result = false;
                         }
                         else {
@@ -112,19 +112,19 @@ namespace davelexer
                 logger *_logger;
                 bool &_ok;
                 const container *_cntr;
-                const std::map<std::wstring, std::unique_ptr<re_ast>> &_bindings;
+                const std::map<std::wstring, std::unique_ptr<re_ast>> &_patterns;
             public:
-                section_item_validator(const std::wstring &token_name, logger *logger, bool &ok, const container* cntr, const std::map<std::wstring, std::unique_ptr<re_ast>> &bindings)
-                    : _token_name(token_name), _logger(logger), _ok(ok), _cntr(cntr), _bindings(bindings)
+                section_item_validator(const std::wstring &token_name, logger *logger, bool &ok, const container* cntr, const std::map<std::wstring, std::unique_ptr<re_ast>> &patterns)
+                    : _token_name(token_name), _logger(logger), _ok(ok), _cntr(cntr), _patterns(patterns)
                 {}
                 virtual ~section_item_validator() {}
                 virtual auto accept(const lex_ast_import* ast) -> void override {
                     // We will validate shared sections seperately
                 }
                 virtual auto accept(const lex_ast_token* ast) -> void override {
-                    re_validator rv(_logger, _ok, _cntr, _bindings);
+                    re_validator rv(_logger, _ok, _cntr, _patterns);
                     ast->ast()->accept(&rv);
-                    re_can_be_epsilon_only v(_bindings);
+                    re_can_be_epsilon_only v(_patterns);
                     ast->ast()->accept(&v);
                     if (v._result) {
                         log::error::re_must_process_something(_logger, _cntr, ast->spn(), _token_name);
@@ -132,9 +132,9 @@ namespace davelexer
                     }
                 }
                 virtual auto accept(const lex_ast_start* ast) -> void override {
-                    re_validator rv(_logger, _ok, _cntr, _bindings);
+                    re_validator rv(_logger, _ok, _cntr, _patterns);
                     ast->ast()->accept(&rv);
-                    re_can_be_epsilon_only v(_bindings);
+                    re_can_be_epsilon_only v(_patterns);
                     ast->ast()->accept(&v);
                     if (v._result) {
                         log::error::re_must_process_something(_logger, _cntr, ast->spn(), _token_name);
@@ -142,9 +142,9 @@ namespace davelexer
                     }
                 }
                 virtual auto accept(const lex_ast_return* ast) -> void override {
-                    re_validator rv(_logger, _ok, _cntr, _bindings);
+                    re_validator rv(_logger, _ok, _cntr, _patterns);
                     ast->ast()->accept(&rv);
-                    re_can_be_epsilon_only v(_bindings);
+                    re_can_be_epsilon_only v(_patterns);
                     ast->ast()->accept(&v);
                     if (v._result) {
                         log::error::re_must_process_something(_logger, _cntr, ast->spn(), _token_name);
@@ -154,7 +154,7 @@ namespace davelexer
             };
 
             for (auto &item : ast->items()) {
-                section_item_validator validator(ast->name(), _logger, _ok, ast->ctnr(), _bindings);
+                section_item_validator validator(ast->name(), _logger, _ok, ast->ctnr(), _patterns);
                 item->accept(&validator);
             }
         }

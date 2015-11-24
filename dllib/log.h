@@ -116,9 +116,9 @@ namespace davecommon
                 logger->write(severity::error, container, spn, stm.str());
             }
 
-            static auto binding_already_defined(logger *logger, const container *container, const span &spn, const std::wstring &name) -> void {
+            static auto pattern_already_defined(logger *logger, const container *container, const span &spn, const std::wstring &name) -> void {
                 std::wstringstream stm;
-                stm << L"The binding '" << name << "' was previously defined.";
+                stm << L"The pattern '" << name << "' was previously defined.";
                 logger->write(severity::error, container, spn, stm.str());
             }
         };

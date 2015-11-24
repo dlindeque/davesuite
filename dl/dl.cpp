@@ -51,8 +51,8 @@ int _tmain(int argc, _TCHAR* argv[])
 
     bool ok = true;
     
-    auto re1 = compile_re_ast(&tc, &cl, L"b+");
-    auto re2 = compile_re_ast(&tc, &cl, L".");
+    auto re1 = compile_re_ast(&tc, &cl, L"abc");
+    auto re2 = compile_re_ast(&tc, &cl, L"abcd");
     if (re1 != nullptr && re2 != nullptr) {
         nfa_builder g(&cl);
 
@@ -65,9 +65,9 @@ int _tmain(int argc, _TCHAR* argv[])
             std::wcout << "ERROR";
         }
         else {
-            auto dfa = dfa::try_compile(std::move(g), [](size_t s1, size_t s2) { return s1 < s2; });
-
-            graphviz::write_graph(std::wcout, dfa.token_yields(), dfa.tmap());
+            auto dfa = dfa::try_compile(std::move(g), [](state_yield s1, state_yield s2) { return s1; });
+            //graphviz::write_graph(std::wcout, g.transitions(), g.state_yields());
+            graphviz::write_graph(std::wcout, dfa.tmap(), dfa.state_yields());
         }
     }
 

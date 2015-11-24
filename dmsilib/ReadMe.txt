@@ -1,0 +1,1 @@
+Create a model/script style DSL to define the MSI
