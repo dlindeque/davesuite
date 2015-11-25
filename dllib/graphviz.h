@@ -15,9 +15,6 @@ namespace davelexer
             if (transition.epsilon()) {
                 os << L'.';
             }
-            else if (transition.eod()) {
-                os << L"<eod>";
-            }
             else if (transition.first() == 0 && transition.last() == WCHAR_MAX) {
                 os << L"<any>";
             }
@@ -35,9 +32,9 @@ namespace davelexer
         static inline auto write_graph(std::wostream &os, const std::vector<fa_transition> &transitions, const std::unordered_map<size_t, state_yield> &state_yields) -> std::wostream& {
             os << L"digraph fa {" << std::endl;
             for (auto &sy : state_yields) {
-                os << L"  \"" << (int)sy.first << L"\" [color=blue,label=\"" << (int)sy.first << L"\\n" << sy.second.token;
-                if (!sy.second.goto_section.empty()) {
-                    os << L"\ng " << sy.second.goto_section;
+                os << L"  \"" << (int)sy.first << L"\" [color=blue,label=\"" << (int)sy.first << L"\\n" << *sy.second.token;
+                if (sy.second.goto_section != nullptr) {
+                    os << L"\ng " << *sy.second.goto_section;
                 }
                 if (sy.second.pop) {
                     os << L"\npop";
@@ -55,9 +52,9 @@ namespace davelexer
         static inline auto write_graph(std::wostream &os, const std::unordered_map<size_t, std::vector<fa_transition>> &map, const std::unordered_map<size_t, state_yield> &state_yields) -> std::wostream& {
             os << L"digraph fa {" << std::endl;
             for (auto &sy : state_yields) {
-                os << L"  \"" << (int)sy.first << L"\" [color=blue,label=\"" << (int)sy.first << L"\\n" << sy.second.token;
-                if (!sy.second.goto_section.empty()) {
-                    os << L"\ng " << sy.second.goto_section;
+                os << L"  \"" << (int)sy.first << L"\" [color=blue,label=\"" << (int)sy.first << L"\\n" << *sy.second.token;
+                if (sy.second.goto_section != nullptr) {
+                    os << L"\ng " << *sy.second.goto_section;
                 }
                 if (sy.second.pop) {
                     os << L"\npop";

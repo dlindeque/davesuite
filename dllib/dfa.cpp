@@ -44,9 +44,7 @@ namespace davelexer
     struct dfa_guard {
         wchar_t first;
         wchar_t last;
-        bool eod;
         friend inline auto operator <(const dfa_guard &g1, const dfa_guard &g2) -> bool {
-            if (g1.eod != g2.eod) return g2.eod;
             if (g1.first != g2.first) return g1.first < g2.first;
             return g1.last < g2.last;
         }
@@ -54,6 +52,15 @@ namespace davelexer
 
     auto dfa::try_compile(nfa_builder &&nfa, const std::function<state_yield(const state_yield&, const state_yield&)> &conflict_resolver) -> dfa
     {
+        // find the goto section states
+        for (auto &gs : nfa._state_yields) {
+            if (gs.second.goto_section != nullptr) {
+                auto f = nfa._sections.find(*gs.second.goto_section);
+                assert(f != nfa._sections.end());
+                gs.second.goto_section_start = f->second;
+            }
+        }
+
 #pragma region Create DFA datastructure
         // Create a map for the rest of the processing
         dfa dfa;
@@ -64,11 +71,11 @@ namespace davelexer
             auto f = dfa._tmap.find(t.from());
             if (f == dfa._tmap.end()) {
                 std::vector<fa_transition> lst;
-                lst.emplace_back(t.from(), t.epsilon(), t.eod(), t.first(), t.last(), t.to());
+                lst.emplace_back(t.from(), t.epsilon(), t.first(), t.last(), t.to());
                 dfa._tmap.emplace(t.from(), std::move(lst));
             }
             else {
-                f->second.emplace_back(t.from(), t.epsilon(), t.eod(), t.first(), t.last(), t.to());
+                f->second.emplace_back(t.from(), t.epsilon(), t.first(), t.last(), t.to());
             }
         }
 #pragma endregion
@@ -115,7 +122,7 @@ namespace davelexer
                         eclosure_unprocessed.push_back(t.to());
                     }
                     else {
-                        lst.emplace_back(state, false, t.eod(), t.first(), t.last(), t.to());
+                        lst.emplace_back(state, false, t.first(), t.last(), t.to());
                     }
                 }
             }
@@ -138,37 +145,27 @@ namespace davelexer
             auto size = lst.size();
             size_t i = 0;
             while (i != size) {
-                if (lst[i].eod()) {
-                    // Nothing overlaps with <eod> (copy the transition)
-                    lst.emplace_back(state, false, true, lst[i].first(), lst[i].last(), lst[i].to());
+                // Find the split points for the transition
+                std::set<wchar_t> pts;
+                for (size_t p = i + 1; p != lst.size(); p++) {
+                    if (lst[p].first() > lst[i].first() && lst[p].first() <= lst[i].last()) {
+                        pts.emplace(lst[p].first() - 1);
+                    }
+                    if (lst[p].last() >= lst[i].first() && lst[p].last() < lst[i].last()) {
+                        pts.emplace(lst[p].last());
+                    }
+                }
+                // Split at each pts point
+                if (!pts.empty()) {
+                    wchar_t f = lst[i].first();
+                    for (auto &p : pts) {
+                        lst.emplace_back(state, false, f, p, lst[i].to());
+                        f = p + 1;
+                    }
+                    lst.emplace_back(state, false, f, lst[i].last(), lst[i].to());
                 }
                 else {
-                    // Find the split points for the transition
-                    std::set<wchar_t> pts;
-                    for (size_t p = i + 1; p != lst.size(); p++) {
-                        if (lst[p].eod()) {
-                            // nothing overlaps with <eod>
-                            continue;
-                        }
-                        if (lst[p].first() > lst[i].first() && lst[p].first() <= lst[i].last()) {
-                            pts.emplace(lst[p].first() - 1);
-                        }
-                        if (lst[p].last() >= lst[i].first() && lst[p].last() < lst[i].last()) {
-                            pts.emplace(lst[p].last());
-                        }
-                    }
-                    // Split at each pts point
-                    if (!pts.empty()) {
-                        wchar_t f = lst[i].first();
-                        for (auto &p : pts) {
-                            lst.emplace_back(state, false, false, f, p, lst[i].to());
-                            f = p + 1;
-                        }
-                        lst.emplace_back(state, false, false, f, lst[i].last(), lst[i].to());
-                    }
-                    else {
-                        lst.emplace_back(state, false, false, lst[i].first(), lst[i].last(), lst[i].to());
-                    }
+                    lst.emplace_back(state, false, lst[i].first(), lst[i].last(), lst[i].to());
                 }
 
                 // Process next
@@ -182,7 +179,6 @@ namespace davelexer
                 dfa_guard g;
                 g.first = lst[i].first();
                 g.last = lst[i].last();
-                g.eod = lst[i].eod();
                 auto f = groups.find(g);
                 if (f == groups.end()) {
                     std::vector<size_t> gv;
@@ -203,13 +199,13 @@ namespace davelexer
                     continue;
                 }
                 assert(g.second.size() > 1);
-                
+
                 // Create a new state for this guard
                 std::set<size_t> closure;
                 for (auto &gi : g.second) {
                     closure.emplace(lst[gi].to());
                 }
-            
+
                 auto cs = closures.emplace(closure, nfa._next_state);
                 if (cs.second) {
                     // new state
@@ -217,7 +213,7 @@ namespace davelexer
                     // copy all 'outbound' transitions of target states
                     for (auto &ts : closure) {
                         for (auto &ot : dfa._tmap[ts]) {
-                            dfa._tmap[cs.first->second].emplace_back(cs.first->second, ot.epsilon(), ot.eod(), ot.first(), ot.last(), ot.to());
+                            dfa._tmap[cs.first->second].emplace_back(cs.first->second, ot.epsilon(), ot.first(), ot.last(), ot.to());
                         }
                     }
                     // enqueue new state for processing
@@ -245,10 +241,10 @@ namespace davelexer
                         }
                     }
                 }
-            
+
                 // Setup a transition from s to the closure state
-                lst.emplace_back(state, false, g.first.eod, g.first.first, g.first.last, cs.first->second);
-            
+                lst.emplace_back(state, false, g.first.first, g.first.last, cs.first->second);
+
                 // record indexes to delete (later)
                 for (auto &gi : g.second) {
                     delete_indexes.emplace(gi);

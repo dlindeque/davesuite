@@ -449,25 +449,23 @@ namespace davelexer
     private:
         size_t _from;
         bool _epsilon;
-        bool _eod;
         wchar_t _first;
         wchar_t _last;
         size_t _to;
     public:
         fa_transition() = delete;
         fa_transition(const fa_transition &c)
-            : _from(c._from), _epsilon(c._epsilon), _eod(c._eod), _first(c._first), _last(c._last), _to(c._to)
+            : _from(c._from), _epsilon(c._epsilon), _first(c._first), _last(c._last), _to(c._to)
         {}
         fa_transition(fa_transition &&c)
-            : _from(c._from), _epsilon(c._epsilon), _eod(c._eod), _first(c._first), _last(c._last), _to(c._to)
+            : _from(c._from), _epsilon(c._epsilon), _first(c._first), _last(c._last), _to(c._to)
         {}
-        fa_transition(size_t from, bool epsilon, bool eod, wchar_t first, wchar_t last, size_t to)
-            : _from(from), _epsilon(epsilon), _eod(eod), _first(first), _last(last), _to(to)
+        fa_transition(size_t from, bool epsilon, wchar_t first, wchar_t last, size_t to)
+            : _from(from), _epsilon(epsilon), _first(first), _last(last), _to(to)
         {}
 
         inline auto from() const -> size_t { return _from; }
         inline auto epsilon() const -> bool { return _epsilon; }
-        inline auto eod() const -> bool { return _eod; }
         inline auto first() const -> wchar_t { return _first; }
         inline auto last() const -> wchar_t { return _last; }
         inline auto to() const -> size_t { return _to; }
@@ -477,7 +475,6 @@ namespace davelexer
         friend inline auto operator <(const fa_transition &t1, const fa_transition &t2) -> bool {
             if (t1.from() != t2.from()) return t1.from() < t2.from();
             if (t1.epsilon() != t2.epsilon()) return t2.epsilon();
-            if (t1.eod() != t2.eod()) return t2.eod();
             if (t1.first() != t2.first()) return t1.first() < t2.first();
             if (t1.last() != t2.last()) return t1.last() < t2.last();
             return t1.to() < t2.to();

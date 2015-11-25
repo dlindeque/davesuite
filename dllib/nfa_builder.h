@@ -16,8 +16,9 @@ using namespace davecommon;
 namespace davelexer
 {
     struct state_yield {
-        std::wstring token;
-        std::wstring goto_section;
+        std::shared_ptr<std::wstring> token;
+        std::shared_ptr<std::wstring> goto_section;
+        size_t goto_section_start;
         bool pop;
     };
 
@@ -33,6 +34,8 @@ namespace davelexer
         std::unordered_map<std::wstring, size_t> _sections;
         std::vector<fa_transition> _transitions;
         std::unordered_map<size_t, state_yield> _state_yields;
+        std::unordered_map<std::wstring, std::shared_ptr<std::wstring>> _tokens;
+        std::unordered_map<std::wstring, std::shared_ptr<std::wstring>> _section_names;
     public:
         nfa_builder(logger *logger)
             : _logger(logger), _ok(true), _next_state(0)

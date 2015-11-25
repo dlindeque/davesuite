@@ -48,6 +48,12 @@
     <ClInclude Include="nfa_builder.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="lexer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cpp_formatter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -68,5 +74,12 @@
     <ClCompile Include="nfa_builder.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="lexer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="dl.dl" />
+    <None Include="common.dlh" />
   </ItemGroup>
 </Project>

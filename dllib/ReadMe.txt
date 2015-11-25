@@ -7,22 +7,18 @@ Lexer File (*.dl)
 -------------------------------------------------------------------------------------------------------------------------------
 import "ds.dlh"; // We can import patterns, shared sections and script components from other sources
 
-// Settings
-set language = c++;
-set case-sensitive = off;
-
 // Numbers
-pattern positivedigit           = [1-9];
-pattern digit                   = [0-9];
-pattern integer                 = {positivedigit}{digit}*;
-pattern float                   = {integer}\.{digit}+;
+pattern positivedigit           = '[1-9]';
+pattern digit                   = '[0-9]';
+pattern integer                 = '{positivedigit}{digit}*';
+pattern float                   = '{integer}\.{digit}+';
 
 // Strings
-pattern cr                      = (\\r);
-pattern nl                      = (\\n);
-pattern otherctrl               = \\[^nr];
-pattern controls                = {cr}|{nl}|{otherctrl};
-pattern string                  = "([^\\]|{controls})*";
+pattern cr                      = '(\\r)';
+pattern nl                      = '(\\n)';
+pattern otherctrl               = '\\[^nr]';
+pattern controls                = '{cr}|{nl}|{otherctrl}';
+pattern string                  = '"([^\\]|{controls})*"';
 
 // Inline script will be evaluated and the output will form part of the compile like any other text, this means you can output more script!
 range "a" "d"
@@ -51,11 +47,26 @@ let escape = transform(tochars)
 external function int atoi(string s); // Implemented in each language
 external function double atof(string s);
 
+enum class brace_side {
+    start,
+    end
+};
+enum class brace_type {
+    braces,
+    parenthesis,
+    comment
+};
+class brace_tag { 
+    brace_side side,
+    brace_type bt 
+};
+
 shared section base_section {
-    token number            = {integer} -> atoi;
-    token number            = {float}   -> atof;
-    token string            = {string}  -> escape;
-    token comment goto comment = /\*;
+    token number            = {integer} -> atoi $;
+    token number            = {float}   -> atof $;
+    token string            = {string}  -> escape $;
+    token comment goto comment = /\*    -> $ 
+                                           |> tag(brace_tag { side = brace_side.start, bt = brace_type.comment }), @);
 };
 
 section default {
@@ -65,7 +76,7 @@ section default {
 
 section comment {
     token comment           = .*;
-    end comment             = \*/;
+    end comment             = \*/       -> $ |> tag(brace_tag { side = brace_side.end, bt = brace_type.comment }), @);
 };
 
 section grammar {

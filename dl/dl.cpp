@@ -5,11 +5,16 @@
 
 #include <sstream>
 #include <iostream>
+#include <fstream>
 
 #include "..\dllib\nfa_builder.h"
 #include "..\dllib\dfa.h"
 #include "..\dllib\model.h"
 #include "..\dllib\graphviz.h"
+#include "..\dllib\lexer.h"
+#include "..\dllib\cpp_formatter.h"
+
+#include "lexertest.h"
 
 class text_container : public davecommon::container {
 public:
@@ -37,11 +42,13 @@ protected:
     }
 };
 
-auto compile_re_ast(const container *cntr, logger *logger, const std::wstring &re)->std::unique_ptr < re_ast > {
+auto compile_re_ast(const container *cntr, logger *logger, const std::wstring &re, bool &ok)->std::unique_ptr < re_ast > {
     std::wstringstream src;
     src << re;
     src.seekg(0);
-    return re_try_parse(cntr, src, logger);
+    auto ast = re_try_parse(cntr, src, logger);
+    ok &= (ast != nullptr);
+    return ast;
 }
 
 int _tmain(int argc, _TCHAR* argv[])
@@ -51,14 +58,18 @@ int _tmain(int argc, _TCHAR* argv[])
 
     bool ok = true;
     
-    auto re1 = compile_re_ast(&tc, &cl, L"abc");
-    auto re2 = compile_re_ast(&tc, &cl, L"abcd");
-    if (re1 != nullptr && re2 != nullptr) {
+    auto re1 = compile_re_ast(&tc, &cl, L"[a-zA-Z_][a-zA-Z_0-9]*", ok);
+    auto re2 = compile_re_ast(&tc, &cl, L"(0|([1-9]\\d*)(\\.\\d+)?)", ok);
+    auto re3 = compile_re_ast(&tc, &cl, L"return", ok);
+    auto re4 = compile_re_ast(&tc, &cl, L"\\s+", ok);
+    if (ok) {
         nfa_builder g(&cl);
 
         std::vector<std::unique_ptr<lex_ast_section_item>> items;
-        items.push_back(std::unique_ptr<lex_ast_section_item>(new lex_ast_token(span(), L"t1", span(), std::move(re1))));
-        items.push_back(std::unique_ptr<lex_ast_section_item>(new lex_ast_token(span(), L"t2", span(), std::move(re2))));
+        items.emplace_back(new lex_ast_token(span(), L"identifier", span(), std::move(re1)));
+        items.emplace_back(new lex_ast_token(span(), L"number", span(), std::move(re2)));
+        items.emplace_back(new lex_ast_token(span(), L"return", span(), std::move(re3)));
+        items.emplace_back(new lex_ast_token(span(), L"whitespace", span(), std::move(re4)));
         lex_ast_section d(&tc, span(), false, L"default", std::move(items));
         d.accept(&g);
         if (!g._ok) {
@@ -67,7 +78,53 @@ int _tmain(int argc, _TCHAR* argv[])
         else {
             auto dfa = dfa::try_compile(std::move(g), [](state_yield s1, state_yield s2) { return s1; });
             //graphviz::write_graph(std::wcout, g.transitions(), g.state_yields());
-            graphviz::write_graph(std::wcout, dfa.tmap(), dfa.state_yields());
+            //graphviz::write_graph(std::wcout, dfa.tmap(), dfa.state_yields());
+
+            //std::unordered_map<std::wstring, std::wstring> settings;
+            //settings.emplace(L"namespace", L"testns");
+            //settings.emplace(L"class", L"testcls");
+            //settings.emplace(L"headerfn", L"lexertest.h");
+            //settings.emplace(L"tokenenum", L"testcls_token");
+            //cpp_formatter()(settings, dfa, std::wofstream("C:\\davecode\\davesuite\\dl\\lexertest.cpp"));
+
+
+            //lexer l(std::move(dfa));
+            testns::testcls l;
+            std::vector<size_t> statestack;
+            statestack.push_back(0);
+            std::wstringstream stm;
+            stm << "0return\n3.4 abc";
+            stm.seekg(0);
+            testns::testcls_token token;
+            std::wstring value;
+            bool is_eod;
+            span spn;
+            spn.end.line = 1;
+            spn.end.column = 1;
+            while (l(statestack, stm, token, value, is_eod, spn)) {
+                std::wcout << spn.begin.line << L':' << spn.begin.column << L'-' << spn.end.line << L':' << spn.end.column << L' ';
+                switch (token) {
+                case testns::testcls_token::identifier:
+                    std::wcout << "identifier";
+                    break;
+                case testns::testcls_token::number:
+                    std::wcout << "number";
+                    break;
+                case testns::testcls_token::return_:
+                    std::wcout << "return";
+                    break;
+                case testns::testcls_token::whitespace:
+                    std::wcout << "whitespace";
+                    break;
+                default:
+                    std::wcout << "???";
+                    break;
+                }
+                std::wcout << L" (" << value << L")" << std::endl;
+            }
+            if (!is_eod) {
+                std::wcout << "Unexpected characters" << std::endl;
+            }
         }
     }
 

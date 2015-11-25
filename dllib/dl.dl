@@ -1,0 +1,54 @@
+/*
+    Definition of the dl lexical structure.
+*/
+
+import "common.dlh";
+
+section default
+{
+    token whitespace            = '\s+';
+    token line-comment          = '{single-line-comment}';
+    token comment-start goto comment = '/*';
+    token @pattern              = 'pattern';
+    token identifier            = '@?{identifier}';
+    token equal                 = '=';
+    token re-start goto re      = '\'';
+    token semicolon             = ';';
+    token @shared               = 'shared';
+    token @section              = 'section';
+    token open-brace            = '{';
+    token close-brace           = '}';
+    token @include              = 'include';
+    token @token                = 'token';
+    token @goto                 = 'goto';
+    token @return               = 'return';
+    token @import               = 'import';
+    token string                = '{string}';
+};
+
+section comment
+{
+    token comment-content       = '([^*]+)|(*[^/])';
+    token comment-end return    = '*/';
+};
+
+section re
+{
+    token re-asterisk           = '\*';
+    token re-plus               = '\+';
+    token re-question           = '\?';
+    token re-open-parenthesis   = '\(';
+    token re-close-parenthesis  = '\)';
+    token re-pipe               = '\|';
+    token re-exclude-set        = '\[^'
+    token re-open-bracket       = '\[';
+    token re-close-bracket      = '\]';
+    token re-hyphen             = '-';
+    token re-dot                = '\.';
+    token re-reference          = '\{{identifier}\}';
+    token re-cardinality        = '\{';
+    token re-close-curly        = '\}';
+    token re-escaped            = '\\\d';
+    token re-char               = '.';
+    token re2 return            = '\'';
+};
