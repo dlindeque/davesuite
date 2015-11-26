@@ -28,6 +28,6 @@ namespace davelexer
         inline auto state_yields() const -> const std::unordered_map<size_t, state_yield>& { return _state_yields; }
 
         // The compile will destroy the nfa
-        static auto try_compile(nfa_builder &&nfa, const std::function<state_yield(const state_yield&, const state_yield&)> &conflict_resolver)->dfa;
+        static auto try_compile(nfa_builder &&nfa)->dfa;
     };
 }

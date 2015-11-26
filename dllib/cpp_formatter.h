@@ -2,6 +2,7 @@
 
 #include <ostream>
 #include <unordered_map>
+#include <iomanip>
 #include "dfa.h"
 
 namespace davelexer
@@ -10,7 +11,15 @@ namespace davelexer
     private:
         inline auto cpp_identifier(const std::wstring &value) -> std::wstring {
             if (value == L"return") return L"return_";
-            else return value;
+            if (value == L"goto") return L"goto_";
+            auto s = value;
+            for (auto &c : s) {
+                if (c <= L'z' && c >= L'a') continue;
+                if (c <= L'Z' && c >= L'A') continue;
+                if (c == L'_') continue;
+                c = L'_';
+            }
+            return s;
         }
         inline auto cpp_char(wchar_t ch) -> std::wstring {
             switch (ch) {
@@ -28,9 +37,53 @@ namespace davelexer
                 return L"\\b";
             default:
                 if (true) {
-                    std::wstring s;
-                    s += ch;
-                    return s;
+                    std::wstringstream s;
+                    switch (ch) {
+                    case L'!':
+                    case L'"':
+                    case L'£':
+                    case L'$':
+                    case L'%':
+                    case L'^':
+                    case L'&':
+                    case L'*':
+                    case L'(':
+                    case L')':
+                    case L'_':
+                    case L'-':
+                    case L'+':
+                    case L'=':
+                    case L'{':
+                    case L'}':
+                    case L'[':
+                    case L']':
+                    case L':':
+                    case L';':
+                    case L'@':
+                    case L'~':
+                    case L'#':
+                    case L'<':
+                    case L'>':
+                    case L',':
+                    case L'.':
+                    case L'?':
+                    case L'/':
+                    case L'|':
+                        s << ch;
+                        break;
+                    default:
+                        if ((ch >= L'a' && ch <= L'z')
+                            || (ch >= L'A' && ch <= L'Z')
+                            || (ch >= L'0' && ch <= L'9')) {
+                            s << ch;
+                        }
+                        else {
+                            auto sf = s.flags();
+                            s << L"\\x" << std::hex << std::setfill(L'0') << std::setw(4) << (int)ch;
+                            s.flags(sf);
+                        }
+                    }
+                    return s.str();
                 }
             }
         }

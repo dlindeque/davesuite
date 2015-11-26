@@ -50,7 +50,38 @@ namespace davelexer
         }
     };
 
-    auto dfa::try_compile(nfa_builder &&nfa, const std::function<state_yield(const state_yield&, const state_yield&)> &conflict_resolver) -> dfa
+    inline auto resolve_conflict(const nfa_builder &nfa, const state_yield &y1, const state_yield &y2) -> state_yield {
+        if (y1.token == nullptr) return y2;
+        auto p1 = nfa.precedences().find(*y1.token);
+        if (p1 == nfa.precedences().end()) return y2;
+        if (y2.token == nullptr) return y1;
+        auto p2 = nfa.precedences().find(*y2.token);
+        if (p2 == nfa.precedences().end()) return y1;
+        size_t i = 0;
+        while (true) {
+            if (p1->second.size() == i) return y2;
+            if (p2->second.size() == i) return y1;
+            if (p1->second[i].line != p2->second[i].line) {
+                if (p1->second[i].line < p2->second[i].line) {
+                    return y1;
+                }
+                else {
+                    return y2;
+                }
+            }
+            if (p1->second[i].column != p2->second[i].column) {
+                if (p1->second[i].column < p2->second[i].column) {
+                    return y1;
+                }
+                else {
+                    return y2;
+                }
+            }
+            i++;
+        }
+    }
+
+    auto dfa::try_compile(nfa_builder &&nfa) -> dfa
     {
         // find the goto section states
         for (auto &gs : nfa._state_yields) {
@@ -90,7 +121,9 @@ namespace davelexer
 #pragma region Make Deterministic
         std::map<std::set<size_t>, size_t> closures;
         std::vector<size_t> unprocessed;
-        unprocessed.push_back(0);
+        for (auto &s : nfa._sections) {
+            unprocessed.push_back(s.second);
+        }
         std::set<size_t> reachable;
         while (!unprocessed.empty()) {
             auto state = unprocessed.back();
@@ -130,7 +163,7 @@ namespace davelexer
                 auto sy = yields.back();
                 yields.pop_back();
                 while (!yields.empty()) {
-                    sy = conflict_resolver(sy, yields.back());
+                    sy = resolve_conflict(nfa, sy, yields.back());
                     yields.pop_back();
                 }
                 if (dfa._state_yields.find(state) == dfa._state_yields.end()) {
@@ -230,7 +263,7 @@ namespace davelexer
                         auto sy = nyields.back();
                         nyields.pop_back();
                         while (!nyields.empty()) {
-                            sy = conflict_resolver(sy, nyields.back());
+                            sy = resolve_conflict(nfa, sy, nyields.back());
                             nyields.pop_back();
                         }
                         if (dfa._state_yields.find(cs.first->second) == dfa._state_yields.end()) {

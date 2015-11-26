@@ -183,12 +183,17 @@ namespace davelexer
         std::unordered_map<size_t, state_yield> &_state_yields;
         std::unordered_map<std::wstring, std::shared_ptr<std::wstring>> &_tokens;
         std::unordered_map<std::wstring, std::shared_ptr<std::wstring>> &_section_names;
-        inline auto add_token_transitions(const std::shared_ptr<std::wstring> &token, const std::shared_ptr<std::wstring> &goto_section, bool pop, const std::unique_ptr<re_ast> &ast) -> void {
+        std::unordered_map<std::wstring, std::vector<position>> &_precedences;
+        std::vector<position> _current_precedence;
+        inline auto add_token_transitions(const std::shared_ptr<std::wstring> &token, const std::shared_ptr<std::wstring> &goto_section, bool pop, const std::unique_ptr<re_ast> &ast, const span &spn) -> void {
             // start - ast -> t(yield)
             auto t = _next_state++;
             re_ast_processor rep(_next_state, _transitions, _patterns, start, t, _ok, _logger, _cntr);
             ast->accept(&rep);
-            _state_yields.emplace(t, state_yield{ token, goto_section, pop });
+            _state_yields.emplace(t, state_yield{ token, goto_section, 0, pop });
+            std::vector<position> p(_current_precedence);
+            p.push_back(spn.begin);
+            _precedences.emplace(*token, std::move(p));
         }
         inline auto get_shared_str(std::unordered_map<std::wstring, std::shared_ptr<std::wstring>> &map, const std::wstring &value)->std::shared_ptr < std::wstring > {
             auto f = map.find(value);
@@ -207,10 +212,11 @@ namespace davelexer
             std::vector<fa_transition> &transitions,
             std::unordered_map<size_t, state_yield> &state_yields,
             std::unordered_map<std::wstring, std::shared_ptr<std::wstring>> &tokens,
-            std::unordered_map<std::wstring, std::shared_ptr<std::wstring>> &section_names)
+            std::unordered_map<std::wstring, std::shared_ptr<std::wstring>> &section_names,
+            std::unordered_map<std::wstring, std::vector<position>> &precedences)
             : _ok(ok), _cntr(cntr), _logger(logger), _next_state(next_state),
             _patterns(patterns), _shared_sections(shared_sections), _transitions(transitions),
-            _state_yields(state_yields), _tokens(tokens), _section_names(section_names)
+            _state_yields(state_yields), _tokens(tokens), _section_names(section_names), _precedences(precedences)
         {}
         virtual ~lex_ast_section_item_processor() {}
 
@@ -223,19 +229,21 @@ namespace davelexer
                 _ok = false;
             }
             else {
+                _current_precedence.push_back(ast->spn().begin);
                 for (auto &item : f->second) {
                     item->accept(this);
                 }
+                _current_precedence.pop_back();
             }
         }
         virtual auto accept(lex_ast_token* ast) -> void override {
-            add_token_transitions(get_shared_str(_tokens, ast->token_name()), nullptr, false, ast->ast());
+            add_token_transitions(get_shared_str(_tokens, ast->token_name()), nullptr, false, ast->ast(), ast->spn());
         }
         virtual auto accept(lex_ast_start* ast) -> void override {
-            add_token_transitions(get_shared_str(_tokens, ast->token_name()), get_shared_str(_section_names, ast->section_name()), false, ast->ast());
+            add_token_transitions(get_shared_str(_tokens, ast->token_name()), get_shared_str(_section_names, ast->section_name()), false, ast->ast(), ast->spn());
         }
         virtual auto accept(lex_ast_return* ast) -> void override {
-            add_token_transitions(get_shared_str(_tokens, ast->token_name()), nullptr, true, ast->ast());
+            add_token_transitions(get_shared_str(_tokens, ast->token_name()), nullptr, true, ast->ast(), ast->spn());
         }
     };
 
@@ -245,7 +253,7 @@ namespace davelexer
             _shared_sections.emplace(std::move(ast->name()), std::move(ast->items()));
         }
         else {
-            lex_ast_section_item_processor item_processor(_ok, ast->ctnr(), _logger, _next_state, _patterns, _shared_sections, _transitions, _state_yields, _tokens, _section_names);
+            lex_ast_section_item_processor item_processor(_ok, ast->ctnr(), _logger, _next_state, _patterns, _shared_sections, _transitions, _state_yields, _tokens, _section_names, _precedences);
             auto f = _sections.find(ast->name());
             if (f == _sections.end()) {
                 // Create the section

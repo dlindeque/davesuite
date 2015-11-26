@@ -2,13 +2,13 @@
     Definition of the dl lexical structure.
 */
 
-import "common.dlh";
+import "common.dl";
 
 section default
 {
     token whitespace            = '\s+';
     token line-comment          = '{single-line-comment}';
-    token comment-start goto comment = '/*';
+    token comment-start goto comment = '/\*';
     token @pattern              = 'pattern';
     token identifier            = '@?{identifier}';
     token equal                 = '=';
@@ -16,8 +16,8 @@ section default
     token semicolon             = ';';
     token @shared               = 'shared';
     token @section              = 'section';
-    token open-brace            = '{';
-    token close-brace           = '}';
+    token open-curly            = '{';
+    token close-curly           = '}';
     token @include              = 'include';
     token @token                = 'token';
     token @goto                 = 'goto';
@@ -28,8 +28,8 @@ section default
 
 section comment
 {
-    token comment-content       = '([^*]+)|(*[^/])';
-    token comment-end return    = '*/';
+    token comment-content       = '([^\*]+)|(\*[^/])';
+    token comment-end return    = '\*/';
 };
 
 section re

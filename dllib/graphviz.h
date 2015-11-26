@@ -34,10 +34,10 @@ namespace davelexer
             for (auto &sy : state_yields) {
                 os << L"  \"" << (int)sy.first << L"\" [color=blue,label=\"" << (int)sy.first << L"\\n" << *sy.second.token;
                 if (sy.second.goto_section != nullptr) {
-                    os << L"\ng " << *sy.second.goto_section;
+                    os << L"\\ng " << *sy.second.goto_section << L" (" << (int)sy.second.goto_section_start << L')';
                 }
                 if (sy.second.pop) {
-                    os << L"\npop";
+                    os << L"\\npop";
                 }
                 os << L"\"]" << std::endl;
             }
@@ -54,10 +54,10 @@ namespace davelexer
             for (auto &sy : state_yields) {
                 os << L"  \"" << (int)sy.first << L"\" [color=blue,label=\"" << (int)sy.first << L"\\n" << *sy.second.token;
                 if (sy.second.goto_section != nullptr) {
-                    os << L"\ng " << *sy.second.goto_section;
+                    os << L"\\ng " << *sy.second.goto_section << L" (" << (int)sy.second.goto_section_start << L')';
                 }
                 if (sy.second.pop) {
-                    os << L"\npop";
+                    os << L"\\npop";
                 }
                 os << L"\"]" << std::endl;
             }

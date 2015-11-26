@@ -36,6 +36,7 @@ namespace davelexer
         std::unordered_map<size_t, state_yield> _state_yields;
         std::unordered_map<std::wstring, std::shared_ptr<std::wstring>> _tokens;
         std::unordered_map<std::wstring, std::shared_ptr<std::wstring>> _section_names;
+        std::unordered_map<std::wstring, std::vector<position>> _precedences;
     public:
         nfa_builder(logger *logger)
             : _logger(logger), _ok(true), _next_state(0)
@@ -51,6 +52,7 @@ namespace davelexer
         inline auto transitions() const -> const std::vector<fa_transition>& { return  _transitions; }
         inline auto state_yields() const -> const std::unordered_map<size_t, state_yield>& { return _state_yields; }
         inline auto state_yields() -> std::unordered_map<size_t, state_yield>& { return _state_yields; }
+        inline auto precedences() const -> const std::unordered_map<std::wstring, std::vector<position>>& { return _precedences; }
 
         virtual auto accept(lex_ast_pattern* ast) -> void override {
             if (!_patterns.emplace(std::move(ast->name()), std::move(ast->ast())).second) {

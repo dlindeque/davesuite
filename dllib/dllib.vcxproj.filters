@@ -80,6 +80,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="dl.dl" />
-    <None Include="common.dlh" />
+    <None Include="common.dl" />
   </ItemGroup>
 </Project>
