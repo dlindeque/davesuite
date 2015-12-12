@@ -13,9 +13,9 @@ namespace testns
                     case 0:
                     case 7:
                     case 10:
-                    case 22:
-                    case 74:
-                    case 76:
+                    case 68:
+                    case 70:
+                    case 73:
                     case 77:
                     case 85:
                     case 102:
@@ -49,30 +49,30 @@ namespace testns
                         statestack.push_back(77);
                         token = testcls_token::comment_start;
                         return true;
-                    case 23:
-                        token = testcls_token::identifier;
-                        return true;
-                    case 25:
-                        token = testcls_token::identifier;
-                        return true;
-                    case 26:
+                    case 20:
                         token = testcls_token::equal;
                         return true;
-                    case 27:
+                    case 21:
                         statestack.push_back(85);
                         token = testcls_token::re_start;
                         return true;
-                    case 28:
+                    case 22:
                         token = testcls_token::semi_colon;
                         return true;
-                    case 42:
+                    case 36:
                         token = testcls_token::open_curly;
                         return true;
-                    case 43:
+                    case 37:
                         token = testcls_token::close_curly;
                         return true;
-                    case 72:
+                    case 66:
                         token = testcls_token::string;
+                        return true;
+                    case 74:
+                        token = testcls_token::identifier;
+                        return true;
+                    case 76:
+                        token = testcls_token::identifier;
                         return true;
                     case 78:
                         statestack.pop_back();
@@ -172,7 +172,7 @@ namespace testns
                         token = testcls_token::identifier;
                         return true;
                     case 134:
-                        token = testcls_token::identifier;
+                        token = testcls_token::token;
                         return true;
                     case 135:
                         token = testcls_token::identifier;
@@ -190,7 +190,7 @@ namespace testns
                         token = testcls_token::identifier;
                         return true;
                     case 140:
-                        token = testcls_token::identifier;
+                        token = testcls_token::shared;
                         return true;
                     case 141:
                         token = testcls_token::identifier;
@@ -205,7 +205,7 @@ namespace testns
                         token = testcls_token::identifier;
                         return true;
                     case 145:
-                        token = testcls_token::identifier;
+                        token = testcls_token::section;
                         return true;
                     case 146:
                         token = testcls_token::identifier;
@@ -220,7 +220,7 @@ namespace testns
                         token = testcls_token::identifier;
                         return true;
                     case 150:
-                        token = testcls_token::identifier;
+                        token = testcls_token::return_;
                         return true;
                     case 151:
                         token = testcls_token::identifier;
@@ -259,7 +259,7 @@ namespace testns
                         token = testcls_token::identifier;
                         return true;
                     case 163:
-                        token = testcls_token::identifier;
+                        token = testcls_token::include;
                         return true;
                     case 164:
                         token = testcls_token::identifier;
@@ -271,7 +271,7 @@ namespace testns
                         token = testcls_token::identifier;
                         return true;
                     case 167:
-                        token = testcls_token::identifier;
+                        token = testcls_token::import;
                         return true;
                     case 168:
                         token = testcls_token::identifier;
@@ -280,7 +280,7 @@ namespace testns
                         token = testcls_token::identifier;
                         return true;
                     case 170:
-                        token = testcls_token::identifier;
+                        token = testcls_token::goto_;
                         return true;
                     default:
                         assert(false); // Invalid state
@@ -320,11 +320,11 @@ namespace testns
                 switch (ch) {
                 case L'-':
                     helper::match_action(ch, value, spn);
-                    sstate = 25;
+                    sstate = 76;
                     break;
                 case L'_':
                     helper::match_action(ch, value, spn);
-                    sstate = 25;
+                    sstate = 76;
                     break;
                 case L'e':
                     helper::match_action(ch, value, spn);
@@ -333,19 +333,19 @@ namespace testns
                 default:
                     if (ch >= L'a' && ch <= L'd') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'f' && ch <= L'z') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'A' && ch <= L'Z') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'0' && ch <= L'9') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else {
                         stm.unget();
@@ -379,17 +379,17 @@ namespace testns
                     helper::match_action(ch, value, spn);
                     sstate = 2;
                     break;
-                case L'\x0020':
+                case L' ':
                     helper::match_action(ch, value, spn);
                     sstate = 2;
                     break;
                 case L'"':
                     helper::match_action(ch, value, spn);
-                    sstate = 74;
+                    sstate = 68;
                     break;
                 case L'\x0027':
                     helper::match_action(ch, value, spn);
-                    sstate = 27;
+                    sstate = 21;
                     break;
                 case L'/':
                     helper::match_action(ch, value, spn);
@@ -397,19 +397,19 @@ namespace testns
                     break;
                 case L';':
                     helper::match_action(ch, value, spn);
-                    sstate = 28;
+                    sstate = 22;
                     break;
                 case L'=':
                     helper::match_action(ch, value, spn);
-                    sstate = 26;
+                    sstate = 20;
                     break;
                 case L'@':
                     helper::match_action(ch, value, spn);
-                    sstate = 22;
+                    sstate = 73;
                     break;
                 case L'_':
                     helper::match_action(ch, value, spn);
-                    sstate = 23;
+                    sstate = 74;
                     break;
                 case L'g':
                     helper::match_action(ch, value, spn);
@@ -417,7 +417,7 @@ namespace testns
                     break;
                 case L'h':
                     helper::match_action(ch, value, spn);
-                    sstate = 23;
+                    sstate = 74;
                     break;
                 case L'i':
                     helper::match_action(ch, value, spn);
@@ -429,7 +429,7 @@ namespace testns
                     break;
                 case L'q':
                     helper::match_action(ch, value, spn);
-                    sstate = 23;
+                    sstate = 74;
                     break;
                 case L'r':
                     helper::match_action(ch, value, spn);
@@ -445,28 +445,28 @@ namespace testns
                     break;
                 case L'{':
                     helper::match_action(ch, value, spn);
-                    sstate = 42;
+                    sstate = 36;
                     break;
                 case L'}':
                     helper::match_action(ch, value, spn);
-                    sstate = 43;
+                    sstate = 37;
                     break;
                 default:
                     if (ch >= L'a' && ch <= L'f') {
                         helper::match_action(ch, value, spn);
-                        sstate = 23;
+                        sstate = 74;
                     }
                     else if (ch >= L'j' && ch <= L'o') {
                         helper::match_action(ch, value, spn);
-                        sstate = 23;
+                        sstate = 74;
                     }
                     else if (ch >= L'u' && ch <= L'z') {
                         helper::match_action(ch, value, spn);
-                        sstate = 23;
+                        sstate = 74;
                     }
                     else if (ch >= L'A' && ch <= L'Z') {
                         helper::match_action(ch, value, spn);
-                        sstate = 23;
+                        sstate = 74;
                     }
                     else {
                         stm.unget();
@@ -480,11 +480,11 @@ namespace testns
                 switch (ch) {
                 case L'-':
                     helper::match_action(ch, value, spn);
-                    sstate = 25;
+                    sstate = 76;
                     break;
                 case L'_':
                     helper::match_action(ch, value, spn);
-                    sstate = 25;
+                    sstate = 76;
                     break;
                 case L'o':
                     helper::match_action(ch, value, spn);
@@ -493,19 +493,19 @@ namespace testns
                 default:
                     if (ch >= L'a' && ch <= L'n') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'p' && ch <= L'z') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'A' && ch <= L'Z') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'0' && ch <= L'9') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else {
                         stm.unget();
@@ -539,7 +539,7 @@ namespace testns
                     helper::match_action(ch, value, spn);
                     sstate = 4;
                     break;
-                case L'\x0020':
+                case L' ':
                     helper::match_action(ch, value, spn);
                     sstate = 4;
                     break;
@@ -556,11 +556,11 @@ namespace testns
                 switch (ch) {
                 case L'-':
                     helper::match_action(ch, value, spn);
-                    sstate = 25;
+                    sstate = 76;
                     break;
                 case L'_':
                     helper::match_action(ch, value, spn);
-                    sstate = 25;
+                    sstate = 76;
                     break;
                 case L'e':
                     helper::match_action(ch, value, spn);
@@ -569,19 +569,19 @@ namespace testns
                 default:
                     if (ch >= L'a' && ch <= L'd') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'f' && ch <= L'z') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'A' && ch <= L'Z') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'0' && ch <= L'9') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else {
                         stm.unget();
@@ -615,7 +615,7 @@ namespace testns
                     helper::match_action(ch, value, spn);
                     sstate = 4;
                     break;
-                case L'\x0020':
+                case L' ':
                     helper::match_action(ch, value, spn);
                     sstate = 4;
                     break;
@@ -632,11 +632,11 @@ namespace testns
                 switch (ch) {
                 case L'-':
                     helper::match_action(ch, value, spn);
-                    sstate = 25;
+                    sstate = 76;
                     break;
                 case L'_':
                     helper::match_action(ch, value, spn);
-                    sstate = 25;
+                    sstate = 76;
                     break;
                 case L'k':
                     helper::match_action(ch, value, spn);
@@ -645,19 +645,19 @@ namespace testns
                 default:
                     if (ch >= L'a' && ch <= L'j') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'l' && ch <= L'z') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'A' && ch <= L'Z') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'0' && ch <= L'9') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else {
                         stm.unget();
@@ -673,11 +673,11 @@ namespace testns
                 switch (ch) {
                 case L'-':
                     helper::match_action(ch, value, spn);
-                    sstate = 25;
+                    sstate = 76;
                     break;
                 case L'_':
                     helper::match_action(ch, value, spn);
-                    sstate = 25;
+                    sstate = 76;
                     break;
                 case L'a':
                     helper::match_action(ch, value, spn);
@@ -686,15 +686,15 @@ namespace testns
                 default:
                     if (ch >= L'b' && ch <= L'z') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'A' && ch <= L'Z') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'0' && ch <= L'9') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else {
                         stm.unget();
@@ -710,11 +710,11 @@ namespace testns
                 switch (ch) {
                 case L'-':
                     helper::match_action(ch, value, spn);
-                    sstate = 25;
+                    sstate = 76;
                     break;
                 case L'_':
                     helper::match_action(ch, value, spn);
-                    sstate = 25;
+                    sstate = 76;
                     break;
                 case L'c':
                     helper::match_action(ch, value, spn);
@@ -723,19 +723,19 @@ namespace testns
                 default:
                     if (ch >= L'a' && ch <= L'b') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'd' && ch <= L'z') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'A' && ch <= L'Z') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'0' && ch <= L'9') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else {
                         stm.unget();
@@ -774,11 +774,11 @@ namespace testns
                 switch (ch) {
                 case L'-':
                     helper::match_action(ch, value, spn);
-                    sstate = 25;
+                    sstate = 76;
                     break;
                 case L'_':
                     helper::match_action(ch, value, spn);
-                    sstate = 25;
+                    sstate = 76;
                     break;
                 case L'e':
                     helper::match_action(ch, value, spn);
@@ -787,19 +787,19 @@ namespace testns
                 default:
                     if (ch >= L'a' && ch <= L'd') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'f' && ch <= L'z') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'A' && ch <= L'Z') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'0' && ch <= L'9') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else {
                         stm.unget();
@@ -838,11 +838,11 @@ namespace testns
                 switch (ch) {
                 case L'-':
                     helper::match_action(ch, value, spn);
-                    sstate = 25;
+                    sstate = 76;
                     break;
                 case L'_':
                     helper::match_action(ch, value, spn);
-                    sstate = 25;
+                    sstate = 76;
                     break;
                 case L'r':
                     helper::match_action(ch, value, spn);
@@ -851,19 +851,19 @@ namespace testns
                 default:
                     if (ch >= L'a' && ch <= L'q') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L's' && ch <= L'z') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'A' && ch <= L'Z') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'0' && ch <= L'9') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else {
                         stm.unget();
@@ -879,24 +879,24 @@ namespace testns
                 switch (ch) {
                 case L'-':
                     helper::match_action(ch, value, spn);
-                    sstate = 25;
+                    sstate = 76;
                     break;
                 case L'_':
                     helper::match_action(ch, value, spn);
-                    sstate = 25;
+                    sstate = 76;
                     break;
                 default:
                     if (ch >= L'a' && ch <= L'z') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'A' && ch <= L'Z') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'0' && ch <= L'9') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else {
                         stm.unget();
@@ -912,24 +912,24 @@ namespace testns
                 switch (ch) {
                 case L'-':
                     helper::match_action(ch, value, spn);
-                    sstate = 25;
+                    sstate = 76;
                     break;
                 case L'_':
                     helper::match_action(ch, value, spn);
-                    sstate = 25;
+                    sstate = 76;
                     break;
                 default:
                     if (ch >= L'a' && ch <= L'z') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'A' && ch <= L'Z') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'0' && ch <= L'9') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else {
                         stm.unget();
@@ -945,11 +945,11 @@ namespace testns
                 switch (ch) {
                 case L'-':
                     helper::match_action(ch, value, spn);
-                    sstate = 25;
+                    sstate = 76;
                     break;
                 case L'_':
                     helper::match_action(ch, value, spn);
-                    sstate = 25;
+                    sstate = 76;
                     break;
                 case L'o':
                     helper::match_action(ch, value, spn);
@@ -958,19 +958,19 @@ namespace testns
                 default:
                     if (ch >= L'a' && ch <= L'n') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'p' && ch <= L'z') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'A' && ch <= L'Z') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'0' && ch <= L'9') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else {
                         stm.unget();
@@ -986,11 +986,11 @@ namespace testns
                 switch (ch) {
                 case L'-':
                     helper::match_action(ch, value, spn);
-                    sstate = 25;
+                    sstate = 76;
                     break;
                 case L'_':
                     helper::match_action(ch, value, spn);
-                    sstate = 25;
+                    sstate = 76;
                     break;
                 case L'i':
                     helper::match_action(ch, value, spn);
@@ -999,19 +999,19 @@ namespace testns
                 default:
                     if (ch >= L'a' && ch <= L'h') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'j' && ch <= L'z') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'A' && ch <= L'Z') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'0' && ch <= L'9') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else {
                         stm.unget();
@@ -1023,20 +1023,28 @@ namespace testns
                 rewind_count = 0;
                 rewind_position = spn.end;
                 break;
-            case 22:
+            case 68:
                 switch (ch) {
-                case L'_':
+                case L'"':
                     helper::match_action(ch, value, spn);
-                    sstate = 23;
+                    sstate = 66;
+                    break;
+                case L'.':
+                    helper::match_action(ch, value, spn);
+                    sstate = 171;
                     break;
                 default:
-                    if (ch >= L'a' && ch <= L'z') {
+                    if (ch >= L'\x0000' && ch <= L'!') {
                         helper::match_action(ch, value, spn);
-                        sstate = 23;
+                        sstate = 70;
                     }
-                    else if (ch >= L'A' && ch <= L'Z') {
+                    else if (ch >= L'#' && ch <= L'-') {
                         helper::match_action(ch, value, spn);
-                        sstate = 23;
+                        sstate = 70;
+                    }
+                    else if (ch >= L'/' && ch <= L'\xffff') {
+                        helper::match_action(ch, value, spn);
+                        sstate = 70;
                     }
                     else {
                         stm.unget();
@@ -1046,28 +1054,28 @@ namespace testns
                 }
                 rewind_count++;
                 break;
-            case 23:
+            case 70:
                 switch (ch) {
-                case L'-':
+                case L'"':
                     helper::match_action(ch, value, spn);
-                    sstate = 25;
+                    sstate = 66;
                     break;
-                case L'_':
+                case L'.':
                     helper::match_action(ch, value, spn);
-                    sstate = 25;
+                    sstate = 171;
                     break;
                 default:
-                    if (ch >= L'a' && ch <= L'z') {
+                    if (ch >= L'\x0000' && ch <= L'!') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 70;
                     }
-                    else if (ch >= L'A' && ch <= L'Z') {
+                    else if (ch >= L'#' && ch <= L'-') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 70;
                     }
-                    else if (ch >= L'0' && ch <= L'9') {
+                    else if (ch >= L'/' && ch <= L'\xffff') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 70;
                     }
                     else {
                         stm.unget();
@@ -1075,32 +1083,22 @@ namespace testns
                     }
                     break;
                 }
-                rewind_state = 23;
-                rewind_count = 0;
-                rewind_position = spn.end;
+                rewind_count++;
                 break;
-            case 25:
+            case 73:
                 switch (ch) {
-                case L'-':
-                    helper::match_action(ch, value, spn);
-                    sstate = 25;
-                    break;
                 case L'_':
                     helper::match_action(ch, value, spn);
-                    sstate = 25;
+                    sstate = 74;
                     break;
                 default:
                     if (ch >= L'a' && ch <= L'z') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 74;
                     }
                     else if (ch >= L'A' && ch <= L'Z') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
-                    }
-                    else if (ch >= L'0' && ch <= L'9') {
-                        helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 74;
                     }
                     else {
                         stm.unget();
@@ -1108,30 +1106,28 @@ namespace testns
                     }
                     break;
                 }
-                rewind_state = 25;
-                rewind_count = 0;
-                rewind_position = spn.end;
+                rewind_count++;
                 break;
             case 74:
                 switch (ch) {
-                case L'"':
+                case L'-':
                     helper::match_action(ch, value, spn);
-                    sstate = 72;
+                    sstate = 76;
                     break;
-                case L'.':
+                case L'_':
                     helper::match_action(ch, value, spn);
-                    sstate = 171;
+                    sstate = 76;
                     break;
                 default:
-                    if (ch >= L'\x0000' && ch <= L'!') {
+                    if (ch >= L'a' && ch <= L'z') {
                         helper::match_action(ch, value, spn);
                         sstate = 76;
                     }
-                    else if (ch >= L'#' && ch <= L'-') {
+                    else if (ch >= L'A' && ch <= L'Z') {
                         helper::match_action(ch, value, spn);
                         sstate = 76;
                     }
-                    else if (ch >= L'/' && ch <= L'\xffff') {
+                    else if (ch >= L'0' && ch <= L'9') {
                         helper::match_action(ch, value, spn);
                         sstate = 76;
                     }
@@ -1141,28 +1137,30 @@ namespace testns
                     }
                     break;
                 }
-                rewind_count++;
+                rewind_state = 74;
+                rewind_count = 0;
+                rewind_position = spn.end;
                 break;
             case 76:
                 switch (ch) {
-                case L'"':
+                case L'-':
                     helper::match_action(ch, value, spn);
-                    sstate = 72;
+                    sstate = 76;
                     break;
-                case L'.':
+                case L'_':
                     helper::match_action(ch, value, spn);
-                    sstate = 171;
+                    sstate = 76;
                     break;
                 default:
-                    if (ch >= L'\x0000' && ch <= L'!') {
+                    if (ch >= L'a' && ch <= L'z') {
                         helper::match_action(ch, value, spn);
                         sstate = 76;
                     }
-                    else if (ch >= L'#' && ch <= L'-') {
+                    else if (ch >= L'A' && ch <= L'Z') {
                         helper::match_action(ch, value, spn);
                         sstate = 76;
                     }
-                    else if (ch >= L'/' && ch <= L'\xffff') {
+                    else if (ch >= L'0' && ch <= L'9') {
                         helper::match_action(ch, value, spn);
                         sstate = 76;
                     }
@@ -1172,7 +1170,9 @@ namespace testns
                     }
                     break;
                 }
-                rewind_count++;
+                rewind_state = 76;
+                rewind_count = 0;
+                rewind_position = spn.end;
                 break;
             case 77:
                 switch (ch) {
@@ -1571,11 +1571,11 @@ namespace testns
                 switch (ch) {
                 case L'-':
                     helper::match_action(ch, value, spn);
-                    sstate = 25;
+                    sstate = 76;
                     break;
                 case L'_':
                     helper::match_action(ch, value, spn);
-                    sstate = 25;
+                    sstate = 76;
                     break;
                 case L'o':
                     helper::match_action(ch, value, spn);
@@ -1584,19 +1584,19 @@ namespace testns
                 default:
                     if (ch >= L'a' && ch <= L'n') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'p' && ch <= L'z') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'A' && ch <= L'Z') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'0' && ch <= L'9') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else {
                         stm.unget();
@@ -1612,11 +1612,11 @@ namespace testns
                 switch (ch) {
                 case L'-':
                     helper::match_action(ch, value, spn);
-                    sstate = 25;
+                    sstate = 76;
                     break;
                 case L'_':
                     helper::match_action(ch, value, spn);
-                    sstate = 25;
+                    sstate = 76;
                     break;
                 case L'm':
                     helper::match_action(ch, value, spn);
@@ -1629,19 +1629,19 @@ namespace testns
                 default:
                     if (ch >= L'a' && ch <= L'l') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'o' && ch <= L'z') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'A' && ch <= L'Z') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'0' && ch <= L'9') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else {
                         stm.unget();
@@ -1657,11 +1657,11 @@ namespace testns
                 switch (ch) {
                 case L'-':
                     helper::match_action(ch, value, spn);
-                    sstate = 25;
+                    sstate = 76;
                     break;
                 case L'_':
                     helper::match_action(ch, value, spn);
-                    sstate = 25;
+                    sstate = 76;
                     break;
                 case L'a':
                     helper::match_action(ch, value, spn);
@@ -1670,15 +1670,15 @@ namespace testns
                 default:
                     if (ch >= L'b' && ch <= L'z') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'A' && ch <= L'Z') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'0' && ch <= L'9') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else {
                         stm.unget();
@@ -1694,11 +1694,11 @@ namespace testns
                 switch (ch) {
                 case L'-':
                     helper::match_action(ch, value, spn);
-                    sstate = 25;
+                    sstate = 76;
                     break;
                 case L'_':
                     helper::match_action(ch, value, spn);
-                    sstate = 25;
+                    sstate = 76;
                     break;
                 case L'e':
                     helper::match_action(ch, value, spn);
@@ -1711,23 +1711,23 @@ namespace testns
                 default:
                     if (ch >= L'a' && ch <= L'd') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'f' && ch <= L'g') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'i' && ch <= L'z') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'A' && ch <= L'Z') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'0' && ch <= L'9') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else {
                         stm.unget();
@@ -1739,17 +1739,17 @@ namespace testns
                 rewind_count = 0;
                 rewind_position = spn.end;
                 break;
-            case 43:
+            case 37:
                 stm.unget();
                 return helper::no_match_action(sstate, statestack, stm, token, value, is_eod, spn, rewind_state, rewind_count, rewind_position);
-                rewind_state = 43;
+                rewind_state = 37;
                 rewind_count = 0;
                 rewind_position = spn.end;
                 break;
-            case 42:
+            case 36:
                 stm.unget();
                 return helper::no_match_action(sstate, statestack, stm, token, value, is_eod, spn, rewind_state, rewind_count, rewind_position);
-                rewind_state = 42;
+                rewind_state = 36;
                 rewind_count = 0;
                 rewind_position = spn.end;
                 break;
@@ -1757,11 +1757,11 @@ namespace testns
                 switch (ch) {
                 case L'-':
                     helper::match_action(ch, value, spn);
-                    sstate = 25;
+                    sstate = 76;
                     break;
                 case L'_':
                     helper::match_action(ch, value, spn);
-                    sstate = 25;
+                    sstate = 76;
                     break;
                 case L'n':
                     helper::match_action(ch, value, spn);
@@ -1770,19 +1770,19 @@ namespace testns
                 default:
                     if (ch >= L'a' && ch <= L'm') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'o' && ch <= L'z') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'A' && ch <= L'Z') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'0' && ch <= L'9') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else {
                         stm.unget();
@@ -1798,11 +1798,11 @@ namespace testns
                 switch (ch) {
                 case L'-':
                     helper::match_action(ch, value, spn);
-                    sstate = 25;
+                    sstate = 76;
                     break;
                 case L'_':
                     helper::match_action(ch, value, spn);
-                    sstate = 25;
+                    sstate = 76;
                     break;
                 case L'd':
                     helper::match_action(ch, value, spn);
@@ -1811,19 +1811,19 @@ namespace testns
                 default:
                     if (ch >= L'a' && ch <= L'c') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'e' && ch <= L'z') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'A' && ch <= L'Z') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'0' && ch <= L'9') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else {
                         stm.unget();
@@ -1839,11 +1839,11 @@ namespace testns
                 switch (ch) {
                 case L'-':
                     helper::match_action(ch, value, spn);
-                    sstate = 25;
+                    sstate = 76;
                     break;
                 case L'_':
                     helper::match_action(ch, value, spn);
-                    sstate = 25;
+                    sstate = 76;
                     break;
                 case L't':
                     helper::match_action(ch, value, spn);
@@ -1852,19 +1852,19 @@ namespace testns
                 default:
                     if (ch >= L'a' && ch <= L's') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'u' && ch <= L'z') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'A' && ch <= L'Z') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'0' && ch <= L'9') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else {
                         stm.unget();
@@ -1880,11 +1880,11 @@ namespace testns
                 switch (ch) {
                 case L'-':
                     helper::match_action(ch, value, spn);
-                    sstate = 25;
+                    sstate = 76;
                     break;
                 case L'_':
                     helper::match_action(ch, value, spn);
-                    sstate = 25;
+                    sstate = 76;
                     break;
                 case L'n':
                     helper::match_action(ch, value, spn);
@@ -1893,19 +1893,19 @@ namespace testns
                 default:
                     if (ch >= L'a' && ch <= L'm') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'o' && ch <= L'z') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'A' && ch <= L'Z') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'0' && ch <= L'9') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else {
                         stm.unget();
@@ -1921,24 +1921,24 @@ namespace testns
                 switch (ch) {
                 case L'-':
                     helper::match_action(ch, value, spn);
-                    sstate = 25;
+                    sstate = 76;
                     break;
                 case L'_':
                     helper::match_action(ch, value, spn);
-                    sstate = 25;
+                    sstate = 76;
                     break;
                 default:
                     if (ch >= L'a' && ch <= L'z') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'A' && ch <= L'Z') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'0' && ch <= L'9') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else {
                         stm.unget();
@@ -1954,11 +1954,11 @@ namespace testns
                 switch (ch) {
                 case L'-':
                     helper::match_action(ch, value, spn);
-                    sstate = 25;
+                    sstate = 76;
                     break;
                 case L'_':
                     helper::match_action(ch, value, spn);
-                    sstate = 25;
+                    sstate = 76;
                     break;
                 case L't':
                     helper::match_action(ch, value, spn);
@@ -1967,19 +1967,19 @@ namespace testns
                 default:
                     if (ch >= L'a' && ch <= L's') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'u' && ch <= L'z') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'A' && ch <= L'Z') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'0' && ch <= L'9') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else {
                         stm.unget();
@@ -1995,11 +1995,11 @@ namespace testns
                 switch (ch) {
                 case L'-':
                     helper::match_action(ch, value, spn);
-                    sstate = 25;
+                    sstate = 76;
                     break;
                 case L'_':
                     helper::match_action(ch, value, spn);
-                    sstate = 25;
+                    sstate = 76;
                     break;
                 case L'u':
                     helper::match_action(ch, value, spn);
@@ -2008,19 +2008,19 @@ namespace testns
                 default:
                     if (ch >= L'a' && ch <= L't') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'v' && ch <= L'z') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'A' && ch <= L'Z') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'0' && ch <= L'9') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else {
                         stm.unget();
@@ -2036,11 +2036,11 @@ namespace testns
                 switch (ch) {
                 case L'-':
                     helper::match_action(ch, value, spn);
-                    sstate = 25;
+                    sstate = 76;
                     break;
                 case L'_':
                     helper::match_action(ch, value, spn);
-                    sstate = 25;
+                    sstate = 76;
                     break;
                 case L'r':
                     helper::match_action(ch, value, spn);
@@ -2049,19 +2049,19 @@ namespace testns
                 default:
                     if (ch >= L'a' && ch <= L'q') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L's' && ch <= L'z') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'A' && ch <= L'Z') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'0' && ch <= L'9') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else {
                         stm.unget();
@@ -2077,11 +2077,11 @@ namespace testns
                 switch (ch) {
                 case L'-':
                     helper::match_action(ch, value, spn);
-                    sstate = 25;
+                    sstate = 76;
                     break;
                 case L'_':
                     helper::match_action(ch, value, spn);
-                    sstate = 25;
+                    sstate = 76;
                     break;
                 case L'n':
                     helper::match_action(ch, value, spn);
@@ -2090,19 +2090,19 @@ namespace testns
                 default:
                     if (ch >= L'a' && ch <= L'm') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'o' && ch <= L'z') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'A' && ch <= L'Z') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'0' && ch <= L'9') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else {
                         stm.unget();
@@ -2118,24 +2118,24 @@ namespace testns
                 switch (ch) {
                 case L'-':
                     helper::match_action(ch, value, spn);
-                    sstate = 25;
+                    sstate = 76;
                     break;
                 case L'_':
                     helper::match_action(ch, value, spn);
-                    sstate = 25;
+                    sstate = 76;
                     break;
                 default:
                     if (ch >= L'a' && ch <= L'z') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'A' && ch <= L'Z') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'0' && ch <= L'9') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else {
                         stm.unget();
@@ -2151,11 +2151,11 @@ namespace testns
                 switch (ch) {
                 case L'-':
                     helper::match_action(ch, value, spn);
-                    sstate = 25;
+                    sstate = 76;
                     break;
                 case L'_':
                     helper::match_action(ch, value, spn);
-                    sstate = 25;
+                    sstate = 76;
                     break;
                 case L't':
                     helper::match_action(ch, value, spn);
@@ -2164,19 +2164,19 @@ namespace testns
                 default:
                     if (ch >= L'a' && ch <= L's') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'u' && ch <= L'z') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'A' && ch <= L'Z') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'0' && ch <= L'9') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else {
                         stm.unget();
@@ -2192,11 +2192,11 @@ namespace testns
                 switch (ch) {
                 case L'-':
                     helper::match_action(ch, value, spn);
-                    sstate = 25;
+                    sstate = 76;
                     break;
                 case L'_':
                     helper::match_action(ch, value, spn);
-                    sstate = 25;
+                    sstate = 76;
                     break;
                 case L't':
                     helper::match_action(ch, value, spn);
@@ -2205,19 +2205,19 @@ namespace testns
                 default:
                     if (ch >= L'a' && ch <= L's') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'u' && ch <= L'z') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'A' && ch <= L'Z') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'0' && ch <= L'9') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else {
                         stm.unget();
@@ -2233,11 +2233,11 @@ namespace testns
                 switch (ch) {
                 case L'-':
                     helper::match_action(ch, value, spn);
-                    sstate = 25;
+                    sstate = 76;
                     break;
                 case L'_':
                     helper::match_action(ch, value, spn);
-                    sstate = 25;
+                    sstate = 76;
                     break;
                 case L'e':
                     helper::match_action(ch, value, spn);
@@ -2246,19 +2246,19 @@ namespace testns
                 default:
                     if (ch >= L'a' && ch <= L'd') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'f' && ch <= L'z') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'A' && ch <= L'Z') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'0' && ch <= L'9') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else {
                         stm.unget();
@@ -2274,11 +2274,11 @@ namespace testns
                 switch (ch) {
                 case L'-':
                     helper::match_action(ch, value, spn);
-                    sstate = 25;
+                    sstate = 76;
                     break;
                 case L'_':
                     helper::match_action(ch, value, spn);
-                    sstate = 25;
+                    sstate = 76;
                     break;
                 case L'r':
                     helper::match_action(ch, value, spn);
@@ -2287,19 +2287,19 @@ namespace testns
                 default:
                     if (ch >= L'a' && ch <= L'q') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L's' && ch <= L'z') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'A' && ch <= L'Z') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'0' && ch <= L'9') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else {
                         stm.unget();
@@ -2315,11 +2315,11 @@ namespace testns
                 switch (ch) {
                 case L'-':
                     helper::match_action(ch, value, spn);
-                    sstate = 25;
+                    sstate = 76;
                     break;
                 case L'_':
                     helper::match_action(ch, value, spn);
-                    sstate = 25;
+                    sstate = 76;
                     break;
                 case L'n':
                     helper::match_action(ch, value, spn);
@@ -2328,19 +2328,19 @@ namespace testns
                 default:
                     if (ch >= L'a' && ch <= L'm') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'o' && ch <= L'z') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'A' && ch <= L'Z') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'0' && ch <= L'9') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else {
                         stm.unget();
@@ -2356,24 +2356,24 @@ namespace testns
                 switch (ch) {
                 case L'-':
                     helper::match_action(ch, value, spn);
-                    sstate = 25;
+                    sstate = 76;
                     break;
                 case L'_':
                     helper::match_action(ch, value, spn);
-                    sstate = 25;
+                    sstate = 76;
                     break;
                 default:
                     if (ch >= L'a' && ch <= L'z') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'A' && ch <= L'Z') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'0' && ch <= L'9') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else {
                         stm.unget();
@@ -2389,11 +2389,11 @@ namespace testns
                 switch (ch) {
                 case L'-':
                     helper::match_action(ch, value, spn);
-                    sstate = 25;
+                    sstate = 76;
                     break;
                 case L'_':
                     helper::match_action(ch, value, spn);
-                    sstate = 25;
+                    sstate = 76;
                     break;
                 case L'p':
                     helper::match_action(ch, value, spn);
@@ -2402,19 +2402,19 @@ namespace testns
                 default:
                     if (ch >= L'a' && ch <= L'o') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'q' && ch <= L'z') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'A' && ch <= L'Z') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'0' && ch <= L'9') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else {
                         stm.unget();
@@ -2430,11 +2430,11 @@ namespace testns
                 switch (ch) {
                 case L'-':
                     helper::match_action(ch, value, spn);
-                    sstate = 25;
+                    sstate = 76;
                     break;
                 case L'_':
                     helper::match_action(ch, value, spn);
-                    sstate = 25;
+                    sstate = 76;
                     break;
                 case L'c':
                     helper::match_action(ch, value, spn);
@@ -2443,19 +2443,19 @@ namespace testns
                 default:
                     if (ch >= L'a' && ch <= L'b') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'd' && ch <= L'z') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'A' && ch <= L'Z') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'0' && ch <= L'9') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else {
                         stm.unget();
@@ -2471,11 +2471,11 @@ namespace testns
                 switch (ch) {
                 case L'-':
                     helper::match_action(ch, value, spn);
-                    sstate = 25;
+                    sstate = 76;
                     break;
                 case L'_':
                     helper::match_action(ch, value, spn);
-                    sstate = 25;
+                    sstate = 76;
                     break;
                 case L'l':
                     helper::match_action(ch, value, spn);
@@ -2484,19 +2484,19 @@ namespace testns
                 default:
                     if (ch >= L'a' && ch <= L'k') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'm' && ch <= L'z') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'A' && ch <= L'Z') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'0' && ch <= L'9') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else {
                         stm.unget();
@@ -2512,11 +2512,11 @@ namespace testns
                 switch (ch) {
                 case L'-':
                     helper::match_action(ch, value, spn);
-                    sstate = 25;
+                    sstate = 76;
                     break;
                 case L'_':
                     helper::match_action(ch, value, spn);
-                    sstate = 25;
+                    sstate = 76;
                     break;
                 case L'u':
                     helper::match_action(ch, value, spn);
@@ -2525,19 +2525,19 @@ namespace testns
                 default:
                     if (ch >= L'a' && ch <= L't') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'v' && ch <= L'z') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'A' && ch <= L'Z') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'0' && ch <= L'9') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else {
                         stm.unget();
@@ -2553,11 +2553,11 @@ namespace testns
                 switch (ch) {
                 case L'-':
                     helper::match_action(ch, value, spn);
-                    sstate = 25;
+                    sstate = 76;
                     break;
                 case L'_':
                     helper::match_action(ch, value, spn);
-                    sstate = 25;
+                    sstate = 76;
                     break;
                 case L'd':
                     helper::match_action(ch, value, spn);
@@ -2566,19 +2566,19 @@ namespace testns
                 default:
                     if (ch >= L'a' && ch <= L'c') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'e' && ch <= L'z') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'A' && ch <= L'Z') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'0' && ch <= L'9') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else {
                         stm.unget();
@@ -2594,11 +2594,11 @@ namespace testns
                 switch (ch) {
                 case L'-':
                     helper::match_action(ch, value, spn);
-                    sstate = 25;
+                    sstate = 76;
                     break;
                 case L'_':
                     helper::match_action(ch, value, spn);
-                    sstate = 25;
+                    sstate = 76;
                     break;
                 case L'e':
                     helper::match_action(ch, value, spn);
@@ -2607,19 +2607,19 @@ namespace testns
                 default:
                     if (ch >= L'a' && ch <= L'd') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'f' && ch <= L'z') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'A' && ch <= L'Z') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'0' && ch <= L'9') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else {
                         stm.unget();
@@ -2635,24 +2635,24 @@ namespace testns
                 switch (ch) {
                 case L'-':
                     helper::match_action(ch, value, spn);
-                    sstate = 25;
+                    sstate = 76;
                     break;
                 case L'_':
                     helper::match_action(ch, value, spn);
-                    sstate = 25;
+                    sstate = 76;
                     break;
                 default:
                     if (ch >= L'a' && ch <= L'z') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'A' && ch <= L'Z') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'0' && ch <= L'9') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else {
                         stm.unget();
@@ -2668,11 +2668,11 @@ namespace testns
                 switch (ch) {
                 case L'-':
                     helper::match_action(ch, value, spn);
-                    sstate = 25;
+                    sstate = 76;
                     break;
                 case L'_':
                     helper::match_action(ch, value, spn);
-                    sstate = 25;
+                    sstate = 76;
                     break;
                 case L'o':
                     helper::match_action(ch, value, spn);
@@ -2681,19 +2681,19 @@ namespace testns
                 default:
                     if (ch >= L'a' && ch <= L'n') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'p' && ch <= L'z') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'A' && ch <= L'Z') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'0' && ch <= L'9') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else {
                         stm.unget();
@@ -2709,11 +2709,11 @@ namespace testns
                 switch (ch) {
                 case L'-':
                     helper::match_action(ch, value, spn);
-                    sstate = 25;
+                    sstate = 76;
                     break;
                 case L'_':
                     helper::match_action(ch, value, spn);
-                    sstate = 25;
+                    sstate = 76;
                     break;
                 case L'r':
                     helper::match_action(ch, value, spn);
@@ -2722,19 +2722,19 @@ namespace testns
                 default:
                     if (ch >= L'a' && ch <= L'q') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L's' && ch <= L'z') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'A' && ch <= L'Z') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'0' && ch <= L'9') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else {
                         stm.unget();
@@ -2750,11 +2750,11 @@ namespace testns
                 switch (ch) {
                 case L'-':
                     helper::match_action(ch, value, spn);
-                    sstate = 25;
+                    sstate = 76;
                     break;
                 case L'_':
                     helper::match_action(ch, value, spn);
-                    sstate = 25;
+                    sstate = 76;
                     break;
                 case L't':
                     helper::match_action(ch, value, spn);
@@ -2763,19 +2763,19 @@ namespace testns
                 default:
                     if (ch >= L'a' && ch <= L's') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'u' && ch <= L'z') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'A' && ch <= L'Z') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'0' && ch <= L'9') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else {
                         stm.unget();
@@ -2791,24 +2791,24 @@ namespace testns
                 switch (ch) {
                 case L'-':
                     helper::match_action(ch, value, spn);
-                    sstate = 25;
+                    sstate = 76;
                     break;
                 case L'_':
                     helper::match_action(ch, value, spn);
-                    sstate = 25;
+                    sstate = 76;
                     break;
                 default:
                     if (ch >= L'a' && ch <= L'z') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'A' && ch <= L'Z') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'0' && ch <= L'9') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else {
                         stm.unget();
@@ -2824,11 +2824,11 @@ namespace testns
                 switch (ch) {
                 case L'-':
                     helper::match_action(ch, value, spn);
-                    sstate = 25;
+                    sstate = 76;
                     break;
                 case L'_':
                     helper::match_action(ch, value, spn);
-                    sstate = 25;
+                    sstate = 76;
                     break;
                 case L't':
                     helper::match_action(ch, value, spn);
@@ -2837,19 +2837,19 @@ namespace testns
                 default:
                     if (ch >= L'a' && ch <= L's') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'u' && ch <= L'z') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'A' && ch <= L'Z') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'0' && ch <= L'9') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else {
                         stm.unget();
@@ -2865,11 +2865,11 @@ namespace testns
                 switch (ch) {
                 case L'-':
                     helper::match_action(ch, value, spn);
-                    sstate = 25;
+                    sstate = 76;
                     break;
                 case L'_':
                     helper::match_action(ch, value, spn);
-                    sstate = 25;
+                    sstate = 76;
                     break;
                 case L'o':
                     helper::match_action(ch, value, spn);
@@ -2878,19 +2878,19 @@ namespace testns
                 default:
                     if (ch >= L'a' && ch <= L'n') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'p' && ch <= L'z') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'A' && ch <= L'Z') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'0' && ch <= L'9') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else {
                         stm.unget();
@@ -2906,24 +2906,24 @@ namespace testns
                 switch (ch) {
                 case L'-':
                     helper::match_action(ch, value, spn);
-                    sstate = 25;
+                    sstate = 76;
                     break;
                 case L'_':
                     helper::match_action(ch, value, spn);
-                    sstate = 25;
+                    sstate = 76;
                     break;
                 default:
                     if (ch >= L'a' && ch <= L'z') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'A' && ch <= L'Z') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else if (ch >= L'0' && ch <= L'9') {
                         helper::match_action(ch, value, spn);
-                        sstate = 25;
+                        sstate = 76;
                     }
                     else {
                         stm.unget();
@@ -2935,17 +2935,17 @@ namespace testns
                 rewind_count = 0;
                 rewind_position = spn.end;
                 break;
-            case 26:
+            case 20:
                 stm.unget();
                 return helper::no_match_action(sstate, statestack, stm, token, value, is_eod, spn, rewind_state, rewind_count, rewind_position);
-                rewind_state = 26;
+                rewind_state = 20;
                 rewind_count = 0;
                 rewind_position = spn.end;
                 break;
-            case 28:
+            case 22:
                 stm.unget();
                 return helper::no_match_action(sstate, statestack, stm, token, value, is_eod, spn, rewind_state, rewind_count, rewind_position);
-                rewind_state = 28;
+                rewind_state = 22;
                 rewind_count = 0;
                 rewind_position = spn.end;
                 break;
@@ -2963,10 +2963,10 @@ namespace testns
                 rewind_count = 0;
                 rewind_position = spn.end;
                 break;
-            case 27:
+            case 21:
                 stm.unget();
                 return helper::no_match_action(sstate, statestack, stm, token, value, is_eod, spn, rewind_state, rewind_count, rewind_position);
-                rewind_state = 27;
+                rewind_state = 21;
                 rewind_count = 0;
                 rewind_position = spn.end;
                 break;
@@ -2974,7 +2974,7 @@ namespace testns
                 switch (ch) {
                 case L'"':
                     helper::match_action(ch, value, spn);
-                    sstate = 72;
+                    sstate = 66;
                     break;
                 case L'.':
                     helper::match_action(ch, value, spn);
@@ -2983,15 +2983,15 @@ namespace testns
                 default:
                     if (ch >= L'\x0000' && ch <= L'!') {
                         helper::match_action(ch, value, spn);
-                        sstate = 76;
+                        sstate = 70;
                     }
                     else if (ch >= L'#' && ch <= L'-') {
                         helper::match_action(ch, value, spn);
-                        sstate = 76;
+                        sstate = 70;
                     }
                     else if (ch >= L'/' && ch <= L'\xffff') {
                         helper::match_action(ch, value, spn);
-                        sstate = 76;
+                        sstate = 70;
                     }
                     else {
                         stm.unget();
@@ -3001,10 +3001,10 @@ namespace testns
                 }
                 rewind_count++;
                 break;
-            case 72:
+            case 66:
                 stm.unget();
                 return helper::no_match_action(sstate, statestack, stm, token, value, is_eod, spn, rewind_state, rewind_count, rewind_position);
-                rewind_state = 72;
+                rewind_state = 66;
                 rewind_count = 0;
                 rewind_position = spn.end;
                 break;

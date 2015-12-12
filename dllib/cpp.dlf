@@ -1,0 +1,127 @@
+// A C++ source file generator
+
+import "cpp_common.dlf";
+import "common.dlf";
+
+namespace davelexer.cpp
+{
+    using namespace davelexer;
+    using namespace davelexer.cpp.common;
+
+    <"
+    #include "stdafx.h"
+    #include "<# context "headerfn" #>"
+    #include <assert.h>
+    
+    namespace <# context "namespace" #>
+    {
+        <# States ~> map (ValueExpression ~> format_ds_functoid <"value_expression_<# StateNo ~> fmt #>"> ) ~> join "\n" #>
+
+        auto <# context "class" #>::operator()(std::vector<size_t> &statestack, std::wistream &stm, <# context "token" #> &token, std::wstring &value, bool &is_eod, span &spn) -> bool {
+            struct helper {
+                static inline auto no_match_action(size_t sstate, std::vector<size_t> &statestack, std::wistream &stm, <# context "token" #> &token, std::wstring &value, bool &is_eod, davecommon::span &spn, const size_t &rewind_state, int rewind_count, const davecommon::position &rewind_position) -> bool {
+                    while (true) {
+                        switch (sstate) {
+                        // Non final states
+                        <# States ~> filter (IsFinal ~> not) ~> map <"case <# StateNo ~> fmt #>:\n"> #>
+                            if (rewind_state == 0) {
+                                return false; // Cannot rewind
+                            }
+                            else {
+                                for (int i = 0; i < rewind_count; i++) {
+                                    stm.unget();
+                                }
+                                spn.end = rewind_position;
+                                value.resize(value.size() - rewind_count);
+                                sstate = rewind_state;
+                            }
+                            break;
+                        // Final states
+                        <# States ~> filter IsFinal ~> map 
+                            <"
+                            case <# StateNo ~> fmt #>:
+                                <# if IsGoto <"statestack.push_back(<# GotoState #>);"> empty #>
+                                <# if IsPop <"statestack.pop_back();"> empty #>
+                                token = <# context "token" #>::<# Token ~> cppIdentifier #>;
+                                value = value_expression_<# StateNo #>()(value, spn);
+                                return true;
+                            "> #>
+                        default:
+                            assert(false); // Invalid state
+                            return false;
+                        }
+                    }
+                }
+                static inline auto match_action(wchar_t ch, std::wstring &value, davecommon::span &spn) -> void {
+                    value += ch;
+                    if (ch == L'\n') {
+                        spn.end.line++;
+                        spn.end.column = 1;
+                    }
+                    else if (ch == L'\r') {
+                        spn.end.column = 1;
+                    }
+                    else {
+                        spn.end.column++;
+                    }
+                }
+            };
+
+            spn.begin = spn.end;
+            auto sstate = statestack.back();
+            value.clear();
+            is_eod = false;
+            size_t rewind_state = 0;
+            int rewind_count = 0;
+            davecommon::position rewind_position;
+            while (true) {
+                wchar_t ch;
+                if (!stm.get(ch)) {
+                    is_eod = true;
+                    return helper::no_match_action(sstate, statestack, stm, token, value, is_eod, spn, rewind_state, rewind_count, rewind_position);
+                }
+                switch (sstate) {
+                <#
+                    States ~> sortWith StateNo ~> map
+                    <"
+                    case <# StateNo ~> fmt #>:
+                        switch (ch) {
+                        <#
+                            Edges ~> filter First = Last ~> map
+                            <"
+                            case L<# First ~> cppChar #>;
+                                helper::match_action(ch, value, spn);
+                                sstate = <# ToStateNo ~> fmt #>;
+                                break;
+                            ">
+                            ~> join "\n"
+                        #>
+                        <#
+                            Edges ~> filter First != Last ~> map
+                            <"
+                            if (ch >= L'<# First ~> cppChar #>' && ch <= L'<# Last ~> cppChar #>') {
+                                helper::match_action(ch, value, spn);
+                                sstate = <# ToStateNo ~> fmt #>;
+                            }
+                            ">
+                            ~> join "\nelse "
+                        #>
+                        <# if Edges ~> any First != Last "else" empty #> {
+                            stm.unget();
+                            return helper::no_match_action(sstate, statestack, stm, token, value, is_eod, spn, rewind_state, rewind_count, rewind_position);
+                        }
+                        rewind_state = <# StateNo ~> fmt #>;
+                        rewind_count = 0;
+                        rewind_position = spn.end;
+                        break;
+                    ">
+                #>
+                default:
+                    assert(false); // Invalid state
+                    break;
+                }
+            }
+        }
+    }
+    ">;
+};

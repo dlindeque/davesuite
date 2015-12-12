@@ -1,7 +1,0 @@
-/*
-Common patterns
-*/
-
-pattern identifier          = '[a-zA-Z_][-a-zA-Z_0-9]*';
-pattern string              = '"([^"]|\\.)*"';
-pattern single-line-comment = '//[^\n]*\n';

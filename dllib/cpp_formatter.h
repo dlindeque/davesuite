@@ -8,8 +8,8 @@
 namespace davelexer
 {
     class cpp_formatter {
-    private:
-        inline auto cpp_identifier(const std::wstring &value) -> std::wstring {
+    public:
+        static inline auto cpp_identifier(const std::wstring &value) -> std::wstring {
             if (value == L"return") return L"return_";
             if (value == L"goto") return L"goto_";
             auto s = value;
@@ -21,7 +21,7 @@ namespace davelexer
             }
             return s;
         }
-        inline auto cpp_char(wchar_t ch) -> std::wstring {
+        static inline auto cpp_char(wchar_t ch) -> std::wstring {
             switch (ch) {
             case L'\n':
                 return L"\\n";
@@ -69,6 +69,7 @@ namespace davelexer
                     case L'?':
                     case L'/':
                     case L'|':
+                    case L' ':
                         s << ch;
                         break;
                     default:
@@ -88,7 +89,7 @@ namespace davelexer
             }
         }
     public:
-        auto operator()(const std::unordered_map<std::wstring, std::wstring> &settings, const dfa &dfa, std::wostream &os) -> void {
+        static auto write_lexer_body(const std::wstring &token_enum_name, const dfa &dfa, std::wostream &os) -> void {
             struct final_state {
                 std::vector<fa_transition> transitions;
                 state_yield yield;
@@ -105,17 +106,6 @@ namespace davelexer
                 }
             }
 
-            os << L"#include \"stdafx.h\"" << std::endl;
-            auto f = settings.find(L"headerfn");
-            os << L"#include \"" << f->second << L"\"" << std::endl;
-            os << L"#include <assert.h>" << std::endl;
-            os << std::endl;
-            f = settings.find(L"namespace");
-            os << L"namespace " << f->second << std::endl;
-            os << L'{' << std::endl;
-            f = settings.find(L"class");
-            auto f2 = settings.find(L"tokenenum");
-            os << L"    auto " << f->second << L"::operator()(std::vector<size_t> &statestack, std::wistream &stm, " << f2->second << L" &token, std::wstring &value, bool &is_eod, davecommon::span &spn) -> bool {" << std::endl;
             os << L"        struct helper {" << std::endl;
             os << L"            static inline auto no_match_action(size_t sstate, std::vector<size_t> &statestack, std::wistream &stm, testcls_token &token, std::wstring &value, bool &is_eod, davecommon::span &spn, const size_t &rewind_state, int rewind_count, const davecommon::position &rewind_position) -> bool {" << std::endl;
             os << L"                while (true) {" << std::endl;
@@ -146,7 +136,7 @@ namespace davelexer
                     os << L"                        statestack.pop_back();" << std::endl;
                     os << L"                        assert(!statestack.empty());" << std::endl;
                 }
-                os << L"                        token = " << f2->second << "::" << cpp_identifier(*s.second.yield.token) << L';' << std::endl;
+                os << L"                        token = " << token_enum_name << "::" << cpp_identifier(*s.second.yield.token) << L';' << std::endl;
                 os << L"                        return true;" << std::endl;
             }
             os << L"                    default:" << std::endl;
@@ -271,8 +261,6 @@ namespace davelexer
             os << L"                break;" << std::endl;
             os << L"            }" << std::endl;
             os << L"        }" << std::endl;
-            os << L"    }" << std::endl;
-            os << L'}';
         }
     };
 }

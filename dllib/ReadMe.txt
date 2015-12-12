@@ -447,7 +447,10 @@ Actions:
 15. S -> T
 16. S -> ST
 
+
+
 ===============================================================================================================================
-Non-lexer regular expressions
-In some cases, we want to be able to use a regular expression to match groups (extract parts of a text).
+C++ Generator (CPP)
 ===============================================================================================================================
+
+

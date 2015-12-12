@@ -1,0 +1,35 @@
+// A C# file generator
+
+import "common.ds";
+
+namespace davelexer.cs
+{
+    using namespace davelexer;
+
+    <"
+    using System;
+    using System.Collections.Generic;
+
+    namespace <# context "namespace" #>
+    {
+        public struct Point
+        {
+            public long line;
+            public long column;
+        }
+
+        public struct Span
+        {
+            Point begin;
+            Point end;        
+        }
+
+        public partial class <# context "class" #>
+        {
+            public static bool TryGetNextToken(Stack<long> stateStack, TextReader reader, out <# context "token" #> token, out string value, out bool isEod, out Span spn)
+            {
+            }
+        }
+    }
+    ">;
+};

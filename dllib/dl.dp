@@ -1,0 +1,173 @@
+
+#import "shared.ds";
+
+namespace davelexer
+{
+    [Visitor = true]
+    abstract class declaration
+    {
+        span spn
+    };
+
+    sealed class import_declaration : declaration
+    {
+        string source
+    };
+
+    sealed class start_declaration : declaration
+    {
+        identifier[] name
+    };
+
+    [Visitor = true]
+    abstract class re
+    {
+        span spn
+    };
+
+    sealed class char_range { char first, char last };
+
+    sealed class re_range : re { bool exclude, char_range[] ranges };
+    sealed class re_card : re { re re, int min, int max };
+    sealed class re_or : re { re re1, re re2 };
+    sealed class re_then : re { re re1, re re2 };
+    sealed class re_ref : re { identifier[] name };
+
+    [Visitor = true]
+    abstract class namespace_item_declaration
+    {
+        span spn
+    };
+
+    sealed class pattern_declaration : namespace_item_declaration
+    {
+        identifier name,
+        re value
+    };
+
+    [Visitor = true]
+    abstract class section_item_declaration
+    {
+        span spn,
+        identifier name,
+        re value,
+        ds_expression expression
+    };
+
+    sealed class token_declaration : section_item_declaration
+    {
+    };
+
+    sealed class token_return_declaration : section_item_declaration
+    {
+    };
+
+    sealed class token_goto_declaration : section_item_declaration
+    {
+        identifier[] destination
+    };
+
+    sealed class section_declaration : namespace_item_declaration
+    {
+        identifier name,
+        section_item_declaration[] items
+    };
+
+    sealed class namespace_declaration : declaration
+    {
+        identifier name,
+        namespace_item_declaration[] items
+    };
+
+    set DOCUMENT = document;
+
+    production qname
+    {
+        identifier           -> [ @1 ];
+        qname dot identifier -> append @1 @3;
+    };
+
+    production char_range
+    {
+        reChar                              -> char_range { first = @1, last = @1 };
+        reChar reHyphen reChar              -> char_range { first = @1, last = @3 };
+    };
+
+    external function char char_max();
+    external function char char_min();
+
+    production char_ranges
+    {
+        char_range                            -> r => [ @1 ];
+        char_ranges char_range                -> append;
+    };
+
+    let classRanges cls =
+        |: cls :|
+        || "a" ||> [ char_ranges { first = 'a', last = 'z' } ]
+        || "A" ||> [ char_ranges { first = 'A', last = 'Z' } ]
+        || "s" ||> [ char_ranges { first = ' ', last = ' ' }, char_ranges { first = '\t', last = '\t' }, char_ranges { first = '\n', last = '\n' }, char_ranges { first = '\r, last = '\r' }, char_ranges { first = '\f', last = '\f' }]
+        || "d" ||> [ char_ranges { first = '0', last = '9' } ]
+        || "w" ||> [ char_ranges { first = 'a', last = 'z' }, char_ranges { first = 'A', last = 'Z' } ];
+
+    production re_ref
+    {
+        reIdentifier                                    -> [ @1 ];
+        re_ref reDot reIdentifier                       -> append @1 @3;
+    };
+    
+    production re_ast
+    {
+        reChar                                                          -> re_range { exclude = false, ranges = [ char_range { first = @1, last = @1 } ] };
+        reRangeStart char_ranges reRangeReturn                          -> re_range { exclude = false, ranges = [ @2 ] };
+        reRangeStart reHat char_ranges reRangeReturn                    -> re_range { exclude = true, ranges = [ @2 ] };
+        reDot                                                           -> re_range { exclude = false, ranges = [ char_range { first = char_min, last = char_max } ] };
+        reCharClass                                                     -> re_range { exclude = false, ranges = classRanges @1 };
+        re_ast reAsterisk                                               -> re_card { re = @1, min = 0, max = -1 };
+        re_ast rePlus                                                   -> re_card { re = @1, min = 1, max = -1 };
+        re_ast reQuestion                                               -> re_card { re = @1, min = 0, max = 1 };
+        re_ast reCardRefStart reNumber reCardRefReturn                  -> re_card { re = @1, min = @3, max = @3 };
+        re_ast reCardRefStart reNumber reComma reNumber reCardRefReturn -> re_card { re = @1, min = @3, max = @5 };
+        reCardRefStart re_ref reCardRefReturn                           -> re_ref { name = @2 };
+        reOpenParenthesis re_ast reCloseParenthesis                     -> @2;
+        re_ast rePipe re_ast                                            -> re_or { re1 = @1, re2 = @3 };
+        re_ast re_ast                                                   -> re_then { re1 = @1 re2 = @2 };
+    };
+
+    production re
+    {
+        reStart re_ast reReturn                 -> @2;
+    };
+
+    production section_item
+    {
+        @token identifier equal re              -> token_declaration { name = @2, value = @4 };
+        @token identifier @return equal re      -> token_return_declaration { name = @2, value = @5 };
+        @token identiifer @goto qname equal re  -> token_goto_declaration { name = @2, value = @6, destination = @4 };
+    }
+
+    production section_items
+    {
+        section_item ";"                    -> [ @1 ];
+        section_items section_item ";"      -> append @1 @2;
+    };
+
+    production namespace_item
+    {
+        pattern identifier "=" re                   -> pattern_declaration { name = @2, value = @4 };
+        section identifier "{" section_items "}"    -> section_declaration { name = @2, items = @4 };
+    };
+
+    production namespace_items
+    {
+        namespace_item ";"                 -> [ @1 ];
+        namespace_items namespace_item ";" -> append @1 @2;
+    };
+
+    production document
+    {
+        import string ";"                                 -> import_declaration { source = @2 };
+        set start "=" qname ";"                           -> start_declaration { name = @4 };
+        namespace identifier "{" namespace_items "}" ";"  -> namespace_declaration { name = @2, items = @4 };
+    };
+};

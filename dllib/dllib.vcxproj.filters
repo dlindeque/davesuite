@@ -48,10 +48,13 @@
     <ClInclude Include="nfa_builder.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="lexer.h">
+    <ClInclude Include="cpp_formatter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="cpp_formatter.h">
+    <ClInclude Include="linker.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="common.dlf.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -74,12 +77,15 @@
     <ClCompile Include="nfa_builder.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="lexer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="dl.dl" />
-    <None Include="common.dl" />
+    <None Include="dl.dp" />
+    <None Include="..\common\common.dl" />
+    <None Include="common.dlf" />
+    <None Include="cpp.dlf" />
+    <None Include="cpp_common.dlf" />
+    <None Include="cs.dlf" />
+    <None Include="h.dlf" />
   </ItemGroup>
 </Project>

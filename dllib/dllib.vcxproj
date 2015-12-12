@@ -76,11 +76,14 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="common.dlf.h">
+      <DependentUpon>common.dlf</DependentUpon>
+    </ClInclude>
     <ClInclude Include="cpp_formatter.h" />
     <ClInclude Include="dfa.h" />
     <ClInclude Include="graphviz.h" />
-    <ClInclude Include="lexer.h" />
     <ClInclude Include="lex_ast_validator.h" />
+    <ClInclude Include="linker.h" />
     <ClInclude Include="log.h" />
     <ClInclude Include="model.h" />
     <ClInclude Include="nfa_builder.h" />
@@ -91,7 +94,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dfa.cpp" />
-    <ClCompile Include="lexer.cpp" />
     <ClCompile Include="model.cpp" />
     <ClCompile Include="nfa_builder.cpp" />
     <ClCompile Include="re_lexer.cpp" />
@@ -102,8 +104,14 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="common.dl" />
+    <None Include="..\common\common.dl" />
+    <None Include="common.dlf" />
+    <None Include="cpp.dlf" />
+    <None Include="cpp_common.dlf" />
+    <None Include="cs.dlf" />
     <None Include="dl.dl" />
+    <None Include="dl.dp" />
+    <None Include="h.dlf" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

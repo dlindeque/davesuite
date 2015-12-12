@@ -13,7 +13,7 @@ namespace davelexer
     private:
         size_t &_next_state;
         std::vector<fa_transition> &_transitions;
-        const std::unordered_map<std::wstring, std::unique_ptr<re_ast>> &_patterns;
+        const std::unordered_map<qname, std::unique_ptr<re_ast>> &_patterns;
 
         size_t _from;
         size_t _to;
@@ -24,7 +24,7 @@ namespace davelexer
     public:
         re_ast_processor(size_t &next_state, 
             std::vector<fa_transition> &transitions, 
-            const std::unordered_map<std::wstring, std::unique_ptr<re_ast>> &patterns,
+            const std::unordered_map<qname, std::unique_ptr<re_ast>> &patterns,
             size_t from, 
             size_t to, 
             bool &ok,
@@ -177,16 +177,15 @@ namespace davelexer
         const container * _cntr;
         logger *& _logger;
         size_t &_next_state;
-        const std::unordered_map<std::wstring, std::unique_ptr<re_ast>> &_patterns;
-        const std::unordered_map<std::wstring, std::vector<std::unique_ptr<lex_ast_section_item>>> &_shared_sections;
+        const std::unordered_map<qname, std::unique_ptr<re_ast>> &_patterns;
+        const std::unordered_map<qname, std::vector<std::unique_ptr<lex_ast_section_item>>> &_import_sections;
         std::vector<fa_transition> &_transitions;
         std::unordered_map<size_t, state_yield> &_state_yields;
         std::unordered_map<std::wstring, std::shared_ptr<std::wstring>> &_tokens;
-        std::unordered_map<std::wstring, std::shared_ptr<std::wstring>> &_section_names;
+        std::unordered_map<qname, std::shared_ptr<qname>> &_section_names;
         std::unordered_map<std::wstring, std::vector<position>> &_precedences;
         std::vector<position> _current_precedence;
-        inline auto add_token_transitions(const std::shared_ptr<std::wstring> &token, const std::shared_ptr<std::wstring> &goto_section, bool pop, const std::unique_ptr<re_ast> &ast, const span &spn) -> void {
-            // start - ast -> t(yield)
+        inline auto add_token_transitions(const std::shared_ptr<std::wstring> &token, const std::shared_ptr<qname> &goto_section, bool pop, const std::unique_ptr<re_ast> &ast, const span &spn) -> void {
             auto t = _next_state++;
             re_ast_processor rep(_next_state, _transitions, _patterns, start, t, _ok, _logger, _cntr);
             ast->accept(&rep);
@@ -195,10 +194,20 @@ namespace davelexer
             p.push_back(spn.begin);
             _precedences.emplace(*token, std::move(p));
         }
-        inline auto get_shared_str(std::unordered_map<std::wstring, std::shared_ptr<std::wstring>> &map, const std::wstring &value)->std::shared_ptr < std::wstring > {
-            auto f = map.find(value);
-            if (f == map.end()) {
-                auto x = map.emplace(value, std::make_shared<std::wstring>(value));
+        inline auto get_shared_token(const std::wstring &value)->std::shared_ptr<std::wstring > {
+            auto f = _tokens.find(value);
+            if (f == _tokens.end()) {
+                auto x = _tokens.emplace(value, std::make_shared<std::wstring>(value));
+                return x.first->second;
+            }
+            else {
+                return f->second;
+            }
+        }
+        inline auto get_shared_section_name(const qname &value)->std::shared_ptr<qname> {
+            auto f = _section_names.find(value);
+            if (f == _section_names.end()) {
+                auto x = _section_names.emplace(value, std::make_shared<std::wstring>(value));
                 return x.first->second;
             }
             else {
@@ -207,15 +216,15 @@ namespace davelexer
         }
     public:
         lex_ast_section_item_processor(bool &ok, const container *cntr, logger *& logger, size_t &next_state,
-            const std::unordered_map<std::wstring, std::unique_ptr<re_ast>> &patterns,
-            const std::unordered_map<std::wstring, std::vector<std::unique_ptr<lex_ast_section_item>>> &shared_sections,
+            const std::unordered_map<qname, std::unique_ptr<re_ast>> &patterns,
+            const std::unordered_map<qname, std::vector<std::unique_ptr<lex_ast_section_item>>> &import_sections,
             std::vector<fa_transition> &transitions,
             std::unordered_map<size_t, state_yield> &state_yields,
             std::unordered_map<std::wstring, std::shared_ptr<std::wstring>> &tokens,
-            std::unordered_map<std::wstring, std::shared_ptr<std::wstring>> &section_names,
+            std::unordered_map<qname, std::shared_ptr<qname>> &section_names,
             std::unordered_map<std::wstring, std::vector<position>> &precedences)
             : _ok(ok), _cntr(cntr), _logger(logger), _next_state(next_state),
-            _patterns(patterns), _shared_sections(shared_sections), _transitions(transitions),
+            _patterns(patterns), _import_sections(import_sections), _transitions(transitions),
             _state_yields(state_yields), _tokens(tokens), _section_names(section_names), _precedences(precedences)
         {}
         virtual ~lex_ast_section_item_processor() {}
@@ -223,9 +232,9 @@ namespace davelexer
         size_t start;
 
         virtual auto accept(lex_ast_import* ast) -> void override {
-            auto f = _shared_sections.find(ast->shared_section_to_import());
-            if (f == _shared_sections.end()) {
-                davecommon::log::error::imported_section_not_found(_logger, _cntr, ast->spn(), ast->shared_section_to_import());
+            auto f = _import_sections.find(ast->section_to_import());
+            if (f == _import_sections.end()) {
+                davecommon::log::error::imported_section_not_found(_logger, _cntr, ast->spn(), ast->section_to_import());
                 _ok = false;
             }
             else {
@@ -237,35 +246,32 @@ namespace davelexer
             }
         }
         virtual auto accept(lex_ast_token* ast) -> void override {
-            add_token_transitions(get_shared_str(_tokens, ast->token_name()), nullptr, false, ast->ast(), ast->spn());
+            add_token_transitions(get_shared_token(ast->token_name()), nullptr, false, ast->ast(), ast->spn());
         }
         virtual auto accept(lex_ast_start* ast) -> void override {
-            add_token_transitions(get_shared_str(_tokens, ast->token_name()), get_shared_str(_section_names, ast->section_name()), false, ast->ast(), ast->spn());
+            add_token_transitions(get_shared_token(ast->token_name()), get_shared_section_name(ast->section_name()), false, ast->ast(), ast->spn());
         }
         virtual auto accept(lex_ast_return* ast) -> void override {
-            add_token_transitions(get_shared_str(_tokens, ast->token_name()), nullptr, true, ast->ast(), ast->spn());
+            add_token_transitions(get_shared_token(ast->token_name()), nullptr, true, ast->ast(), ast->spn());
         }
     };
 
     auto nfa_builder::accept(lex_ast_section* ast) -> void
     {
-        if (ast->is_shared()) {
-            _shared_sections.emplace(std::move(ast->name()), std::move(ast->items()));
-        }
-        else {
-            lex_ast_section_item_processor item_processor(_ok, ast->ctnr(), _logger, _next_state, _patterns, _shared_sections, _transitions, _state_yields, _tokens, _section_names, _precedences);
-            auto f = _sections.find(ast->name());
-            if (f == _sections.end()) {
-                // Create the section
-                auto s = _sections.emplace(ast->name(), _next_state++);
-                item_processor.start = s.first->second;
-            }
-            else {
-                item_processor.start = f->second;
-            }
+        qname n(_current_ns);
+        n.parts.push_back(ast->name());
+        auto f = _sections_start_states.find(n);
+        if (f != _sections_start_states.end()) {
+            // Process the section
+            lex_ast_section_item_processor item_processor(_ok, ast->ctnr(), _logger, _next_state, _patterns, _import_section_items, _transitions, _state_yields, _tokens, _section_names, _precedences);
+            item_processor.start = f->second;
             for (auto &item : ast->items()) {
                 item->accept(&item_processor);
             }
+        }
+        auto sf = _import_section_items.find(n);
+        if (sf != _import_section_items.end()) {
+            sf->second = std::move(ast->items());
         }
     }
 }

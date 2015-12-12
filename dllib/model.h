@@ -19,11 +19,14 @@ namespace davelexer
     class lex_ast;
     class lex_ast_pattern;
     class lex_ast_section;
+    class lex_ast_option_start;
     class lex_ast_section_item;
     class lex_ast_import;
     class lex_ast_token;
     class lex_ast_start;
     class lex_ast_return;
+    class lex_namespace;
+    class lex_using_namespace;
     class fa_transition;
 
     class re_ast_visitor;
@@ -32,6 +35,8 @@ namespace davelexer
     class const_lex_ast_visitor;
     class lex_ast_section_item_visitor;
     class const_lex_ast_section_item_visitor;
+    class lex_namespace_item_visitor;
+    class const_lex_namespace_item_visitor;
 
     class re_ast_visitor abstract {
     public:
@@ -58,6 +63,9 @@ namespace davelexer
         virtual ~lex_ast_visitor() {}
         virtual auto accept(lex_ast_pattern*) -> void = 0;
         virtual auto accept(lex_ast_section*) -> void = 0;
+        virtual auto accept(lex_ast_option_start*) -> void = 0;
+        virtual auto accept(lex_namespace*) -> void = 0;
+        virtual auto accept(lex_using_namespace*) -> void = 0;
     };
 
     class const_lex_ast_visitor abstract {
@@ -65,6 +73,9 @@ namespace davelexer
         virtual ~const_lex_ast_visitor() {}
         virtual auto accept(const lex_ast_pattern*) -> void = 0;
         virtual auto accept(const lex_ast_section*) -> void = 0;
+        virtual auto accept(const lex_ast_option_start*) -> void = 0;
+        virtual auto accept(const lex_namespace*) -> void = 0;
+        virtual auto accept(const lex_using_namespace*) -> void = 0;
     };
 
     class lex_ast_section_item_visitor abstract {
@@ -107,7 +118,7 @@ namespace davelexer
         virtual auto accept(const_re_ast_visitor *visitor) const -> void = 0;
     };
 
-    auto operator << (std::wostream &os, const std::unique_ptr<re_ast> &ast)->std::wostream&;
+    //auto operator << (std::wostream &os, const std::unique_ptr<re_ast> &ast)->std::wostream&;
 
     struct wchar_range {
         wchar_t from;
@@ -141,22 +152,23 @@ namespace davelexer
 
     class re_ast_reference sealed : public re_ast{
     private:
-        std::wstring _name;
+        qname _name;
     public:
         re_ast_reference() = delete;
         re_ast_reference(const re_ast_reference&) = delete;
         re_ast_reference(re_ast_reference &&c)
             : re_ast(std::move(c)), _name(std::move(c._name))
         {}
-        re_ast_reference(const span &spn, const std::wstring &name)
+        re_ast_reference(const span &spn, const qname &name)
             : re_ast(spn), _name(name)
         {}
-        re_ast_reference(const span &spn, std::wstring &&name)
+        re_ast_reference(const span &spn, qname &&name)
             : re_ast(spn), _name(std::move(name))
         {}
         virtual ~re_ast_reference() {}
 
-        inline auto name() const -> const std::wstring&{ return _name; }
+        inline auto name() const -> const qname&{ return _name; }
+        inline auto name() -> qname&{ return _name; }
 
         virtual auto accept(re_ast_visitor *visitor) -> void override { visitor->accept(this); }
         virtual auto accept(const_re_ast_visitor *visitor) const -> void override { visitor->accept(this); }
@@ -282,7 +294,6 @@ namespace davelexer
 
     class lex_ast_section sealed : public lex_ast{
     private:
-        bool _is_shared;
         std::wstring _name;
         std::vector<std::unique_ptr<lex_ast_section_item>> _items;
     public:
@@ -291,18 +302,40 @@ namespace davelexer
         lex_ast_section(lex_ast_section&& c)
             : lex_ast(std::move(c)), _name(std::move(c._name)), _items(std::move(c._items))
         {}
-        lex_ast_section(const container *cntr, const span &spn, bool is_shared, const std::wstring &name, std::vector<std::unique_ptr<lex_ast_section_item>> &&items)
-            : lex_ast(cntr, spn), _is_shared(is_shared), _name(name), _items(std::move(items))
+        lex_ast_section(const container *cntr, const span &spn, const std::wstring &name, std::vector<std::unique_ptr<lex_ast_section_item>> &&items)
+            : lex_ast(cntr, spn), _name(name), _items(std::move(items))
         {}
-        lex_ast_section(const container *cntr, const span &spn, bool is_shared, std::wstring &&name, std::vector<std::unique_ptr<lex_ast_section_item>> &&items)
-            : lex_ast(cntr, spn), _is_shared(is_shared), _name(std::move(name)), _items(std::move(items))
+        lex_ast_section(const container *cntr, const span &spn, std::wstring &&name, std::vector<std::unique_ptr<lex_ast_section_item>> &&items)
+            : lex_ast(cntr, spn), _name(std::move(name)), _items(std::move(items))
         {}
 
-        inline auto is_shared() const -> bool { return _is_shared; }
         inline auto name() const -> const std::wstring&{ return _name; }
         inline auto name() -> std::wstring&{ return _name; }
         inline auto items() const -> const std::vector<std::unique_ptr<lex_ast_section_item>>& { return _items; }
         inline auto items() -> std::vector<std::unique_ptr<lex_ast_section_item>>& { return _items; }
+
+        virtual auto accept(lex_ast_visitor *visitor) -> void override { visitor->accept(this); }
+        virtual auto accept(const_lex_ast_visitor *visitor) const -> void override { visitor->accept(this); }
+    };
+
+    class lex_ast_option_start sealed : public lex_ast{
+    private:
+        qname _section_name;
+    public:
+        lex_ast_option_start() = delete;
+        lex_ast_option_start(const lex_ast_section&) = delete;
+        lex_ast_option_start(lex_ast_option_start&& c)
+            : lex_ast(std::move(c)), _section_name(std::move(c._section_name))
+        {}
+        lex_ast_option_start(const container *cntr, const span &spn, const qname &section_name)
+            : lex_ast(cntr, spn), _section_name(section_name)
+        {}
+        lex_ast_option_start(const container *cntr, const span &spn, qname &&section_name)
+            : lex_ast(cntr, spn), _section_name(std::move(section_name))
+        {}
+
+        inline auto section_name() const -> const qname&{ return _section_name; }
+        inline auto section_name() -> qname&{ return _section_name; }
 
         virtual auto accept(lex_ast_visitor *visitor) -> void override { visitor->accept(this); }
         virtual auto accept(const_lex_ast_visitor *visitor) const -> void override { visitor->accept(this); }
@@ -328,25 +361,26 @@ namespace davelexer
         virtual auto accept(const_lex_ast_section_item_visitor *visitor) const -> void = 0;
     };
 
-    auto operator << (std::wostream &os, const std::unique_ptr<lex_ast_section_item> &ast)->std::wostream&;
+    //auto operator << (std::wostream &os, const std::unique_ptr<lex_ast_section_item> &ast)->std::wostream&;
     
     class lex_ast_import sealed : public lex_ast_section_item{
     private:
-        std::wstring _shared_section_to_import;
+        qname _section_to_import;
     public:
         lex_ast_import() = delete;
         lex_ast_import(const lex_ast_import &c) = delete;
         lex_ast_import(lex_ast_import &&c)
-            : lex_ast_section_item(std::move(c))
+            : lex_ast_section_item(std::move(c)), _section_to_import(std::move(c._section_to_import))
         {}
-        lex_ast_import(const span &spn, const std::wstring &shared_section_to_import)
-            : lex_ast_section_item(spn), _shared_section_to_import(shared_section_to_import)
+        lex_ast_import(const span &spn, const qname &section_to_import)
+            : lex_ast_section_item(spn), _section_to_import(section_to_import)
         {}
-        lex_ast_import(const span &spn, std::wstring &&shared_section_to_import)
-            : lex_ast_section_item(spn), _shared_section_to_import(std::move(shared_section_to_import))
+        lex_ast_import(const span &spn, qname &&section_to_import)
+            : lex_ast_section_item(spn), _section_to_import(std::move(section_to_import))
         {}
 
-        inline auto shared_section_to_import() const -> const std::wstring&{ return _shared_section_to_import; }
+        inline auto section_to_import() const -> const qname&{ return _section_to_import; }
+        inline auto section_to_import() -> qname&{ return _section_to_import; }
 
         virtual auto accept(lex_ast_section_item_visitor *visitor) -> void override { visitor->accept(this); }
         virtual auto accept(const_lex_ast_section_item_visitor *visitor) const -> void override { visitor->accept(this); }
@@ -399,7 +433,7 @@ namespace davelexer
 
     class lex_ast_start sealed : public lex_ast_section_item_token{
     private:
-        std::wstring _section_name;
+        qname _section_name;
         span _section_name_spn;
     public:
         lex_ast_start() = delete;
@@ -407,20 +441,20 @@ namespace davelexer
         lex_ast_start(lex_ast_start &&c)
             : lex_ast_section_item_token(std::move(c))
         {}
-        lex_ast_start(const span &spn, const std::wstring &token_name, const span &token_name_spn, std::unique_ptr<re_ast> &&ast, const std::wstring &section_name, const span &section_name_spn)
+        lex_ast_start(const span &spn, const std::wstring &token_name, const span &token_name_spn, std::unique_ptr<re_ast> &&ast, const qname &section_name, const span &section_name_spn)
             : lex_ast_section_item_token(spn, token_name, token_name_spn, std::move(ast)), _section_name(section_name), _section_name_spn(section_name_spn)
         {}
-        lex_ast_start(const span &spn, std::wstring &&token_name, const span &token_name_spn, std::unique_ptr<re_ast> &&ast, const std::wstring &section_name, const span &section_name_spn)
+        lex_ast_start(const span &spn, std::wstring &&token_name, const span &token_name_spn, std::unique_ptr<re_ast> &&ast, const qname &section_name, const span &section_name_spn)
             : lex_ast_section_item_token(spn, std::move(token_name), token_name_spn, std::move(ast)), _section_name(section_name), _section_name_spn(section_name_spn)
         {}
-        lex_ast_start(const span &spn, const std::wstring &token_name, const span &token_name_spn, std::unique_ptr<re_ast> &&ast, std::wstring &&section_name, const span &section_name_spn)
+        lex_ast_start(const span &spn, const std::wstring &token_name, const span &token_name_spn, std::unique_ptr<re_ast> &&ast, qname &&section_name, const span &section_name_spn)
             : lex_ast_section_item_token(spn, token_name, token_name_spn, std::move(ast)), _section_name(std::move(section_name)), _section_name_spn(section_name_spn)
         {}
-        lex_ast_start(const span &spn, std::wstring &&token_name, const span &token_name_spn, std::unique_ptr<re_ast> &&ast, std::wstring &&section_name, const span &section_name_spn)
+        lex_ast_start(const span &spn, std::wstring &&token_name, const span &token_name_spn, std::unique_ptr<re_ast> &&ast, qname &&section_name, const span &section_name_spn)
             : lex_ast_section_item_token(spn, std::move(token_name), token_name_spn, std::move(ast)), _section_name(std::move(section_name)), _section_name_spn(section_name_spn)
         {}
 
-        inline auto section_name() const -> const std::wstring&{ return _section_name; }
+        inline auto section_name() const -> const qname&{ return _section_name; }
         inline auto section_name_spn() const -> const span&{ return _section_name_spn; }
 
         virtual auto accept(lex_ast_section_item_visitor *visitor) -> void override { visitor->accept(this); }
@@ -443,6 +477,55 @@ namespace davelexer
 
         virtual auto accept(lex_ast_section_item_visitor *visitor) -> void override { visitor->accept(this); }
         virtual auto accept(const_lex_ast_section_item_visitor *visitor) const -> void override { visitor->accept(this); }
+    };
+
+    class lex_namespace sealed : public lex_ast {
+    private:
+        qname _name;
+        std::vector<std::unique_ptr<lex_ast>> _items;
+    public:
+        lex_namespace() = delete;
+        lex_namespace(const lex_namespace &c) = delete;
+        lex_namespace(lex_namespace &&c)
+            : lex_ast(std::move(c)), _name(std::move(c._name)), _items(std::move(c._items))
+        {}
+        lex_namespace(const container *cntr, const span &spn, const qname &name, std::vector<std::unique_ptr<lex_ast>> &&items)
+            : lex_ast(cntr, spn), _name(name), _items(std::move(items))
+        {}
+        lex_namespace(const container *cntr, const span &spn, qname &&name, std::vector<std::unique_ptr<lex_ast>> &&items)
+            : lex_ast(cntr, spn), _name(std::move(name)), _items(std::move(items))
+        {}
+
+        inline auto name() const -> const qname&{ return _name; }
+        inline auto name() -> qname& { return _name; }
+        inline auto items() const -> const std::vector<std::unique_ptr<lex_ast>>& { return _items; };
+        inline auto items() -> std::vector<std::unique_ptr<lex_ast>>& { return _items; };
+
+        virtual auto accept(lex_ast_visitor *visitor) -> void override { visitor->accept(this); }
+        virtual auto accept(const_lex_ast_visitor *visitor) const -> void override { visitor->accept(this); }
+    };
+
+    class lex_using_namespace sealed : public lex_ast{
+    private:
+        qname _name;
+    public:
+        lex_using_namespace() = delete;
+        lex_using_namespace(const lex_using_namespace&) = delete;
+        lex_using_namespace(lex_using_namespace &&c)
+            : lex_ast(std::move(c)), _name(std::move(c._name))
+        {}
+        lex_using_namespace(const container *cntr, const span &spn, const qname &name)
+            : lex_ast(cntr, spn), _name(name)
+        {}
+        lex_using_namespace(const container *cntr, const span &spn, qname &&name)
+            : lex_ast(cntr, spn), _name(std::move(name))
+        {}
+
+        inline auto name() const -> const qname&{ return _name; }
+        inline auto name() -> qname& { return _name; }
+
+        virtual auto accept(lex_ast_visitor *visitor) -> void override { visitor->accept(this); }
+        virtual auto accept(const_lex_ast_visitor *visitor) const -> void override { visitor->accept(this); }
     };
 
     class fa_transition sealed {

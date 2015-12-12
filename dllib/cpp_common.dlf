@@ -1,0 +1,18 @@
+// Common stuff
+namespace davelexer.cpp.common
+{
+    let empty _ = "";
+
+    let cppIdentifier s = 
+        s in ["return", "goto"] ? s+"_" : s;
+
+    let isPrintable c =
+        (c >= 'a' & c <= 'z')
+        | (c >= 'A' & c <= 'Z')
+        | (c >= '0' & c <= '9')
+        | c in ['!', '"', '£', '$', '%', '^', '&', '*', '(', ')', '_', 
+                '-', '+', '=', '{', '[', '}', ']', ':', ';', '@', '\'', 
+                '~', '#', '|', '\\', '<', ',', '>', '.', '?', '/', ' '];
+
+    let cppChar = if isPrintable fmt <"\\x<# toInt ~> fmt NumberStyle.Hex 4 '0' #>">;
+};

@@ -5,6 +5,10 @@
 
 namespace davecommon
 {
+    struct qname {
+        std::vector<std::wstring> parts;
+    };
+
     enum class severity {
         info = 10,
         warning = 30,

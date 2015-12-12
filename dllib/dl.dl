@@ -2,53 +2,123 @@
     Definition of the dl lexical structure.
 */
 
-import "common.dl";
+import "..\common\common.dl";
+import "..\dslib\ds.dl";
+import "..\dmlib\dm.dl"
 
-section default
+namespace davelexer
 {
-    token whitespace            = '\s+';
-    token line-comment          = '{single-line-comment}';
-    token comment-start goto comment = '/\*';
-    token @pattern              = 'pattern';
-    token identifier            = '@?{identifier}';
-    token equal                 = '=';
-    token re-start goto re      = '\'';
-    token semicolon             = ';';
-    token @shared               = 'shared';
-    token @section              = 'section';
-    token open-curly            = '{';
-    token close-curly           = '}';
-    token @include              = 'include';
-    token @token                = 'token';
-    token @goto                 = 'goto';
-    token @return               = 'return';
-    token @import               = 'import';
-    token string                = '{string}';
-};
+    using namespace davecommon;
 
-section comment
-{
-    token comment-content       = '([^\*]+)|(\*[^/])';
-    token comment-end return    = '\*/';
-};
+    extend enum davecommon.TokenType
+    {
+        // Punctuation
+        ProducedBy,
+    
+        // keywords
+        Set,
+        Initial,
+        Pattern,
+        Automata,
 
-section re
-{
-    token re-asterisk           = '\*';
-    token re-plus               = '\+';
-    token re-question           = '\?';
-    token re-open-parenthesis   = '\(';
-    token re-close-parenthesis  = '\)';
-    token re-pipe               = '\|';
-    token re-exclude-set        = '\[^'
-    token re-open-bracket       = '\[';
-    token re-close-bracket      = '\]';
-    token re-hyphen             = '-';
-    token re-dot                = '\.';
-    token re-reference          = '\{{identifier}\}';
-    token re-cardinality        = '\{';
-    token re-close-curly        = '\}';
-    token re-escaped            = '\\\d';
-    token re-char               = '.';
-    token re2 return            = '\'';
-};
+        // RE
+        ReStart,
+        ReEnd,
+        ReChar,
+        ReAsterisk,
+        RePlus,
+        ReQuestion,
+        ReOpenParenthesis,
+        ReCloseParenthesis,
+        RePipe,
+        ReDot,
+        ReCharClass,
+        ReRangeStart,
+        ReRangeEnd,
+        ReCardRefStart,
+        ReCardRefEnd,
+        ReHat,
+        ReHyphen,
+        ReComma,
+        ReCardinality,
+        ReIdentifier
+    };
+
+    external function char fromHex(string value);
+    let fromEscaped value =
+        let d = right 1 value
+        |: d   :|
+        || "n" ||> '\n'
+        || "r" ||> '\r'
+        ||> char d;
+
+    set valueExpression
+    {
+        ';' return                  -> token TokenType.Semicolon;
+        include davescript.expression;
+    };
+
+    set document
+    {
+        'set'                       -> keyword TokenType.Set;
+        'automata'                  -> keyword TokenType.Automata;
+        'pattern'                   -> keyword TokenType.Pattern;
+        'initial'                   -> keyword TokenType.Initial;
+
+        '\'' goto re                -> token TokenType.ReStart;
+        '->' goto valueExpression   -> token TokenType.ProducedBy;
+
+        include davemodel.document;
+    };
+
+    initial automata lexer
+    {
+        include document;
+    };
+
+    set reChar
+    {
+        '\\x{hex}{4}'                             -> value TokenType.ReChar fromHex
+        '\\[^xsaAwd]'                             -> value TokenType.ReChar fromEscaped
+        '.'                                       -> value TokenType.ReChar char
+    };
+
+    /// Process a regular expression section
+    automata re
+    {
+        '\'' return                               -> token TokenType.ReEnd;
+
+        '\*'                                      -> token TokenType.ReAsterisk;
+        '\+'                                      -> token TokenType.RePlus;
+        '\?'                                      -> token TokenType.ReQuestion;
+        '\('                                      -> token TokenType.ReOpenParenthesis;
+        '\)'                                      -> token TokenType.ReCloseParentesis;
+        '\|'                                      -> token TokenType.RePipe;
+        '\.'                                      -> token TokenType.ReDot;
+        '\\[saAwd]'                               -> token TokenType.ReCharClass;
+        '\[' goto reRange                         -> token TokenType.ReRangeStart;
+        '\{' goto reCardRef                       -> token TokenType.ReCardRefStart;
+
+        include reChar;
+    };
+
+    /// Process a range inside a regular expression
+    /// For instance [a], [a-z], [ab], [ab-d], [^a-z], [a-\-]
+    automata reRange
+    {
+        '\]' return                               -> token TokenType.ReRangeEnd;
+        '\^'                                      -> token TokenType.ReHat;
+        '-'                                       -> token TokenType.ReHyphen;
+
+        include reChar;
+    };
+
+    automata reCardRef
+    {
+        '\}' return                               -> token TokenType.ReCardRefEnd;
+        ','                                       -> token TokenType.ReComma;
+        '{integer}'                               -> value TokenType.ReCardinality;
+        '{identifier}'                            -> value TokenType.ReIdentifier;
+        '\.'                                      -> value TokenType.ReDot;
+    };
+}
