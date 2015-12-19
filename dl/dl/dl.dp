@@ -1,0 +1,111 @@
+
+import "dl.ds";
+
+ignore Whitespace;
+ignore Comment;
+
+namespace davelexer
+{
+    production Ident : AstToken<string>
+    {
+        TokenType.Identifier  -> AstToken<string> { Value = $1, Spn = @1 };
+    };
+
+    production Str : AstToken<string>
+    {
+        TokenType.String -> AstToken<string> { Value = $1, Spn = @1 };
+    };
+
+    production QName : AstToken<string>[]
+    {
+        Ident              -> [ $1 ];
+        QName Dot Ident    -> append $3 $1;
+    };
+
+    production Document : DocumentAst[]
+    {
+        davelexer.DocumentItem            -> [ $1 ];
+        Document DocumentItem   -> append $2 $1;
+    };
+
+
+    production DocumentItem : DocumentAst
+    {
+        Import Str Semicolon -> ImportAst { Spn = @$, Document = $2 };
+        Namespace Ident OpenBrace NamespaceItems CloseBrace Semicolon -> NamespaceAst { Spn = @$, Name = $2, Items = $4 };
+        Set Start Equals QName Semicolon -> StartAutomataAst { Spn = @$, Automata = $4 };
+    };
+
+    production NamespaceItems : NamespaceItemAst[]
+    {
+        NamespaceItem -> [ $1 ];
+        NamespaceItems NamespaceItem -> append $2 $1;
+    };
+
+    production NamespaceItem : NamespaceItemAst
+    {
+        Enum Ident OpenBrace EnumItems CloseBrace Semicolon -> Enum { Spn = @$, Name = $2, Items = $4 };
+        Pattern Ident Equal Re Semicolon -> PatternAst { Spn = @$, Name = $2, Value = $4 };
+        Set QName OpenBrace SetItems CloseBrace Semicolon -> SetAst { Name = $2, Items = $4 };
+        Automata QName OpenBrace SetItems CloseBrace Semicolon -> Automata { Name = $2, Items = $4 };
+    };
+
+    production SetItems : SetItemAst[]
+    {
+        SetItem -> [ $1 ];
+        SetItems SetItem -> append $2 $1;
+    };
+
+    production SetItem : SetItemAst
+    {
+        Re ProducedBy Identifier QName Semicolon -> MatchDefinitionAst { IsReturn = false, IsGoto = false, Value = $1 };
+        Re Return ProducedBy Identifier QName Semicolon -> MatchDefinitionAst { IsReturn = true, IsGoto = false, Value = $1 };
+        Re Goto QName ProducedBy Identifier QName Semicolon -> MatchDefinitionAst { IsReturn = false, IsGoto = true, GotoLabel = $3, Value = $1 };
+        Include QName Semicolon -> IncludeSetAst { IsReturn = false, IsGoto = false, SetName = $2 };
+        include QName Return Semicolon -> IncludeSetAst { IsReturn = true, IsGoto = false, SetName = $2 };
+        Include QName Goto QName Semicolon -> IncludeSetAst { IsReturn = false, IsGoto = true GotoLabel = $4, SetName = $2 };
+    };
+
+    production EnumItems : AstToken<string>[]
+    {
+        Ident                   -> [ $1 ];
+        EnumItems Comma Ident   -> append $3 $1;
+    };
+
+    production Re : ReAst
+    {
+        ReStart ReText ReEnd -> $2;
+    };
+
+    production ReText : ReAst
+    {
+        TokenType.OpenParenthesis ReText TokenType.CloseParenthesis -> $2;
+        Char -> CharReAst { Spn = @$, Char = AstToken<char> { Value = $1, Spn = @1 } };
+        CharClass -> CharClassReAst { Spn = @$, CharClass = $1 };
+        ReText ReText -> ThenReAst { Spn = @$, RE1 = $1 RE2 = $2 };
+        ReText Pipe ReText -> OrReAst { Spn = @$, RE1 = $1, RE2 = $3 };
+        ReText Asterisk -> CardinalReAst { Spn = @$, RE = $1, Min = 0, Max = -1 };
+        ReText Question -> CardinalReAst { Spn = @$, RE = $1, Min = 0, Max = 1 };
+        ReText Plus -> CardinalReAst { Spn = @$, RE = $1, Min = 1, Max = -1 };
+        OpenSquare CharRanges CloseSquare -> CharRangesReAst { Spn = @$, Exclude = false, Ranges = $2 };
+        OpenSquare Hat CharRanges CloseSquare -> CharRangesReAst { Spn = @$, Exclude = true, Ranges = $3 };
+        OpenBrace QName CloseBrace -> ReferenceReAst { Spn = @$, Name = $2 };
+        ReText OpenBrace Number CloseBrace -> CardinalReAst { Spn = @$, RE = $1, Min = $3, Max = $3 };
+        ReText OpenBrace Number Comma Number CloseBrace -> CardinalReAst { Spn = @$, RE = $1, Min = $3, Max = $5 };
+    };
+
+    production CharRanges : CharSetAst[]
+    {
+        CharRange -> [ $1 ];
+        CharRanges CharRange -> append $2 $1;
+    };
+
+    production CharRange : CharSetAst
+    {
+        Char -> SingleCharAst { Spn = @$, Char = AstToken<char> { Value = $1, Spn = @1 } };
+        Char Hyphen Char -> CharRangeAst { Spn = @$, First = AstToken<char> { Value = $1, Spn = @1 }, Last = AstToken<char> { Value = $3, Spn = @3 } };
+    };
+};
+
+set start = davelexer.Document;
+

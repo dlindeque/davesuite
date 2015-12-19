@@ -1,0 +1,279 @@
+// This is the davescript formatter to serialize parts of the davelexer object model
+
+namespace davelexer
+{
+    [Visitor = true]
+    class Container abstract
+    {
+    };
+
+    class FileContainer sealed : Container
+    {
+        string FileName
+    };
+
+    class Point sealed
+    {
+        int Line,
+        int Column
+    };
+
+    class Span sealed
+    {
+        Container FileName,
+        Point Begin,
+        Point End
+    };
+
+    class AstToken<T>
+    {
+        T Value,
+        Span Spn
+    };
+
+    class QName
+    {
+        AstToken<string>[] Parts
+    };
+
+    class Ast abstract
+    {
+        Span Spn
+    }
+
+    [Visitor = true]
+    class DocumentAst abstract : Ast
+    {
+    };
+
+    class ImportAst : DocumentAst
+    {
+        AstToken<string> Document
+    };
+
+    class StartAutomataAst sealed : DocumentAst
+    {
+        QName Automata
+    };
+
+    class NamespaceAst sealed : DocumentAst
+    {
+        QName Name,
+        NamespaceItemAst[] Items
+    };
+
+    [Visitor = true]
+    class NamepspaceItemAst abstract : Ast
+    {
+    };
+
+    class PatternAst sealed : NamespaceItemAst
+    {
+        AstToken<string> Name,
+        ReAst Value
+    };
+
+    class SetAst sealed : NamespaceItemAst
+    {
+        AstToken<string> Name,
+        SetItemAst[] Items
+    };
+
+    [Visitor = true]
+    class SetItemAst abstract : Ast
+    {
+        bool IsReturn,
+        bool IsGoto,
+        AstToken<string> GotoLabel
+    };
+
+    class MatchDefinitionAst sealed : SetItemAst
+    {
+        ReAst Value
+    };
+
+    class IncludeSetAst sealed : SetItemAst
+    {
+        AstToken<string> SetName
+    };
+
+    class AutomataAst sealed : NamespaceItemAst
+    {
+        AstToken<string> Name,
+        SetItemAst[] Items
+    };
+
+    [Visitor = true]
+    class ReAst abstract : Ast
+    {
+    };
+
+    class ThenReAst sealed : ReAst
+    {
+        ReAst RE1,
+        ReAst RE2
+    };
+
+    class OrReAst sealed : ReAst
+    {
+        ReAst RE1,
+        ReAst RE2
+    };
+
+    class CardinalReAst sealed : ReAst
+    {
+        ReAst RE,
+        int Min,
+        int Max
+    };
+
+    class ReferenceReAst sealed : ReAst
+    {
+        QName Name
+    };
+
+    class CharReAst sealed : ReAst
+    {
+        AstToken<char> Char
+    };
+
+    enum CharClass
+    {
+        AnyChar,
+        Digit,
+        Whitespace,
+        Alpha,
+        AlphaNum
+    };
+
+    class CharClassReAst sealed : ReAst
+    {
+        CharClass CharClass
+    };
+
+    [Visitor = true]
+    class CharSetAst abstract : Ast
+    {
+    };
+
+    class CharRangeAst sealed : CharSetAst
+    {
+        AstToken<char> First,
+        AstToken<char> Last
+    };
+
+    class SingleCharAst sealed : CharSetAst
+    {
+        AstToken<char> Char
+    };
+
+    class CharRangesReAst sealed : ReAst
+    {
+        AstToken<bool> Exclude,
+        CharSetAst[] Ranges
+    };
+
+    class DfaEdge
+    {
+        char First,
+        char Last,
+        int ToState,
+        bool IsGoto,
+        bool IsReturn,
+        int GotoStateNo
+    };
+
+    class DfaState
+    {
+        int StateNo,
+        DfaEdge[] Edges
+    };
+
+    class Transition
+    {
+        int FromState,
+        char First,
+        char Last,
+        int ToState,
+        bool IsEpsilon,
+        bool IsGoto
+    };
+
+    class Model
+    {
+        DocumentAst[] Document,
+        Transition[] Nfa
+        DfaState[] Dfa
+    };
+
+    visitor BuildNfa for ReAst
+    {
+        constructor ->
+            { fromState = 0, toState = 1, nextState = 2, transitions = [] };
+        visit(ThenReAst ast, state) ->
+            let s1 = state
+                        |> mapWith(toState, state.nextState)
+                        |> mapWith(nextState, state.nextState + 1)
+                        |> visit(ast.RE1);
+            let s2 = state
+                        |> mapWith(fromState = state.nextState)
+                        |> mapWith(nextState, s1.nexstState)
+                        |> visit(ast.RE2);
+            {
+                nextState = s2.nextState,
+                transitions = state.transitions
+                                |> concat s1.transitions
+                                |> concat s2.transitions
+            };
+        visit(OrReAst ast, state) ->
+            let s1 = state
+                        |> mapWith(fromState = state.nextState)
+                        |> mapWith(toState = state.nextState + 1)
+                        |> mapWith(nextState = state.nextState + 4)
+                        |> visit(ast.RE1);
+            let s2 = state
+                        |> mapWith(fromState = state.nextState + 2)
+                        |> mapWith(toState = state.nextState + 3)
+                        |> mapWith(nextState = s1.nextState)
+                        |> visit(ast.RE1);
+            {
+                nextState = s2.nextState,
+                transitions = state.transitions
+                    |> concat s1.transitions
+                    |> concat s2.transitions
+                    |> append Transition { FromState = state.fromState, ToState = state.nextState, IsEpsilon = true }
+                    |> append Transition { FromState = state.fromState, ToState = state.nextState + 2, IsEpsilon = true }
+                    |> append Transition { FromState = state.nextState + 1, ToState = state.toState, IsEpsilon = true }
+                    |> append Transition { FromState = state.nextState + 3, ToState = state.toState, IsEpsilon = true }
+            };
+        visit(CharClassAst ast, state) ->
+            {
+                nextState = state.nextState,
+                transitions = match ast.CharClass with
+                    | CharClass.AnyChar ->
+                        state.transitions
+                            |> append Transitions
+                                {
+                                    FromState = state.fromState,
+                                    ToState = state.toState,
+                                    IsEpsilon = false,
+                                    IsGoto = false,
+                                    First = MIN_CHAR,
+                                    Last = MAX_CHAR
+                                };
+                    | CharClass.Digit ->
+                        state.transitions
+                            |> append Transitions
+                                {
+                                    FromState = state.fromState,
+                                    ToState = state.toState,
+                                    IsEpsilon = false,
+                                    IsGoto = false,
+                                    First = '0',
+                                    Last = '9'
+                                };
+            };
+    };
+
+
+};

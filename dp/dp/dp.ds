@@ -1,0 +1,45 @@
+
+
+namespace daveparser
+{
+    [Visitor = true]
+    class Container abstract
+    {
+    };
+    
+    class FileContainer sealed : Container
+    {
+        string FileName
+    };
+    
+    class Point sealed
+    {
+        int Line,
+        int Column
+    };
+    
+    class Span sealed
+    {
+        Container FileName,
+        Point Begin,
+        Point End
+    };
+    
+    class AstToken<T>
+    {
+        T Value,
+        Span Spn
+    };
+    
+    class QName
+    {
+        AstToken<string>[] Parts
+    };
+
+    class Production
+    {
+        AstToken<string> Name,
+        QName[] Items
+    };
+    
+};
