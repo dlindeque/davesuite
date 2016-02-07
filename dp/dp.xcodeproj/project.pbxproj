@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		96C6231C1C2584760009A3A7 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 96C6231B1C2584760009A3A7 /* main.cpp */; };
+		96C623251C25B2A40009A3A7 /* dp.ds.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 96C623231C25B2A40009A3A7 /* dp.ds.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -26,6 +27,9 @@
 		96C623181C2584760009A3A7 /* dp */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = dp; sourceTree = BUILT_PRODUCTS_DIR; };
 		96C6231B1C2584760009A3A7 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		96C623221C2586690009A3A7 /* dp.ds */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dp.ds; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.javascript; };
+		96C623231C25B2A40009A3A7 /* dp.ds.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dp.ds.cpp; sourceTree = "<group>"; };
+		96C623241C25B2A40009A3A7 /* dp.ds.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dp.ds.h; sourceTree = "<group>"; };
+		96F559501C380DBC000CEBAA /* en */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text; name = en; path = en.lproj/dl.dpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -60,6 +64,9 @@
 			children = (
 				96C6231B1C2584760009A3A7 /* main.cpp */,
 				96C623221C2586690009A3A7 /* dp.ds */,
+				96C623231C25B2A40009A3A7 /* dp.ds.cpp */,
+				96C623241C25B2A40009A3A7 /* dp.ds.h */,
+				96F559511C380DBC000CEBAA /* dl.dpp */,
 			);
 			path = dp;
 			sourceTree = "<group>";
@@ -121,10 +128,22 @@
 			buildActionMask = 2147483647;
 			files = (
 				96C6231C1C2584760009A3A7 /* main.cpp in Sources */,
+				96C623251C25B2A40009A3A7 /* dp.ds.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		96F559511C380DBC000CEBAA /* dl.dpp */ = {
+			isa = PBXVariantGroup;
+			children = (
+				96F559501C380DBC000CEBAA /* en */,
+			);
+			name = dl.dpp;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		96C6231D1C2584760009A3A7 /* Debug */ = {
@@ -239,6 +258,7 @@
 				96C623211C2584760009A3A7 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

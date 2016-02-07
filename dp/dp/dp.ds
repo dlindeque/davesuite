@@ -38,8 +38,28 @@ namespace daveparser
 
     class Production
     {
+        int Id,
+        int Dot,
         AstToken<string> Name,
         QName[] Items
+    };
+    
+    class ParserAction
+    {
+        TokenType Token,
+        int ToState,
+        Production Reduce
+    };
+    
+    class ParserState
+    {
+        int StateNo,
+        ParserAction[] Actions
+    };
+    
+    class ParserTable
+    {
+        ParserState[] States
     };
     
 };

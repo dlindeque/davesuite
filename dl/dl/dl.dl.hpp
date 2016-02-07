@@ -21,9 +21,9 @@ namespace davelexer
     template<typename _Token> class lexerstate {
     private:
         std::wistream &_stm;
-        std::shared_ptr<Container> _cntr;
+        std::shared_ptr<davecommon::container> _cntr;
     public:
-        lexerstate(std::wistream &stm, const std::shared_ptr<Container> &cntr)
+        lexerstate(std::wistream &stm, const std::shared_ptr<davecommon::container> &cntr)
         : _stm(stm), _cntr(cntr)
         {}
         
@@ -31,15 +31,16 @@ namespace davelexer
         
         _Token token;
         std::wstring value;
-        Point begin;
-        Point end;
+        davecommon::position begin;
+        davecommon::position end;
         
         inline auto stm() -> std::wistream& { return _stm; }
-        inline auto cntr() const -> const std::shared_ptr<Container>& { return _cntr; }
-        inline auto cntr() -> std::shared_ptr<Container>& { return _cntr; }
+        inline auto cntr() const -> const std::shared_ptr<davecommon::container>& { return _cntr; }
+        inline auto cntr() -> std::shared_ptr<davecommon::container>& { return _cntr; }
     };
     
     enum class TokenType {
+        Eod,
         Import,
         Set,
         Start,
@@ -80,6 +81,7 @@ namespace davelexer
     
     inline auto text(const TokenType &value) -> std::wstring {
         switch(value) {
+            case TokenType::Eod: return L"Eod";
             case TokenType::Import: return L"Import";
             case TokenType::Set: return L"Set";
             case TokenType::Start: return L"Start";
