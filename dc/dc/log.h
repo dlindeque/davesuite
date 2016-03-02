@@ -14,9 +14,17 @@
 #include "logger.h"
 #include "container.h"
 #include "span.h"
+#include "lexer.ds.model.h"
 
 namespace dc {
 
+    inline auto text(davelexer::TokenType tkn) -> std::wstring
+    {
+        std::wstringstream stm;
+        stm << tkn;
+        return stm.str();
+    }
+    
     struct log {
     public:
         static inline auto printable(wchar_t ch) -> std::wstring {
@@ -130,6 +138,11 @@ namespace dc {
                 stm << L"Processing " << std::wstring(fn.begin(), fn.end());
                 logger->write(severity::info, 0x01, std::shared_ptr<container>(), span(), stm.str());
             }
+            static inline auto WritingOutputFile(logger *logger, const std::string &fn) -> void {
+                std::wstringstream stm;
+                stm << L"Writing output " << std::wstring(fn.begin(), fn.end());
+                logger->write(severity::info, 0x01, std::shared_ptr<container>(), span(), stm.str());
+            }
         };
         struct warning {
             static inline auto TokenLost(logger *logger, const NfaAction &action, const std::vector<NfaAction> &preceding) -> void {
@@ -157,13 +170,27 @@ namespace dc {
                 bool first = true;
                 for(auto &tkn : valid_tkns) {
                     if (first) {
-                        stm << L',';
-                    } else {
                         first = false;
+                    } else {
+                        stm << L", ";
                     }
                     stm << L'\'' << text(tkn) << L'\'';
                 }
                 logger->write(severity::error, 0x12, cntr, span(begin, end), stm.str());
+            }
+            static inline auto UnexpectedToken(logger *logger, const std::shared_ptr<container> &cntr, const long &start_line, const long &start_column, const long &end_line, const long &end_column, const davelexer::TokenType &given_tkn, const std::wstring &given_value, const std::vector<davelexer::TokenType> &valid_tkns) -> void {
+                std::wstringstream stm;
+                stm << L"Unexpected token '" << text(given_tkn) << L"' encountered. Expected any of ";
+                bool first = true;
+                for(auto &tkn : valid_tkns) {
+                    if (first) {
+                        first = false;
+                    } else {
+                        stm << L", ";
+                    }
+                    stm << L'\'' << text(tkn) << L'\'';
+                }
+                logger->write(severity::error, 0x12, cntr, span(position(start_line, start_column), position(end_line, end_column)), stm.str());
             }
             static inline auto SymbolNotFound(logger *logger, const std::wstring &symbol_type, const std::shared_ptr<container> &cntr, const span &spn, const symbolreference &name) -> void {
                 std::wstringstream stm;
@@ -248,25 +275,50 @@ namespace dc {
             }
             static inline auto AutomataOutboundGaps(logger *logger, const std::shared_ptr<container> &cntr, const span &spn, const std::wstring &pre_matched, const std::vector<std::pair<wchar_t, wchar_t>> &gaps) -> void {
                 // After 'aaa6' was matched, the characters 'a'-'z', '0'-'7' or '%' cannot be processed.
+
+                std::vector<std::pair<wchar_t, wchar_t>> wgaps(gaps);
+                size_t s = wgaps.size();
+                size_t i = 0;
+                while(i < s) {
+                    if (wgaps[i].first != (wchar_t)WCHAR_MAX
+                     && wgaps[i].second == (wchar_t)WCHAR_MAX) {
+                        wgaps.emplace_back((wchar_t)WCHAR_MAX, (wchar_t)WCHAR_MAX);
+                        wgaps[i].second--;
+                    }
+                    i++;
+                }
+
                 std::wstringstream stm;
                 stm << L"After '" << pre_matched << L"' was matched, the characters ";
-                switch(gaps.size()) {
+                switch(wgaps.size()) {
                 case 0:
                     stm << L"<unknown>";
                     break;
                 case 1:
-                    stm << printable(gaps[0]);
+                    stm << printable(wgaps[0]);
                     break;
                 default:
-                    stm << printable(gaps[0]);
-                    for(size_t i = 1; i < gaps.size() - 1; i++) {
-                        stm << L',' << printable(gaps[i]);
+                    stm << printable(wgaps[0]);
+                    for(size_t i = 1; i < wgaps.size() - 1; i++) {
+                        stm << L',' << printable(wgaps[i]);
                     }
-                    stm << L" or " << printable(gaps[gaps.size() - 1]);
+                    stm << L" or " << printable(wgaps[wgaps.size() - 1]);
                     break;
                 }
                 stm << L" cannot be processed";
                 logger->write(severity::error, 0x403, cntr, spn, stm.str());
+            }
+
+            // Compile errors
+            static inline auto TypeArgumentsMustBeUnique(logger *logger, const std::shared_ptr<container> &cntr, const span &spn, const std::wstring &argument_name) -> void {
+                std::wstringstream msg;
+                msg << L"The type argument '" << argument_name << L"' may not be repeated";
+                logger->write(severity::error, 0x501, cntr, spn, msg.str());
+            }
+            static inline auto TypeNameAlreadyDefined(logger *logger, const std::shared_ptr<container> &cntr, const span &spn, const std::wstring &name, const std::shared_ptr<container> &other_cntr, const span &other_spn) -> void {
+                std::wstringstream msg;
+                msg << L"The type/enum name '" << name << L"' was previously defined. See " << std::wstring(other_cntr->filename().begin(), other_cntr->filename().end()) << L' ' << other_spn.begin.line << L':' << other_spn.begin.column;
+                logger->write(severity::error, 0x502, cntr, spn, msg.str());
             }
         };
     };

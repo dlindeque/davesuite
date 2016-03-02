@@ -5,6 +5,8 @@
 #include "spanvalue.h"
 #include "symbolreference.h"
 #include "log.h"
+#include "dc.ds.h"
+#include "cpp_helpers.h"
 
 namespace dc
 {
@@ -14,15 +16,7 @@ namespace dc
 	template<>
 	struct action_processor<DfaAction> {
 		template<class _Action> inline auto operator()(size_t state, const DfaAction &a, const _Action &action) const -> void {
-			if (a.CanYield) {
-				action(true, a.YieldAction);
-			} 
-			//else if (a.RewindSteps != -1) {
-			//	action(true,  a.RewindAction);
-			//}
-			else {
-				action(false, NfaAction());
-			}
+            action(true, a.YieldAction);
 		}
 	};
 
@@ -132,4 +126,54 @@ namespace dc
             _stm << L"}" << std::endl;
 		}
 	};
+
+
+	struct output_nfa_gv {
+	private:
+		logger *_logger;
+		std::string _compile_filename;
+		std::string _path;
+	public:
+		output_nfa_gv(logger *logger, const std::string &compile_filename, const std::string &path)
+		: _logger(logger), _compile_filename(compile_filename), _path(path)
+		{}
+
+		inline auto operator()(DocumentAstProcessor &processor) const -> bool {
+			std::string fn = get_standard_output_filename(_compile_filename, _path, ".nfa.gv");
+			log::info::WritingOutputFile(_logger, fn);
+			std::wofstream stm(fn);
+			if (!stm) {
+				log::error::FailureOpeningFile(_logger, std::shared_ptr<container>(), span(), fn);
+				return false;
+			}
+			graph_formatter fmt(stm);
+			fmt(L"NFA", processor.nfa().transitions, processor.nfa().actions);
+			return true;
+		}
+	};
+
+	struct output_dfa_gv {
+	private:
+		logger *_logger;
+		std::string _compile_filename;
+		std::string _path;
+	public:
+		output_dfa_gv(logger *logger, const std::string &compile_filename, const std::string &path)
+		: _logger(logger), _compile_filename(compile_filename), _path(path)
+		{}
+
+		inline auto operator()(DocumentAstProcessor &processor) const -> bool {
+			std::string fn = get_standard_output_filename(_compile_filename, _path, ".dfa.gv");
+			log::info::WritingOutputFile(_logger, fn);
+			std::wofstream stm(fn);
+			if (!stm) {
+				log::error::FailureOpeningFile(_logger, std::shared_ptr<container>(), span(), fn);
+				return false;
+			}
+            graph_formatter fmt(stm);
+			fmt(L"DFA", processor.dfa().transitions, processor.dfa().actions);
+			return true;
+		}
+	};
+
 }

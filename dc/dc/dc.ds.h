@@ -30,7 +30,9 @@ namespace dc {
         Ast(const span &spn)
         : Spn(spn)
         {}
+        virtual ~Ast() {}
         span Spn;
+        std::shared_ptr<Ast> DeclaringAst;
     };
     
     class StartItemAst;
@@ -40,10 +42,18 @@ namespace dc {
     
     class DocumentAstVisitor {
     public:
-        virtual auto visit(const StartItemAst*) -> void = 0;
-        virtual auto visit(const NamespaceAst*) -> void = 0;
-        virtual auto visit(const ImportAst*) -> void = 0;
-        virtual auto visit(const MixinAst*) -> void = 0;
+        virtual auto visit(const std::shared_ptr<StartItemAst>&) -> void = 0;
+        virtual auto visit(const std::shared_ptr<NamespaceAst>&) -> void = 0;
+        virtual auto visit(const std::shared_ptr<ImportAst>&) -> void = 0;
+        virtual auto visit(const std::shared_ptr<MixinAst>&) -> void = 0;
+    };
+
+    class DocumentAstMutatingVisitor {
+    public:
+        virtual auto visit(std::shared_ptr<StartItemAst>&) -> void = 0;
+        virtual auto visit(std::shared_ptr<NamespaceAst>&) -> void = 0;
+        virtual auto visit(std::shared_ptr<ImportAst>&) -> void = 0;
+        virtual auto visit(std::shared_ptr<MixinAst>&) -> void = 0;
     };
     
     class DocumentAst : public Ast {
@@ -51,7 +61,8 @@ namespace dc {
         DocumentAst(const span &spn)
         : Ast(spn)
         {}
-        virtual auto accept(DocumentAstVisitor*) const -> void = 0;
+        virtual auto accept(const std::shared_ptr<DocumentAst>&, DocumentAstVisitor*) const -> void = 0;
+        virtual auto accept(std::shared_ptr<DocumentAst>&, DocumentAstMutatingVisitor*) -> void = 0;
     };
     
     class StartItemAst : public DocumentAst {
@@ -61,7 +72,16 @@ namespace dc {
         {}
         
         symbolreference Document;
-        virtual auto accept(DocumentAstVisitor* visitor) const -> void { visitor->visit(this); }
+        virtual auto accept(const std::shared_ptr<DocumentAst>& ast, DocumentAstVisitor* visitor) const -> void {
+            assert(ast.get() == this);
+            auto s = std::dynamic_pointer_cast<StartItemAst>(ast);
+            visitor->visit(s);
+        }
+        virtual auto accept(std::shared_ptr<DocumentAst>& ast, DocumentAstMutatingVisitor* visitor) -> void {
+            assert(ast.get() == this);
+            auto s = std::dynamic_pointer_cast<StartItemAst>(ast);
+            visitor->visit(s);
+        }
     };
     
     class ImportAst : public DocumentAst {
@@ -70,7 +90,16 @@ namespace dc {
         : DocumentAst(spn), Document(document)
         {}
         spantext Document;
-        virtual auto accept(DocumentAstVisitor* visitor) const -> void { visitor->visit(this); }
+        virtual auto accept(const std::shared_ptr<DocumentAst>& ast, DocumentAstVisitor* visitor) const -> void {
+            assert(ast.get() == this);
+            auto s = std::dynamic_pointer_cast<ImportAst>(ast);
+            visitor->visit(s);
+        }
+        virtual auto accept(std::shared_ptr<DocumentAst>& ast, DocumentAstMutatingVisitor* visitor) -> void {
+            assert(ast.get() == this);
+            auto s = std::dynamic_pointer_cast<ImportAst>(ast);
+            visitor->visit(s);
+        }
     };
 
     class MixinAst : public DocumentAst {
@@ -78,7 +107,25 @@ namespace dc {
         MixinAst(const span &spn)
         : DocumentAst(spn)
         {}
-        virtual auto accept(DocumentAstVisitor* visitor) const -> void { visitor->visit(this); }
+        virtual auto accept(const std::shared_ptr<DocumentAst>& ast, DocumentAstVisitor* visitor) const -> void {
+            assert(ast.get() == this);
+            auto s = std::dynamic_pointer_cast<MixinAst>(ast);
+            visitor->visit(s);
+        }
+        virtual auto accept(std::shared_ptr<DocumentAst>& ast, DocumentAstMutatingVisitor* visitor) -> void {
+            assert(ast.get() == this);
+            auto s = std::dynamic_pointer_cast<MixinAst>(ast);
+            visitor->visit(s);
+        }
+    };
+
+    class AttrAndDoc : public Ast {
+    public:
+        AttrAndDoc(const span &spn, std::vector<spantext> &&documenation)
+        : Ast(spn), Documentation(std::move(documenation))
+        {}
+
+        std::vector<spantext> Documentation;
     };
     
     class NamespaceItemAst;
@@ -91,7 +138,16 @@ namespace dc {
         
         symbolreference Name;
         std::vector<std::shared_ptr<NamespaceItemAst>> Items;
-        virtual auto accept(DocumentAstVisitor* visitor) const -> void { visitor->visit(this); }
+        virtual auto accept(const std::shared_ptr<DocumentAst>& ast, DocumentAstVisitor* visitor) const -> void {
+            assert(ast.get() == this);
+            auto s = std::dynamic_pointer_cast<NamespaceAst>(ast);
+            visitor->visit(s);
+        }
+        virtual auto accept(std::shared_ptr<DocumentAst>& ast, DocumentAstMutatingVisitor* visitor) -> void {
+            assert(ast.get() == this);
+            auto s = std::dynamic_pointer_cast<NamespaceAst>(ast);
+            visitor->visit(s);
+        }
     };
     
     class PatternAst;
@@ -99,57 +155,172 @@ namespace dc {
     class AutomataAst;
     class EnumAst;
     class UsingNamespaceAst;
+    class TypeAst;
     
     class NamespaceItemAstVisitor {
     public:
-        virtual auto visit(const PatternAst*) -> void = 0;
-        virtual auto visit(const SetAst*) -> void = 0;
-        virtual auto visit(const AutomataAst*) -> void = 0;
-        virtual auto visit(const EnumAst*) -> void = 0;
-        virtual auto visit(const UsingNamespaceAst*) -> void = 0;
+        virtual auto visit(const std::shared_ptr<PatternAst>&) -> void = 0;
+        virtual auto visit(const std::shared_ptr<SetAst>&) -> void = 0;
+        virtual auto visit(const std::shared_ptr<AutomataAst>&) -> void = 0;
+        virtual auto visit(const std::shared_ptr<EnumAst>&) -> void = 0;
+        virtual auto visit(const std::shared_ptr<UsingNamespaceAst>&) -> void = 0;
+        virtual auto visit(const std::shared_ptr<TypeAst>&) -> void = 0;
+    };
+
+    class NamespaceItemAstMutatingVisitor {
+    public:
+        virtual auto visit(std::shared_ptr<PatternAst>&) -> void = 0;
+        virtual auto visit(std::shared_ptr<SetAst>&) -> void = 0;
+        virtual auto visit(std::shared_ptr<AutomataAst>&) -> void = 0;
+        virtual auto visit(std::shared_ptr<EnumAst>&) -> void = 0;
+        virtual auto visit(std::shared_ptr<UsingNamespaceAst>&) -> void = 0;
+        virtual auto visit(std::shared_ptr<TypeAst>&) -> void = 0;
     };
     
     class NamespaceItemAst : public Ast {
     public:
-        NamespaceItemAst(const span &spn)
-        : Ast(spn)
+        NamespaceItemAst(const span &spn, std::vector<spantext> &&documentation)
+        : Ast(spn), Documentation(std::move(documentation))
         { }
         
-        virtual auto accept(NamespaceItemAstVisitor *visitor) const -> void = 0;
+        std::vector<spantext> Documentation;
+        
+        virtual auto accept(const std::shared_ptr<NamespaceItemAst>& ast, NamespaceItemAstVisitor *visitor) const -> void = 0;
+        virtual auto accept(std::shared_ptr<NamespaceItemAst>& ast, NamespaceItemAstMutatingVisitor *visitor) -> void = 0;
     };
     
     class ReAst;
     
     class PatternAst : public NamespaceItemAst {
     public:
-        PatternAst(const span &spn, spantext &&name, std::shared_ptr<ReAst> &&value)
-        : NamespaceItemAst(spn), Name(std::move(name)), Value(std::move(value))
+        PatternAst(const span &spn, std::vector<spantext> &&documentation, spantext &&name, std::shared_ptr<ReAst> &&value)
+        : NamespaceItemAst(spn, std::move(documentation)), Name(std::move(name)), Value(std::move(value))
         { }
         spantext Name;
         std::shared_ptr<ReAst> Value;
-        virtual auto accept(NamespaceItemAstVisitor * visitor) const -> void { visitor->visit(this); }
+        virtual auto accept(const std::shared_ptr<NamespaceItemAst>& ast, NamespaceItemAstVisitor * visitor) const -> void {
+            assert(ast.get() == this);
+            auto s = std::dynamic_pointer_cast<PatternAst>(ast);
+            visitor->visit(s);
+        }
+        virtual auto accept(std::shared_ptr<NamespaceItemAst>& ast, NamespaceItemAstMutatingVisitor * visitor) -> void {
+            assert(ast.get() == this);
+            auto s = std::dynamic_pointer_cast<PatternAst>(ast);
+            visitor->visit(s);
+        }
+    };
+
+    class EnumItemAst : public Ast {
+    public:
+        EnumItemAst(const span &spn, std::vector<spantext> &&documentation, spantext &&name)
+        : Ast(spn), Name(std::move(name)), Documentation(std::move(documentation))
+        {}
+
+        spantext Name;
+        std::vector<spantext> Documentation;
+    };
+
+    class TypeDefinitionAst : public NamespaceItemAst {
+    public:
+        TypeDefinitionAst(const span &spn, std::vector<spantext> &&documentation, spantext &&name)
+        : NamespaceItemAst(spn, std::move(documentation)), Name(std::move(name))
+        {}
+
+        spantext Name;
     };
     
-    class EnumAst : public NamespaceItemAst {
+    class EnumAst : public TypeDefinitionAst {
     public:
-        EnumAst(const span &spn, spantext &&name, std::vector<spantext> &&items)
-        : NamespaceItemAst(spn), Name(std::move(name)), Items(std::move(items))
+        EnumAst(const span &spn, std::vector<spantext> &&documentation, spantext &&name, std::vector<std::shared_ptr<EnumItemAst>> &&items)
+        : TypeDefinitionAst(spn, std::move(documentation), std::move(name)), Items(std::move(items))
         {}
+        std::vector<std::shared_ptr<EnumItemAst>> Items;
+        virtual auto accept(const std::shared_ptr<NamespaceItemAst>& ast, NamespaceItemAstVisitor * visitor) const -> void {
+            assert(ast.get() == this);
+            auto s = std::dynamic_pointer_cast<EnumAst>(ast);
+            visitor->visit(s);
+        }
+        virtual auto accept(std::shared_ptr<NamespaceItemAst>& ast, NamespaceItemAstMutatingVisitor * visitor) -> void {
+            assert(ast.get() == this);
+            auto s = std::dynamic_pointer_cast<EnumAst>(ast);
+            visitor->visit(s); }
+    };
+
+    class TypeReferenceAst : public Ast {
+    public:
+        TypeReferenceAst(const span &spn, symbolreference &&name, std::vector<std::shared_ptr<TypeReferenceAst>> &&arguments)
+        : Ast(spn), Name(std::move(name)), Arguments(std::move(arguments))
+        {}
+
+        symbolreference Name;
+        std::vector<std::shared_ptr<TypeReferenceAst>> Arguments;
+        std::shared_ptr<TypeDefinitionAst> Bound;
+    };
+
+    class TypePropertyAst : public Ast {
+    public:
+        TypePropertyAst(const span &spn, std::vector<spantext> &&documentation, std::shared_ptr<TypeReferenceAst> &&type, spantext &&name)
+        : Ast(spn), Documentation(std::move(documentation)), Type(std::move(type)), Name(std::move(name))
+        {}
+
         spantext Name;
-        std::vector<spantext> Items;
-        virtual auto accept(NamespaceItemAstVisitor * visitor) const -> void { visitor->visit(this); }
+        std::vector<spantext> Documentation;
+        std::shared_ptr<TypeReferenceAst> Type;
+    };
+
+    class TypeArgumentAst : public Ast {
+    public:
+        TypeArgumentAst(const span &spn, spantext &&name)
+        : Ast(spn), Name(std::move(name))
+        {}
+
+        spantext Name;
+    };
+
+    class TypeAst : public TypeDefinitionAst {
+    public:
+        TypeAst(const span &spn, std::vector<spantext> &&documentation, spantext &&name, std::vector<std::shared_ptr<TypeArgumentAst>> &&arguments, bool isAbstract, bool isSealed, std::shared_ptr<TypeReferenceAst> &&parent, std::vector<std::shared_ptr<TypePropertyAst>> &&properties)
+        : TypeDefinitionAst(spn, std::move(documentation), std::move(name)), Arguments(std::move(arguments)), IsAbstract(isAbstract), IsSealed(isSealed), Parent(std::move(parent)), Properties(std::move(properties))
+        {}
+
+        std::vector<std::shared_ptr<TypeArgumentAst>> Arguments;
+        bool IsAbstract;
+        bool IsSealed;
+        std::shared_ptr<TypeReferenceAst> Parent;
+        std::vector<std::shared_ptr<TypePropertyAst>> Properties;
+        
+        virtual auto accept(const std::shared_ptr<NamespaceItemAst>& ast, NamespaceItemAstVisitor * visitor) const -> void {
+            assert(ast.get() == this);
+            auto s = std::dynamic_pointer_cast<TypeAst>(ast);
+            visitor->visit(s);
+        }
+        virtual auto accept(std::shared_ptr<NamespaceItemAst>& ast, NamespaceItemAstMutatingVisitor * visitor) -> void {
+            assert(ast.get() == this);
+            auto s = std::dynamic_pointer_cast<TypeAst>(ast);
+            visitor->visit(s);
+        }
     };
     
     class UsingNamespaceAst : public NamespaceItemAst {
     public:
-        UsingNamespaceAst(const span &spn, symbolreference &&name)
-        : NamespaceItemAst(spn), Name(std::move(name))
+        UsingNamespaceAst(const span &spn, std::vector<spantext> &&documentation, symbolreference &&name)
+        : NamespaceItemAst(spn, std::move(documentation)), Name(std::move(name))
         { }
         symbolreference Name;
-        virtual auto accept(NamespaceItemAstVisitor * visitor) const -> void { visitor->visit(this); }
+        virtual auto accept(const std::shared_ptr<NamespaceItemAst>& ast, NamespaceItemAstVisitor * visitor) const -> void {
+            assert(ast.get() == this);
+            auto s = std::dynamic_pointer_cast<UsingNamespaceAst>(ast);
+            visitor->visit(s);
+        }
+        virtual auto accept(std::shared_ptr<NamespaceItemAst>& ast, NamespaceItemAstMutatingVisitor * visitor) -> void {
+            assert(ast.get() == this);
+            auto s = std::dynamic_pointer_cast<UsingNamespaceAst>(ast);
+            visitor->visit(s);
+        }
     };
     
     class SetItemAstVisitor;
+    class SetItemAstMutatingVisitor;
     class SetItemAst : public Ast {
     public:
         SetItemAst(const span &spn, bool isReturn, bool isGoto, symbolreference &&gotoLabel)
@@ -159,7 +330,8 @@ namespace dc {
         bool IsReturn;
         bool IsGoto;
         symbolreference GotoLabel;
-        virtual auto accept(SetItemAstVisitor *) const -> void = 0;
+        virtual auto accept(const std::shared_ptr<SetItemAst>& ast, SetItemAstVisitor *) const -> void = 0;
+        virtual auto accept(std::shared_ptr<SetItemAst>& ast, SetItemAstMutatingVisitor *) -> void = 0;
     };
     
     class MatchDefinitionAst;
@@ -167,8 +339,14 @@ namespace dc {
     
     class SetItemAstVisitor {
     public:
-        virtual auto visit(const MatchDefinitionAst*) -> void = 0;
-        virtual auto visit(const IncludeSetAst*) -> void = 0;
+        virtual auto visit(const std::shared_ptr<MatchDefinitionAst>&) -> void = 0;
+        virtual auto visit(const std::shared_ptr<IncludeSetAst>&) -> void = 0;
+    };
+
+    class SetItemAstMutatingVisitor {
+    public:
+        virtual auto visit(std::shared_ptr<MatchDefinitionAst>&) -> void = 0;
+        virtual auto visit(std::shared_ptr<IncludeSetAst>&) -> void = 0;
     };
     
     class MatchDefinitionAst : public SetItemAst {
@@ -180,7 +358,16 @@ namespace dc {
         std::shared_ptr<ReAst> Value;
         spantext FunctionName;
         symbolreference TokenName;
-        virtual auto accept(SetItemAstVisitor *visitor) const -> void { visitor->visit(this); }
+        virtual auto accept(const std::shared_ptr<SetItemAst>& ast, SetItemAstVisitor *visitor) const -> void {
+            assert(ast.get() == this);
+            auto s = std::dynamic_pointer_cast<MatchDefinitionAst>(ast);
+            visitor->visit(s);
+        }
+        virtual auto accept(std::shared_ptr<SetItemAst>& ast, SetItemAstMutatingVisitor *visitor) -> void {
+            assert(ast.get() == this);
+            auto s = std::dynamic_pointer_cast<MatchDefinitionAst>(ast);
+            visitor->visit(s);
+        }
     };
     
     class IncludeSetAst : public SetItemAst {
@@ -190,27 +377,54 @@ namespace dc {
         {}
         
         symbolreference Name;
-        virtual auto accept(SetItemAstVisitor *visitor) const -> void { visitor->visit(this); }
+        virtual auto accept(const std::shared_ptr<SetItemAst>& ast, SetItemAstVisitor *visitor) const -> void {
+            assert(ast.get() == this);
+            auto s = std::dynamic_pointer_cast<IncludeSetAst>(ast);
+            visitor->visit(s);
+        }
+        virtual auto accept(std::shared_ptr<SetItemAst>& ast, SetItemAstMutatingVisitor *visitor) -> void {
+            assert(ast.get() == this);
+            auto s = std::dynamic_pointer_cast<IncludeSetAst>(ast);
+            visitor->visit(s);
+        }
     };
     
     class SetAst : public NamespaceItemAst {
     public:
-        SetAst(const span &spn, spantext &&name, std::vector<std::shared_ptr<SetItemAst>> &&items)
-        : NamespaceItemAst(spn), Name(std::move(name)), Items(std::move(items))
+        SetAst(const span &spn, std::vector<spantext> &&documentation, spantext &&name, std::vector<std::shared_ptr<SetItemAst>> &&items)
+        : NamespaceItemAst(spn, std::move(documentation)), Name(std::move(name)), Items(std::move(items))
         {}
         spantext Name;
         std::vector<std::shared_ptr<SetItemAst>> Items;
-        virtual auto accept(NamespaceItemAstVisitor * visitor) const -> void { visitor->visit(this); }
+        virtual auto accept(const std::shared_ptr<NamespaceItemAst>& ast, NamespaceItemAstVisitor * visitor) const -> void {
+            assert(ast.get() == this);
+            auto s = std::dynamic_pointer_cast<SetAst>(ast);
+            visitor->visit(s);
+        }
+        virtual auto accept(std::shared_ptr<NamespaceItemAst>& ast, NamespaceItemAstMutatingVisitor * visitor) -> void {
+            assert(ast.get() == this);
+            auto s = std::dynamic_pointer_cast<SetAst>(ast);
+            visitor->visit(s);
+        }
     };
     
     class AutomataAst : public NamespaceItemAst {
     public:
-        AutomataAst(const span &spn, spantext &&name, std::vector<std::shared_ptr<SetItemAst>> &&items)
-        : NamespaceItemAst(spn), Name(std::move(name)), Items(std::move(items))
+        AutomataAst(const span &spn, std::vector<spantext> &&documentation, spantext &&name, std::vector<std::shared_ptr<SetItemAst>> &&items)
+        : NamespaceItemAst(spn, std::move(documentation)), Name(std::move(name)), Items(std::move(items))
         {}
         spantext Name;
         std::vector<std::shared_ptr<SetItemAst>> Items;
-        virtual auto accept(NamespaceItemAstVisitor * visitor) const -> void { visitor->visit(this); }
+        virtual auto accept(const std::shared_ptr<NamespaceItemAst>& ast, NamespaceItemAstVisitor * visitor) const -> void {
+            assert(ast.get() == this);
+            auto s = std::dynamic_pointer_cast<AutomataAst>(ast);
+            visitor->visit(s);
+        }
+        virtual auto accept(std::shared_ptr<NamespaceItemAst>& ast, NamespaceItemAstMutatingVisitor * visitor) -> void {
+            assert(ast.get() == this);
+            auto s = std::dynamic_pointer_cast<AutomataAst>(ast);
+            visitor->visit(s);
+        }
     };
     
     class ThenReAst;
@@ -223,13 +437,24 @@ namespace dc {
     
     class ReAstVisitor {
     public:
-        virtual auto visit(const ThenReAst*) -> void = 0;
-        virtual auto visit(const OrReAst*) -> void = 0;
-        virtual auto visit(const CardinalReAst*) -> void = 0;
-        virtual auto visit(const ReferenceReAst*) -> void = 0;
-        virtual auto visit(const CharReAst*) -> void = 0;
-        virtual auto visit(const CharClassReAst*) -> void = 0;
-        virtual auto visit(const CharRangesReAst*) -> void = 0;
+        virtual auto visit(const std::shared_ptr<ThenReAst>&) -> void = 0;
+        virtual auto visit(const std::shared_ptr<OrReAst>&) -> void = 0;
+        virtual auto visit(const std::shared_ptr<CardinalReAst>&) -> void = 0;
+        virtual auto visit(const std::shared_ptr<ReferenceReAst>&) -> void = 0;
+        virtual auto visit(const std::shared_ptr<CharReAst>&) -> void = 0;
+        virtual auto visit(const std::shared_ptr<CharClassReAst>&) -> void = 0;
+        virtual auto visit(const std::shared_ptr<CharRangesReAst>&) -> void = 0;
+    };
+
+    class ReAstMutatingVisitor {
+    public:
+        virtual auto visit(std::shared_ptr<ThenReAst>&) -> void = 0;
+        virtual auto visit(std::shared_ptr<OrReAst>&) -> void = 0;
+        virtual auto visit(std::shared_ptr<CardinalReAst>&) -> void = 0;
+        virtual auto visit(std::shared_ptr<ReferenceReAst>&) -> void = 0;
+        virtual auto visit(std::shared_ptr<CharReAst>&) -> void = 0;
+        virtual auto visit(std::shared_ptr<CharClassReAst>&) -> void = 0;
+        virtual auto visit(std::shared_ptr<CharRangesReAst>&) -> void = 0;
     };
     
     class ReAst : public Ast {
@@ -237,7 +462,8 @@ namespace dc {
         ReAst(const span &spn)
         : Ast(spn)
         { }
-        virtual auto accept(ReAstVisitor*) const -> void = 0;
+        virtual auto accept(const std::shared_ptr<ReAst>& ast, ReAstVisitor*) const -> void = 0;
+        virtual auto accept(std::shared_ptr<ReAst>& ast, ReAstMutatingVisitor*) -> void = 0;
     };
     
     class ThenReAst : public ReAst {
@@ -249,7 +475,16 @@ namespace dc {
         std::shared_ptr<ReAst> RE1;
         std::shared_ptr<ReAst> RE2;
         
-        virtual auto accept(ReAstVisitor * visitor) const -> void { visitor->visit(this); }
+        virtual auto accept(const std::shared_ptr<ReAst>& ast, ReAstVisitor * visitor) const -> void {
+            assert(ast.get() == this);
+            auto s = std::dynamic_pointer_cast<ThenReAst>(ast);
+            visitor->visit(s);
+        }
+        virtual auto accept(std::shared_ptr<ReAst>& ast, ReAstMutatingVisitor * visitor) -> void {
+            assert(ast.get() == this);
+            auto s = std::dynamic_pointer_cast<ThenReAst>(ast);
+            visitor->visit(s);
+        }
     };
     
     class OrReAst : public ReAst {
@@ -261,7 +496,16 @@ namespace dc {
         std::shared_ptr<ReAst> RE1;
         std::shared_ptr<ReAst> RE2;
         
-        virtual auto accept(ReAstVisitor * visitor) const -> void { visitor->visit(this); }
+        virtual auto accept(const std::shared_ptr<ReAst>& ast, ReAstVisitor * visitor) const -> void {
+            assert(ast.get() == this);
+            auto s = std::dynamic_pointer_cast<OrReAst>(ast);
+            visitor->visit(s);
+        }
+        virtual auto accept(std::shared_ptr<ReAst>& ast, ReAstMutatingVisitor * visitor) -> void {
+            assert(ast.get() == this);
+            auto s = std::dynamic_pointer_cast<OrReAst>(ast);
+            visitor->visit(s);
+        }
     };
     
     class CardinalReAst : public ReAst {
@@ -274,7 +518,16 @@ namespace dc {
         int Min;
         int Max;
         
-        virtual auto accept(ReAstVisitor * visitor) const -> void { visitor->visit(this); }
+        virtual auto accept(const std::shared_ptr<ReAst>& ast, ReAstVisitor * visitor) const -> void {
+            assert(ast.get() == this);
+            auto s = std::dynamic_pointer_cast<CardinalReAst>(ast);
+            visitor->visit(s);
+        }
+        virtual auto accept(std::shared_ptr<ReAst>& ast, ReAstMutatingVisitor * visitor) -> void {
+            assert(ast.get() == this);
+            auto s = std::dynamic_pointer_cast<CardinalReAst>(ast);
+            visitor->visit(s);
+        }
     };
     
     class ReferenceReAst : public ReAst {
@@ -285,7 +538,16 @@ namespace dc {
         
         symbolreference Name;
         
-        virtual auto accept(ReAstVisitor * visitor) const -> void { visitor->visit(this); }
+        virtual auto accept(const std::shared_ptr<ReAst>& ast, ReAstVisitor * visitor) const -> void {
+            assert(ast.get() == this);
+            auto s = std::dynamic_pointer_cast<ReferenceReAst>(ast);
+            visitor->visit(s);
+        }
+        virtual auto accept(std::shared_ptr<ReAst>& ast, ReAstMutatingVisitor * visitor) -> void {
+            assert(ast.get() == this);
+            auto s = std::dynamic_pointer_cast<ReferenceReAst>(ast);
+            visitor->visit(s);
+        }
     };
     
     class CharReAst : public ReAst {
@@ -296,7 +558,16 @@ namespace dc {
         
         spanvalue<wchar_t> Char;
         
-        virtual auto accept(ReAstVisitor * visitor) const -> void { visitor->visit(this); }
+        virtual auto accept(const std::shared_ptr<ReAst>& ast, ReAstVisitor * visitor) const -> void {
+            assert(ast.get() == this);
+            auto s = std::dynamic_pointer_cast<CharReAst>(ast);
+            visitor->visit(s);
+        }
+        virtual auto accept(std::shared_ptr<ReAst>& ast, ReAstMutatingVisitor * visitor) -> void {
+            assert(ast.get() == this);
+            auto s = std::dynamic_pointer_cast<CharReAst>(ast);
+            visitor->visit(s);
+        }
     };
     
     enum class CharClass {
@@ -316,10 +587,20 @@ namespace dc {
         
         spanvalue<CharClass> CharClass;
         
-        virtual auto accept(ReAstVisitor * visitor) const -> void { visitor->visit(this); }
+        virtual auto accept(const std::shared_ptr<ReAst>& ast, ReAstVisitor * visitor) const -> void {
+            assert(ast.get() == this);
+            auto s = std::dynamic_pointer_cast<CharClassReAst>(ast);
+            visitor->visit(s);
+        }
+        virtual auto accept(std::shared_ptr<ReAst>& ast, ReAstMutatingVisitor * visitor) -> void {
+            assert(ast.get() == this);
+            auto s = std::dynamic_pointer_cast<CharClassReAst>(ast);
+            visitor->visit(s);
+        }
     };
     
     class CharSetAstVisitor;
+    class CharSetAstMutatingVisitor;
     
     class CharSetAst : public Ast {
     public:
@@ -327,7 +608,8 @@ namespace dc {
         : Ast(spn)
         { }
         
-        virtual auto accept(CharSetAstVisitor*) const -> void = 0;
+        virtual auto accept(const std::shared_ptr<CharSetAst>& ast, CharSetAstVisitor*) const -> void = 0;
+        virtual auto accept(std::shared_ptr<CharSetAst>& ast, CharSetAstMutatingVisitor*) -> void = 0;
     };
     
     class SingleCharAst;
@@ -336,9 +618,16 @@ namespace dc {
     
     class CharSetAstVisitor {
     public:
-        virtual auto visit(const SingleCharAst*) -> void = 0;
-        virtual auto visit(const CharRangeAst*) -> void = 0;
-        virtual auto visit(const CharClassRangeAst*) -> void = 0;
+        virtual auto visit(const std::shared_ptr<SingleCharAst>&) -> void = 0;
+        virtual auto visit(const std::shared_ptr<CharRangeAst>&) -> void = 0;
+        virtual auto visit(const std::shared_ptr<CharClassRangeAst>&) -> void = 0;
+    };
+
+    class CharSetAstMutatingVisitor {
+    public:
+        virtual auto visit(std::shared_ptr<SingleCharAst>&) -> void = 0;
+        virtual auto visit(std::shared_ptr<CharRangeAst>&) -> void = 0;
+        virtual auto visit(std::shared_ptr<CharClassRangeAst>&) -> void = 0;
     };
     
     class SingleCharAst : public CharSetAst {
@@ -349,7 +638,16 @@ namespace dc {
         
         spanvalue<wchar_t> Char;
         
-        virtual auto accept(CharSetAstVisitor* visitor) const -> void { visitor->visit(this); }
+        virtual auto accept(const std::shared_ptr<CharSetAst>& ast, CharSetAstVisitor* visitor) const -> void {
+            assert(ast.get() == this);
+            auto s = std::dynamic_pointer_cast<SingleCharAst>(ast);
+            visitor->visit(s);
+        }
+        virtual auto accept(std::shared_ptr<CharSetAst>& ast, CharSetAstMutatingVisitor* visitor) -> void {
+            assert(ast.get() == this);
+            auto s = std::dynamic_pointer_cast<SingleCharAst>(ast);
+            visitor->visit(s);
+        }
     };
     
     class CharRangeAst : public CharSetAst {
@@ -361,7 +659,16 @@ namespace dc {
         spanvalue<wchar_t> First;
         spanvalue<wchar_t> Last;
         
-        virtual auto accept(CharSetAstVisitor* visitor) const -> void { visitor->visit(this); }
+        virtual auto accept(const std::shared_ptr<CharSetAst>& ast, CharSetAstVisitor* visitor) const -> void {
+            assert(ast.get() == this);
+            auto s = std::dynamic_pointer_cast<CharRangeAst>(ast);
+            visitor->visit(s);
+        }
+        virtual auto accept(std::shared_ptr<CharSetAst>& ast, CharSetAstMutatingVisitor* visitor) -> void {
+            assert(ast.get() == this);
+            auto s = std::dynamic_pointer_cast<CharRangeAst>(ast);
+            visitor->visit(s);
+        }
     };
     
     class CharClassRangeAst : public CharSetAst {
@@ -372,7 +679,16 @@ namespace dc {
         
         CharClass Cls;
         
-        virtual auto accept(CharSetAstVisitor* visitor) const -> void { visitor->visit(this); }
+        virtual auto accept(const std::shared_ptr<CharSetAst>& ast, CharSetAstVisitor* visitor) const -> void {
+            assert(ast.get() == this);
+            auto s = std::dynamic_pointer_cast<CharClassRangeAst>(ast);
+            visitor->visit(s);
+        }
+        virtual auto accept(std::shared_ptr<CharSetAst>& ast, CharSetAstMutatingVisitor* visitor) -> void {
+            assert(ast.get() == this);
+            auto s = std::dynamic_pointer_cast<CharClassRangeAst>(ast);
+            visitor->visit(s);
+        }
     };
     
     class CharRangesReAst : public ReAst {
@@ -384,7 +700,16 @@ namespace dc {
         bool Exclude;
         std::vector<std::shared_ptr<CharSetAst>> Ranges;
         
-        virtual auto accept(ReAstVisitor * visitor) const -> void { visitor->visit(this); }
+        virtual auto accept(const std::shared_ptr<ReAst>& ast, ReAstVisitor * visitor) const -> void {
+            assert(ast.get() == this);
+            auto s = std::dynamic_pointer_cast<CharRangesReAst>(ast);
+            visitor->visit(s);
+        }
+        virtual auto accept(std::shared_ptr<ReAst>& ast, ReAstMutatingVisitor * visitor) -> void {
+            assert(ast.get() == this);
+            auto s = std::dynamic_pointer_cast<CharRangesReAst>(ast);
+            visitor->visit(s);
+        }
     };
 
     class Transition {
@@ -453,7 +778,7 @@ namespace dc {
 
     struct DfaAction
     {
-        bool CanYield;
+        //bool CanYield;
         // If we can yield
         NfaAction YieldAction;
         //// If we cannot yield
@@ -524,18 +849,18 @@ namespace dc {
             _cntr_stack.push_back(cntr);
         }
 
-        virtual auto visit(const ThenReAst* ast) -> void {
+        virtual auto visit(const std::shared_ptr<ThenReAst>& ast) -> void {
             auto s = _nfa.next_state++;
             auto t = _to;
             _to = s;
-            ast->RE1->accept(this);
+            ast->RE1->accept(ast->RE1, this);
             bool sif = _start_is_final;
             _from = s;
             _to = t;
-            ast->RE2->accept(this);
+            ast->RE2->accept(ast->RE2, this);
             _start_is_final &= sif;
         }
-        virtual auto visit(const OrReAst* ast) -> void {
+        virtual auto visit(const std::shared_ptr<OrReAst>& ast) -> void {
             auto t1 = _nfa.next_state++;
             auto t2 = _nfa.next_state++;
             auto b1 = _nfa.next_state++;
@@ -548,20 +873,20 @@ namespace dc {
             _nfa.transitions.emplace_back(b2, true, L' ', L' ', t);
             _from = t1;
             _to = t2;
-            ast->RE1->accept(this);
+            ast->RE1->accept(ast->RE1, this);
             bool sif = _start_is_final;
             _from = b1;
             _to = b2;
-            ast->RE2->accept(this);
+            ast->RE2->accept(ast->RE2, this);
             _start_is_final |= sif;
         }
-        virtual auto visit(const CardinalReAst* ast) -> void;
-        virtual auto visit(const ReferenceReAst* ast) -> void;
-        virtual auto visit(const CharReAst* ast) -> void {
+        virtual auto visit(const std::shared_ptr<CardinalReAst>& ast) -> void;
+        virtual auto visit(const std::shared_ptr<ReferenceReAst>& ast) -> void;
+        virtual auto visit(const std::shared_ptr<CharReAst>& ast) -> void {
             _nfa.transitions.emplace_back(_from, false, ast->Char.value(), ast->Char.value(), _to);
             _start_is_final = false;
         }
-        virtual auto visit(const CharClassReAst* ast) -> void {
+        virtual auto visit(const std::shared_ptr<CharClassReAst>& ast) -> void {
             auto &nfa = _nfa;
             auto &from = _from;
             auto &to = _to;
@@ -571,7 +896,7 @@ namespace dc {
             } );
             _start_is_final = false;
         }
-        virtual auto visit(const CharRangesReAst* ast) -> void {
+        virtual auto visit(const std::shared_ptr<CharRangesReAst>& ast) -> void {
             class include_ranges_visitor : public CharSetAstVisitor {
             private:
                 std::vector<std::pair<wchar_t, wchar_t>> &_ranges;
@@ -580,13 +905,13 @@ namespace dc {
                 : _ranges(ranges)
                 { }
 
-                virtual auto visit(const SingleCharAst* c) -> void {
+                virtual auto visit(const std::shared_ptr<SingleCharAst>& c) -> void {
                     _ranges.emplace_back(c->Char.value(), c->Char.value());
                 }
-                virtual auto visit(const CharRangeAst* c) -> void {
+                virtual auto visit(const std::shared_ptr<CharRangeAst>& c) -> void {
                     _ranges.emplace_back(c->First.value(), c->Last.value());
                 }
-                virtual auto visit(const CharClassRangeAst* c) -> void {
+                virtual auto visit(const std::shared_ptr<CharClassRangeAst>& c) -> void {
                     auto &ranges = _ranges;
                     process_ranges(c->Cls, [&ranges](const wchar_t &first, const wchar_t &last)
                     {
@@ -602,13 +927,13 @@ namespace dc {
                 : _ranges(ranges)
                 { }
 
-                virtual auto visit(const SingleCharAst* c) -> void {
+                virtual auto visit(const std::shared_ptr<SingleCharAst>& c) -> void {
                     exclude_char_range(c->Char.value(), c->Char.value(), _ranges);
                 }
-                virtual auto visit(const CharRangeAst* c) -> void {
+                virtual auto visit(const std::shared_ptr<CharRangeAst>& c) -> void {
                     exclude_char_range(c->First.value(), c->Last.value(), _ranges);
                 }
-                virtual auto visit(const CharClassRangeAst* c) -> void {
+                virtual auto visit(const std::shared_ptr<CharClassRangeAst>& c) -> void {
                     auto &ranges = _ranges;
                     process_ranges(c->Cls, [&ranges](const wchar_t &first, const wchar_t &last)
                     {
@@ -621,16 +946,16 @@ namespace dc {
 
             std::vector<std::pair<wchar_t, wchar_t>> ranges;
             if (ast->Exclude) {
-                ranges.emplace_back((wchar_t)0, (wchar_t)WCHAR_MAX);
+                ranges.emplace_back((wchar_t)0, (wchar_t)WCHAR_MAX - 1);
                 exclude_ranges_visitor v(ranges);
                 for(auto &r : ast->Ranges) {
-                    r->accept(&v);
+                    r->accept(r, &v);
                 }
             }
             else {
                 include_ranges_visitor v(ranges);
                 for(auto &r : ast->Ranges) {
-                    r->accept(&v);
+                    r->accept(r, &v);
                 }    
             }
             

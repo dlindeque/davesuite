@@ -1,7 +1,7 @@
 
 // This is a test
 
-#import "dl.ds";
+//import "dl.ds";
 
 namespace davelexer
 {
@@ -50,6 +50,54 @@ namespace davelexer
     pattern hex         = '[a-fA-F0-9]+';
     pattern int         = '0|([1-9][0-9]*)';
 
+    automata comment
+    {
+        '\*/' return -> token TokenType.Comment;
+        '.+'         -> token TokenType.Comment;
+    };
+
+    set rechar
+    {
+        '\\x{hex}{4}' -> value TokenType.Char;
+        '\\s'         -> value TokenType.CharClass;
+        '\\\.'        -> value TokenType.CharClass;
+        '\\.'   -> value TokenType.Char;
+        '.'     -> value TokenType.Char;
+    };
+
+    automata rebrace
+    {
+        '\}' return     -> token TokenType.CloseBrace;
+        '{identifier}'  -> value TokenType.Identifier;
+        '\.'            -> token TokenType.Dot;
+        '{int}'         -> value TokenType.Number;
+        ','             -> token TokenType.Comma;
+    };
+
+    automata resqr
+    {
+        ']' return      -> token TokenType.CloseSquare;
+        '^'             -> token TokenType.Hat;
+        '-'             -> token TokenType.Hyphen;
+
+        include rechar;
+    };
+
+    automata re
+    {
+        '\'' return -> token TokenType.ReEnd;
+
+        '\('         -> token TokenType.OpenParethesis;
+        '\)'         -> token TokenType.CloseParenthesis;
+        '\{' goto rebrace -> token TokenType.OpenBrace;
+        '\[' goto resqr   -> token TokenType.OpenSquare;
+        '\*'         -> token TokenType.Asterisk;
+        '\?'         -> token TokenType.Question;
+        '\+'         -> token TokenType.Plus;
+
+        include rechar;
+    };
+
     automata lexer
     {
         '\s+'       -> token TokenType.Whitespace;
@@ -67,8 +115,8 @@ namespace davelexer
         '='         -> token TokenType.Equals;
         '\.'        -> token TokenType.Dot;
         ';'         -> token TokenType.Semicolon;
-        '{'         -> token TokenType.OpenBrace;
-        '}'         -> token TokenType.CloseBrace;
+        '\{'        -> token TokenType.OpenBrace;
+        '\}'        -> token TokenType.CloseBrace;
         '->'        -> token TokenType.ProducedBy;
 
         '\'' goto re -> token TokenType.ReStart;
@@ -83,52 +131,8 @@ namespace davelexer
 
         '{string}'  -> value TokenType.String;
         '{identifier}'  -> value TokenType.Identifier;
-    };
-
-    automata comment
-    {
-        '\*/' return -> token TokenType.Comment;
-        '.*'        -> token TokenType.Comment;
-    };
-
-    set rechar
-    {
-        '\\x{hex}{4}' -> value TokenType.Char;
-        '\\.'   -> value TokenType.Char;
-        '.'     -> value TokenType.Char;
-    };
-
-    automata re
-    {
-        '\'' return -> token TokenType.ReEnd;
-
-        '('         -> token TokenType.OpenParethesis;
-        ')'         -> token TokenType.CloseParenthesis;
-        '{' goto rebrace -> token TokenType.OpenBrace;
-        '[' goto resqr   -> token TokenType.OpenSquare;
-        '*'         -> token TokenType.Asterisk;
-        '?'         -> token TokenType.Question;
-        '+'         -> token TokenType.Plus;
-
-        include rechar;
-    };
-
-    automata rebrace
-    {
-        '}' return  -> token TokenType.CloseBrace;
-        '{identifier}'  -> value TokenType.Identifier;
-        '\.'            -> token TokenType.Dot;
-        '{int}'         -> value TokenType.Number;
-        ','             -> token TokenType.Comma;
-    };
-
-    automata resqr
-    {
-        ']' return      -> token TokenType.CloseSquare;
-        '^'             -> token TokenType.Hat;
-        '-'             -> token TokenType.Hyphen;
-
-        include rechar;
+        '.'         -> token TokenType.Error;
+        '\e'        -> token TokenType.EOD;
     };
 };
 

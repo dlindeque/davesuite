@@ -14,7 +14,12 @@
 #include <map>
 #include <fstream>
 #include <codecvt>
+#include <dirent.h>
+#include <sys/stat.h>
+
 #include "dp.ds.h"
+
+#define NEW_LEXER
 
 using namespace daveparser;
 
@@ -107,6 +112,7 @@ inline auto read_next_dpp_token(std::wifstream &stm, int &state, std::wstring &v
                         bool is_id = false;
                         while ((ch >= L'a' && ch <= L'z')
                                || (ch >= L'A' && ch <= L'Z')
+                               || (ch >= L'0' && ch <= L'9')
                                || (ch == L'.')
                                || (ch == L'_')) {
                             is_id = true;
@@ -191,21 +197,214 @@ inline auto toupper(const std::wstring &value) -> std::wstring {
     return s;
 }
 
+typedef std::unordered_multimap<std::wstring, std::wstring> settings_map;
+
+inline auto s2w(const char *s) -> std::wstring
+{
+    std::string ss(s);
+    return std::wstring(ss.begin(), ss.end());
+}
+
+inline auto parse_options(int argc, const char *argv[], settings_map &settings, std::string &compile_fn) -> bool
+{
+    // dc.exe /path:/Users/davidlindeque/Documents/ /output:nfa_gv /output:dfa_gv /output:cpp_lexer /Users/davidlindeque/davesuite/dc/dc/lexer.ds
+    for(int i = 1;i<argc;i++) {
+        //std::cout << i << ": " << argv[i] << std::endl;
+        if (strncmp(argv[i], "/path:", 6) == 0) {
+            settings.emplace(L"path", s2w(argv[i] + 6));
+        } else if (strncmp(argv[i], "/output:", 8) == 0) {
+            settings.emplace(L"output", s2w(argv[i] + 8));
+        } else if (strncmp(argv[i], "/include:", 9) == 0) {
+            settings.emplace(L"include", s2w(argv[i] + 9));
+        } else {
+            if (compile_fn.empty()) {
+                compile_fn = argv[i];
+            } else {
+                std::wcout << L"Cannot specify more than one input file" << std::endl;
+                return false;
+            }
+        }
+    }
+    
+    //compile_fn = "/Users/davidlindeque/davesuite/dc/dc/lexer.ds";
+    
+    //settings.emplace(L"path", L"/Users/davidlindeque/davesuite/dc/dc/gen/");
+    //settings.emplace(L"output", L"nfa_gv");
+    //settings.emplace(L"output", L"dfa_gv");
+    //settings.emplace(L"output", L"cpp_lexer");
+    
+    return true;
+}
+
+template<typename T, class _Deserializer> inline auto get_unique_option(const settings_map &settings, const std::wstring &name, bool mandatory, const T &defaultValue, T &result, const _Deserializer &deserializer) -> bool {
+    auto f = settings.equal_range(name);
+    if (f.first == f.second) {
+        if (mandatory) {
+            std::wcout << L"The command line option '" << name << L"' could not be found" << std::endl;
+            return false;
+        } else {
+            result = defaultValue;
+            return true;
+        }
+    }
+    auto i = f.first;
+    i++;
+    if (i != f.second) {
+        std::wcout << L"The command line option '" << name << L"' was found more than once." << std::endl;
+        return false;
+    }
+
+    return deserializer(f.first->second, result);
+}
+
+template<typename T, class _Deserializer>
+inline auto get_non_unique_option(const settings_map &settings, const std::wstring &name, std::vector<T> &result, const _Deserializer &deserializer) -> bool {
+    auto f = settings.equal_range(name);
+    for(auto &i = f.first; i != f.second; i++) {
+        result.emplace_back(T());
+        if (!deserializer(i->second, result.back())) {
+            return false;
+        }
+    }
+    return true;
+}
+
+template<typename T, class _Deserializer>
+inline auto get_non_unique_option(const settings_map &settings, const std::wstring &name, std::set<T> &result, const _Deserializer &deserializer) -> bool {
+    auto f = settings.equal_range(name);
+    for(auto &i = f.first; i != f.second; i++) {
+        T x;
+        deserializer(i->second, x);
+        result.emplace(x);
+    }
+    return true;
+}
+
+inline auto get_bool_option(const settings_map &settings, const std::wstring &name, bool mandatory, bool defaultValue, bool &result) -> bool {
+    return get_unique_option(settings, name, mandatory, defaultValue, result, [](const std::wstring &value, bool &result) {
+        result = (value == L"y" || value == L"Y");
+        return true;
+    });
+}
+
+inline auto get_string_option(const settings_map &settings, const std::wstring &name, bool mandatory, std::wstring defaultValue, std::wstring &result) -> bool {
+    return get_unique_option(settings, name, mandatory, defaultValue, result, [](const std::wstring &value, std::wstring &result) {
+        result = value;
+        return true;
+    });
+}
+
+inline auto get_string_option(const settings_map &settings, const std::wstring &name, bool mandatory, std::string defaultValue, std::string &result) -> bool {
+    return get_unique_option(settings, name, mandatory, defaultValue, result, [](const std::wstring &value, std::string &result) {
+        result = std::string(value.begin(), value.end());
+        return true;
+    });
+}
+
+inline auto get_string_options(const settings_map &settings, const std::wstring &name, std::vector<std::wstring> &result) -> bool
+{
+    return get_non_unique_option(settings, name, result, [](const std::wstring &value, std::wstring &result)
+    {
+        result = value;
+        return true;
+    });
+}
+inline auto get_string_options(const settings_map &settings, const std::wstring &name, std::set<std::wstring> &result) -> bool
+{
+    return get_non_unique_option(settings, name, result, [](const std::wstring &value, std::wstring &result)
+    {
+        result = value;
+        return true;
+    });
+}
+inline auto get_string_options(const settings_map &settings, const std::wstring &name, std::vector<std::string> &result) -> bool
+{
+    return get_non_unique_option(settings, name, result, [](const std::wstring &value, std::string &result)
+    {
+        result = std::string(value.begin(), value.end());
+        return true;
+    });
+}
+inline auto get_string_options(const settings_map &settings, const std::wstring &name, std::set<std::string> &result) -> bool
+{
+    return get_non_unique_option(settings, name, result, [](const std::wstring &value, std::string &result)
+    {
+        result = std::string(value.begin(), value.end());
+        return true;
+    });
+}
+
+inline auto create_directory(const std::string &path) -> void {
+    mkdir(path.c_str(), 0777);
+}
+
+inline auto extract_filename(const std::string &path) -> std::string
+{
+    // Get abc.xyz from /path1/path2/abc.xyz
+    // or /abc.xyz
+    // or abc.xyz
+
+    auto f = path.find_last_of("/");
+    if (f != std::string::npos) {
+        return std::string(path.begin() + f + 1, path.end());
+    } 
+    else {
+        return path;
+    }
+}
+
+inline auto combine_path_filename(const std::string &path, const std::string &fn) -> std::string
+{
+    if (path.empty()) return fn;
+    auto x = path.end();
+    x--;
+    if (*x == '/') {
+        return path + fn;
+    }
+    else {
+        return path + "/" + fn;
+    }
+}
+
+inline auto get_standard_output_filename(const std::string &parent_filename, const std::string &output_path, const std::string &new_ext) -> std::string
+{
+    return combine_path_filename(output_path, extract_filename(parent_filename) + new_ext);
+}
+        
 int main(int argc, const char * argv[]) {
+
+    std::wcout << L"Dave Temporary Parser 0.1" << std::endl;
+
+    settings_map settings;
+    std::string compile_fn, path;
+    if (!parse_options(argc, argv, settings, compile_fn)) {
+        return 1;
+    }
+    
+    std::set<std::wstring> output;
+
+    if (!get_string_option(settings, L"path", true, "", path)) {
+        return 1;
+    }
+
+    create_directory(path);
+    std::string output_fn = get_standard_output_filename(compile_fn, path, ".cpp");
+    std::string output_h = get_standard_output_filename(compile_fn, path, ".h");
+
     std::vector<Production> productions;
     std::wstring start;
     std::map<std::wstring, std::wstring> production_type;
     std::map<std::pair<const Production*, std::wstring>, ConflictResolution> resolutions;
     
     // Parse the dpp file
-    std::wifstream dpp("/Users/davidlindeque/davesuite/dp/dp/en.lproj/dl.dpp", std::ios::binary);
+    std::wifstream dpp(compile_fn, std::ios::binary);
     if (!dpp.is_open()) {
-        std::wcout << L"Failure opening dl.dpp" << std::endl;
+        std::wcout << L"Failure opening " << std::wstring(compile_fn.begin(), compile_fn.end()) << std::endl;
         return 1;
     }
     dpp.imbue(std::locale(dpp.getloc(), new std::codecvt_utf16<wchar_t, 0x10ffff, (std::codecvt_mode)(std::little_endian | std::consume_header)>));
     
-    int s2 = 0, line = 1;
+    int s2 = 0, line = 0;
     std::wstring value;
     auto tkn = read_next_dpp_token(dpp, s2, value, line);
     if (tkn != dpp_token::hypens) { std::wcout << line << L": " << L"Expecting hyphens" << std::endl; return 1; }
@@ -568,13 +767,18 @@ int main(int argc, const char * argv[]) {
     }
     
     // Build a PDA
-    std::wofstream stm("dc/dc/dc.dp.cpp");
+    std::wofstream stm(output_fn);
     if(!stm.is_open()) {
         std::wcout << L"Failed to open";
         return 1;
     }
     stm << L"#include <vector>" << std::endl;
-    stm << L"#include \"dc.dp.h\"" << std::endl;
+    auto inc_fn = extract_filename(output_h);
+    stm << L"#include \"" << std::wstring(inc_fn.begin(), inc_fn.end()) << "\"" << std::endl;
+#ifdef NEW_LEXER
+    stm << L"#include \"lexer.ds.lexer.h\"" << std::endl;
+    stm << L"#include \"lexer.ds.model.h\"" << std::endl;
+#endif
     stm << std::endl;
     stm << L"namespace dc" << std::endl;
     stm << L"{" << std::endl;
@@ -585,17 +789,29 @@ int main(int argc, const char * argv[]) {
     stm << L"    };" << std::endl;
     stm << L"    struct lexical_value {" << std::endl;
     stm << L"        std::wstring desc;" << std::endl;
+#ifdef NEW_LEXER
+    stm << L"        davelexer::TokenType tkn_type;" << std::endl;
+#else
     stm << L"        TokenType tkn_type;" << std::endl;
+#endif
     stm << L"        std::wstring tkn_value;" << std::endl;
     stm << L"        span tkn_span;" << std::endl;
     for(auto &pt : production_type) {
         stm << L"        " << pt.second << L" " << pt.first << L";" << std::endl;
     }
     stm << L"        lexical_value() { }" << std::endl;
+#ifdef NEW_LEXER
+    stm << L"        lexical_value(span &&spn, const davelexer::TokenType _tkn_type, const std::wstring &_tkn_value)" << std::endl;
+#else
     stm << L"        lexical_value(span &&spn, const TokenType _tkn_type, const std::wstring &_tkn_value)" << std::endl;
+#endif
     stm << L"        : desc(text(_tkn_type)), tkn_span(std::move(spn)), tkn_type(_tkn_type), tkn_value(_tkn_value)" << std::endl;
     stm << L"        {}" << std::endl;
+#ifdef NEW_LEXER
+    stm << L"        lexical_value(span &&spn, const davelexer::TokenType _tkn_type, std::wstring &&_tkn_value)" << std::endl;
+#else
     stm << L"        lexical_value(span &&spn, const TokenType _tkn_type, std::wstring &&_tkn_value)" << std::endl;
+#endif
     stm << L"        : desc(text(_tkn_type)), tkn_span(std::move(spn)), tkn_type(_tkn_type), tkn_value(std::move(_tkn_value))" << std::endl;
     stm << L"        {}" << std::endl;
     for(auto &pt : production_type) {
@@ -605,21 +821,36 @@ int main(int argc, const char * argv[]) {
     }
     stm << L"    };" << std::endl;
     stm << std::endl;
-    stm << L"    auto parse(std::wistream &stm, const std::shared_ptr<container> &cntr, logger *logger, DocumentAstVisitor *processor, bool &ok) -> bool" << std::endl;
+    stm << L"    auto parse(std::wistream &stm, const std::shared_ptr<container> &cntr, logger *logger, DocumentAstMutatingVisitor *processor, bool &ok) -> bool" << std::endl;
     stm << L"    {" << std::endl;
     stm << L"        std::vector<size_t> states;" << std::endl;
     stm << L"        std::vector<lexical_value> values;" << std::endl;
+#ifndef NEW_LEXER
     stm << L"        dlstate s(stm, cntr);" << std::endl;
     stm << L"        s.states.push_back(0);" << std::endl;
+#endif
     stm << L"        states.push_back(0);" << std::endl;
     stm << L"        bool read_token = true;" << std::endl;
+#ifdef NEW_LEXER
+    stm << L"        davelexer::lexer lexer(stm);" << std::endl;
+    stm << L"        long start_line = 0, start_column = 0, end_line = 0, end_column = 0;" << std::endl;
+    stm << L"        std::wstring value;" << std::endl;
+    stm << L"        davelexer::TokenType token = davelexer::TokenType::Error;" << std::endl;
+#endif
     stm << L"        while(true) {" << std::endl;
     stm << L"            if (read_token) {" << std::endl;
     stm << L"                while(true) {" << std::endl;
+#ifdef NEW_LEXER
+    stm << L"                    if (!lexer.try_read_next_token(start_line, start_column, end_line, end_column, value, token)) {" << std::endl;
+    stm << L"                        token = davelexer::TokenType::EOD;" << std::endl;
+    stm << L"                    }" << std::endl;
+    stm << L"                    if (token != davelexer::TokenType::Whitespace && token != davelexer::TokenType::Comment) break;" << std::endl;
+#else
     stm << L"                    if (!read_next_token(s)) {" << std::endl;
     stm << L"                        s.token = TokenType::Eod;" << std::endl;
     stm << L"                    }" << std::endl;
     stm << L"                    if (s.token != TokenType::Whitespace && s.token != TokenType::Comment) break;" << std::endl;
+#endif
     stm << L"                }" << std::endl;
     stm << L"            }" << std::endl;
     stm << L"            switch(states.back()) {" << std::endl;
@@ -676,18 +907,31 @@ int main(int argc, const char * argv[]) {
             stm << L"                    break;" << std::endl;
 
         } else {
+#ifdef NEW_LEXER
+            stm << L"                    switch(token) {" << std::endl;
+#else
             stm << L"                    switch(s.token) {" << std::endl;
+#endif
             for(auto i = f.first; i != f.second; i++) {
                 if (i->second.Reduce == nullptr && i->second.IsConflictResolutionVictim == false && terminals.find(i->second.Token) != terminals.end()) {
+#ifdef NEW_LEXER
+                    stm << L"                        case davelexer::" << as_cpp_token(i->second.Token) << L":" << std::endl;
+                    stm << L"                            values.emplace_back(span(position(start_line, start_column), position(end_line, end_column)), davelexer::" << as_cpp_token(i->second.Token) << L", std::move(value));" << std::endl;
+#else
                     stm << L"                        case " << as_cpp_token(i->second.Token) << L":" << std::endl;
                     stm << L"                            values.emplace_back(span(std::move(s.begin), std::move(s.end)), " << as_cpp_token(i->second.Token) << L", std::move(s.value));" << std::endl;
+#endif
                     stm << L"                            states.push_back(" << i->second.ToState << L");" << std::endl;
                     stm << L"                            read_token = true;" << std::endl;
                     stm << L"                            break;" << std::endl;
                 }
             }
             if (is_final_state) {
+#ifdef NEW_LEXER
+                stm << L"                        case davelexer::TokenType::EOD:" << std::endl;
+#else
                 stm << L"                        case TokenType::Eod:" << std::endl;
+#endif
                 stm << L"                            return true;" << std::endl;
             }
             stm << L"                        default:" << std::endl;
@@ -730,13 +974,25 @@ int main(int argc, const char * argv[]) {
                 // There's no reduce on this state - must be an error then.
                 stm << L"                            // Error - We did not read an expected token, and we also cannot reduce" << std::endl;
                 stm << L"                            if(true) {" << std::endl;
+#ifdef NEW_LEXER
+                stm << L"                                std::vector<davelexer::TokenType> validTokens;" << std::endl;
+#else
                 stm << L"                                std::vector<TokenType> validTokens;" << std::endl;
+#endif
                 for(auto i = f.first; i != f.second; i++) {
                     if (!i->second.IsConflictResolutionVictim && terminals.find(i->second.Token) != terminals.end()) {
+#ifdef NEW_LEXER
+                        stm << L"                                validTokens.push_back(davelexer::" << as_cpp_token(i->second.Token) << L");" << std::endl;
+#else
                         stm << L"                                validTokens.push_back(" << as_cpp_token(i->second.Token) << L");" << std::endl;
+#endif
                     }
                 }
+#ifdef NEW_LEXER
+                stm << L"                                log::error::UnexpectedToken(logger, cntr, start_line, start_column, end_line, end_column, token, value, validTokens);" << std::endl;
+#else
                 stm << L"                                log::error::UnexpectedToken(logger, cntr, s.begin, s.end, s.token, s.value, validTokens);" << std::endl;
+#endif
                 stm << L"                                return false;" << std::endl;
                 stm << L"                            }" << std::endl;
                 stm << L"                            break;" << std::endl;

@@ -50,6 +50,9 @@ namespace davecommon {
                 }
                 logger->write(davecommon::severity::error, cntr, davecommon::span(begin, end), stm.str());
             }
+            static inline auto UnexpectedToken(logger *logger, const std::shared_ptr<container> &cntr, const long &start_line, const long &start_column, const long &end_line, const long &end_column, const davelexer::TokenType &given_tkn, const std::wstring &given_value, const std::vector<davelexer::TokenType> &valid_tkns) -> void {
+                UnexpectedToken(logger, cntr, position(start_line, start_column), position(end_line, end_column), given_tkn, given_value, valid_tkns);
+            }
             static inline auto PatternNotFound(logger *logger, const std::shared_ptr<container> &cntr, const span &spn, const std::vector<davelexer::AstToken<std::wstring>> &pattern) -> void {
                 std::wstringstream stm;
                 stm << L"The pattern '" << format_qname(pattern) << L"' could not be found";

@@ -194,6 +194,12 @@ namespace dc {
         TKNS(TokenType::Identifier, L"Question");
         TKNS(TokenType::Comma, L"");
         TKNS(TokenType::Identifier, L"Pipe");
+        TKNS(TokenType::Comma, L"");
+        TKNS(TokenType::Identifier, L"Error");
+        TKNS(TokenType::Comma, L"");
+        TKNS(TokenType::Identifier, L"Documentation");
+        TKNS(TokenType::Comma, L"");
+        TKNS(TokenType::Identifier, L"EOD");
         TKNS(TokenType::CloseBrace, L"");
         TKNS(TokenType::Semicolon, L"");
         
@@ -227,12 +233,13 @@ namespace dc {
         TKNS(TokenType::ReEnd, L"");
         TKNS(TokenType::Semicolon, L"");
         
-        // pattern string      = '"([^"\\]|(\\(.|\e)))*"';
+        // pattern string      = '"(([^"\\]|\e)|(\\(.|\e)))*"';
         TKNS(TokenType::Pattern, L"");
         TKNS(TokenType::Identifier, L"string");
         TKNS(TokenType::Equals, L"");
         TKNS(TokenType::ReStart, L"");
         TKNS(TokenType::Char, L"\"");
+        TKNS(TokenType::OpenParenthesis, L"");
         TKNS(TokenType::OpenParenthesis, L"");
         TKNS(TokenType::OpenSquare, L"");
         TKNS(TokenType::Hat, L"");
@@ -240,12 +247,15 @@ namespace dc {
         TKNS(TokenType::Char, L"\\");
         TKNS(TokenType::CloseSquare, L"");
         TKNS(TokenType::Pipe, L"");
+        TKNS(TokenType::CharClass, L"\\e");
+        TKNS(TokenType::CloseParenthesis, L"");
+        TKNS(TokenType::Pipe, L"");
         TKNS(TokenType::OpenParenthesis, L"");
         TKNS(TokenType::Char, L"\\");
         TKNS(TokenType::OpenParenthesis, L"");
         TKNS(TokenType::Dot, L"");
         TKNS(TokenType::Pipe, L"");
-        TKNS(TokenType::CharClass, L"e");
+        TKNS(TokenType::CharClass, L"\\e");
         TKNS(TokenType::CloseParenthesis, L"");
         TKNS(TokenType::CloseParenthesis, L"");
         TKNS(TokenType::CloseParenthesis, L"");
@@ -301,7 +311,9 @@ namespace dc {
         {
             '\*+[/]' return -> token TokenType.Comment;
             '\*+[^/]'       -> token TokenType.Comment;
+            '\*+\e'         -> token TokenType.Error;
             '[^\*]+'        -> token TokenType.Comment;
+            '\e'            -> token TokenType.Error;
         };
         */
         TKNS(TokenType::Automata, L"");
@@ -327,6 +339,14 @@ namespace dc {
         TKNS(TokenType::ReEnd, L"");
         PRODUCE(L"token", L"Comment", tkns);
         
+            // '\*+\e'         -> token TokenType.Error;
+        TKNS(TokenType::ReStart, L"");
+        TKNS(TokenType::Char, L"*");
+        TKNS(TokenType::Plus, L"");
+        TKNS(TokenType::CharClass, L"\\e");
+        TKNS(TokenType::ReEnd, L"");
+        PRODUCE(L"token", L"Error", tkns);
+        
             // '[^\*]+'        -> token TokenType.Comment;
         TKNS(TokenType::ReStart, L"");
         TKNS(TokenType::OpenSquare, L"");
@@ -337,13 +357,43 @@ namespace dc {
         TKNS(TokenType::ReEnd, L"");
         PRODUCE(L"token", L"Comment", tkns);
         
+            // '\e'            -> token TokenType.Error;
+        TKNS(TokenType::ReStart, L"");
+        TKNS(TokenType::CharClass, L"\\e");
+        TKNS(TokenType::ReEnd, L"");
+        PRODUCE(L"token", L"Error", tkns);
+        
         TKNS(TokenType::CloseBrace, L"");
         TKNS(TokenType::Semicolon, L"");
         
         // set rechar
+        /*
+        set rechar {
+            '\\[adAse]'     -> value TokenType.CharClass;
+            '\.'            -> value TokenType.CharClass;
+            '\\x{hex}{4}'   -> value TokenType.Char;
+            '\\x{hex}{0,3}' -> value TokenType.Error;
+            '\\.'           -> value TokenType.Char;
+            '.'             -> value TokenType.Char;
+        };
+        */
         TKNS(TokenType::Set, L"");
         TKNS(TokenType::Identifier, L"rechar");
         TKNS(TokenType::OpenBrace, L"");
+
+        TKNS(TokenType::ReStart, L"");
+        CHARS(L"\\", tkns);
+        TKNS(TokenType::OpenSquare, L"");
+        CHARS(L"adAse", tkns);
+        TKNS(TokenType::CloseSquare, L"");
+        TKNS(TokenType::ReEnd, L"");
+        PRODUCE(L"value", L"CharClass", tkns);
+
+        TKNS(TokenType::ReStart, L"");
+        TKNS(TokenType::Char, L".");
+        TKNS(TokenType::ReEnd, L"");
+        PRODUCE(L"value", L"CharClass", tkns);
+
         TKNS(TokenType::ReStart, L"");
         CHARS(L"\\x", tkns);
         TKNS(TokenType::OpenBrace, L"");
@@ -404,7 +454,7 @@ namespace dc {
         TKNS(TokenType::ReStart, L"");
         TKNS(TokenType::Dot, L"");
         TKNS(TokenType::Pipe, L"");
-        TKNS(TokenType::CharClass, L"e");
+        TKNS(TokenType::CharClass, L"\\e");
         TKNS(TokenType::ReEnd, L"");
         PRODUCE(L"value", L"Error", tkns);
         TKNS(TokenType::CloseBrace, L"");
@@ -427,7 +477,7 @@ namespace dc {
         TKNS(TokenType::ReStart, L"");
         //TKNS(TokenType::Dot, L"");
         //TKNS(TokenType::Pipe, L"");
-        TKNS(TokenType::CharClass, L"e");
+        TKNS(TokenType::CharClass, L"\\e");
         TKNS(TokenType::ReEnd, L"");
         PRODUCE(L"value", L"Error", tkns);
         TKNS(TokenType::CloseBrace, L"");
@@ -449,13 +499,14 @@ namespace dc {
         TKN(L"*", L"Asterisk", tkns);
         TKN(L"?", L"Question", tkns);
         TKN(L"+", L"Plus", tkns);
+        TKN(L"|", L"Pipe", tkns);
         TKNS(TokenType::Include, L"");
         TKNS(TokenType::Identifier, L"rechar");
         TKNS(TokenType::Semicolon, L"");
         TKNS(TokenType::ReStart, L"");
         //TKNS(TokenType::Dot, L"");
         //TKNS(TokenType::Pipe, L"");
-        TKNS(TokenType::CharClass, L"e");
+        TKNS(TokenType::CharClass, L"\\e");
         TKNS(TokenType::ReEnd, L"");
         PRODUCE(L"value", L"Error", tkns);
         TKNS(TokenType::CloseBrace, L"");
@@ -468,7 +519,7 @@ namespace dc {
         
         // '\s+'       -> token TokenType.Whitespace;
         TKNS(TokenType::ReStart, L"");
-        TKNS(TokenType::CharClass, L"s");
+        TKNS(TokenType::CharClass, L"\\s");
         TKNS(TokenType::Plus, L"");
         TKNS(TokenType::ReEnd, L"");
         TKNS(TokenType::ProducedBy, L"");
@@ -487,12 +538,14 @@ namespace dc {
         KEYWORD(L"include", L"Include", tkns);
         KEYWORD(L"goto", L"Goto", tkns);
         KEYWORD(L"return", L"Return", tkns);
+        KEYWORD(L"enum", L"Enum", tkns);
         TKN(L"=", L"Equals", tkns);
         TKN(L".", L"Dot", tkns);
         TKN(L";", L"Semicolon", tkns);
         TKN(L"{", L"OpenBrace", tkns);
         TKN(L"}", L"CloseBrace", tkns);
         TKN(L"->", L"ProducedBy", tkns);
+        TKN(L",", L"Comma", tkns);
         TKN_WITH_GOTO(L"'", L"re", L"ReStart", tkns);
         TKN_WITH_GOTO(L"/*", L"comment", L"Comment", tkns);
         
@@ -502,7 +555,7 @@ namespace dc {
         TKNS(TokenType::OpenParenthesis, L"");
         CHARS(L"\n", tkns);
         TKNS(TokenType::Pipe, L"");
-        TKNS(TokenType::CharClass, L"e");
+        TKNS(TokenType::CharClass, L"\\e");
         TKNS(TokenType::CloseParenthesis, L"");
         TKNS(TokenType::ReEnd, L"");
         PRODUCE(L"token", L"Comment", tkns);
@@ -513,18 +566,18 @@ namespace dc {
         TKNS(TokenType::OpenSquare, L"");
         TKNS(TokenType::Hat, L"");
         CHARS(L"/\n", tkns);
-        TKNS(TokenType::CharClass, L"e");
+        TKNS(TokenType::CharClass, L"\\e");
         TKNS(TokenType::CloseSquare, L"");
         TKNS(TokenType::OpenSquare, L"");
         TKNS(TokenType::Hat, L"");
         CHARS(L"\n", tkns);
-        TKNS(TokenType::CharClass, L"e");
+        TKNS(TokenType::CharClass, L"\\e");
         TKNS(TokenType::CloseSquare, L"");
         TKNS(TokenType::Asterisk, L"");
         TKNS(TokenType::OpenParenthesis, L"");
         CHARS(L"\n", tkns);
         TKNS(TokenType::Pipe, L"");
-        TKNS(TokenType::CharClass, L"e");
+        TKNS(TokenType::CharClass, L"\\e");
         TKNS(TokenType::CloseParenthesis, L"");
         TKNS(TokenType::ReEnd, L"");
         PRODUCE(L"token", L"Comment", tkns);
@@ -535,13 +588,13 @@ namespace dc {
         TKNS(TokenType::OpenSquare, L"");
         TKNS(TokenType::Hat, L"");
         CHARS(L"\n", tkns);
-        TKNS(TokenType::CharClass, L"e");
+        TKNS(TokenType::CharClass, L"\\e");
         TKNS(TokenType::CloseSquare, L"");
         TKNS(TokenType::Asterisk, L"");
         TKNS(TokenType::OpenParenthesis, L"");
         CHARS(L"\n", tkns);
         TKNS(TokenType::Pipe, L"");
-        TKNS(TokenType::CharClass, L"e");
+        TKNS(TokenType::CharClass, L"\\e");
         TKNS(TokenType::CloseParenthesis, L"");
         TKNS(TokenType::ReEnd, L"");
         PRODUCE(L"token", L"Comment", tkns);
@@ -552,7 +605,7 @@ namespace dc {
         TKNS(TokenType::OpenParenthesis, L"");
         CHARS(L"\n", tkns);
         TKNS(TokenType::Pipe, L"");
-        TKNS(TokenType::CharClass, L"e");
+        TKNS(TokenType::CharClass, L"\\e");
         TKNS(TokenType::CloseParenthesis, L"");
         TKNS(TokenType::ReEnd, L"");
         PRODUCE(L"value", L"Documentation", tkns);
@@ -563,18 +616,18 @@ namespace dc {
         TKNS(TokenType::OpenSquare, L"");
         TKNS(TokenType::Hat, L"");
         CHARS(L"/\n", tkns);
-        TKNS(TokenType::CharClass, L"e");
+        TKNS(TokenType::CharClass, L"\\e");
         TKNS(TokenType::CloseSquare, L"");
         TKNS(TokenType::OpenSquare, L"");
         TKNS(TokenType::Hat, L"");
         CHARS(L"\n", tkns);
-        TKNS(TokenType::CharClass, L"e");
+        TKNS(TokenType::CharClass, L"\\e");
         TKNS(TokenType::CloseSquare, L"");
         TKNS(TokenType::Asterisk, L"");
         TKNS(TokenType::OpenParenthesis, L"");
         CHARS(L"\n", tkns);
         TKNS(TokenType::Pipe, L"");
-        TKNS(TokenType::CharClass, L"e");
+        TKNS(TokenType::CharClass, L"\\e");
         TKNS(TokenType::CloseParenthesis, L"");
         TKNS(TokenType::ReEnd, L"");
         PRODUCE(L"value", L"Documentation", tkns);
@@ -597,7 +650,7 @@ namespace dc {
 
         // '\e'
         TKNS(TokenType::ReStart, L"");
-        TKNS(TokenType::CharClass, L"e");
+        TKNS(TokenType::CharClass, L"\\e");
         TKNS(TokenType::ReEnd, L"");
         PRODUCE(L"value", L"EOD", tkns);
 

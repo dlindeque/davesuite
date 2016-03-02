@@ -67,8 +67,8 @@ namespace davelexer
         '='         -> token TokenType.Equals;
         '\.'        -> token TokenType.Dot;
         ';'         -> token TokenType.Semicolon;
-        '{'         -> token TokenType.OpenBrace;
-        '}'         -> token TokenType.CloseBrace;
+        '\{'         -> token TokenType.OpenBrace;
+        '\}'         -> token TokenType.CloseBrace;
         '->'        -> token TokenType.ProducedBy;
 
         '\'' goto re -> token TokenType.ReStart;

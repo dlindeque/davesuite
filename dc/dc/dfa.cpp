@@ -263,7 +263,7 @@ namespace dc
                 }
             }
             //dfa.actions.emplace(s.first, DfaAction { true, *best_action, 0, NfaAction(), false });
-            dfa.actions.emplace(s.first, DfaAction { true, *best_action });
+            dfa.actions.emplace(s.first, DfaAction { *best_action });
         }
 
         // Report the lost tokens
@@ -358,7 +358,7 @@ namespace dc
             std::vector<std::pair<wchar_t, wchar_t>> gaps;
             find_gaps_in_outbound_transitions(m.second, gaps);
             auto yield = dfa.actions.find(m.first);
-            if (yield != dfa.actions.end() && yield->second.CanYield && !gaps.empty()) {
+            if (yield != dfa.actions.end() && !gaps.empty()) {
                 // We're on a state that can yield, and there's gaps in the outbound, so some chars exist that will yield
                 absolute_final_unprocessed.push_back(m.first);
                 //std::wcout << L"State " << m.first << L" is absolute final" << std::endl;
@@ -379,7 +379,7 @@ namespace dc
                     gaps.emplace_back((wchar_t)0, (wchar_t)WCHAR_MAX);
                     state_gaps.emplace(t.ToState, std::move(gaps));
                     auto y2 = dfa.actions.find(t.ToState);
-                    if (y2 != dfa.actions.end() && y2->second.CanYield) {
+                    if (y2 != dfa.actions.end()) {
                         absolute_final_unprocessed.push_back(t.ToState);
                         //std::wcout << L"State " << t.ToState << L" is absolute final" << std::endl;
                         //y2->second.IsAbsoluteFinalState = true;
@@ -443,17 +443,17 @@ namespace dc
                 }
 
                 // See what our state is
-                    // We've got no state to rewind to - if there's gaps in the outbound then we've got an error
-                    auto gf = state_gaps.find(f->first);
-                    if (gf != state_gaps.end() && !gf->second.empty()) {
-                        // We've got gaps
-                        log::error::AutomataOutboundGaps(logger, state.automata->cntr, state.automata->spn, state.sample, gf->second);
-                        ok = false;
-                    }
+                // We've got no state to rewind to - if there's gaps in the outbound then we've got an error
+                auto gf = state_gaps.find(f->first);
+                if (gf != state_gaps.end() && !gf->second.empty()) {
+                    // We've got gaps
+                    log::error::AutomataOutboundGaps(logger, state.automata->cntr, state.automata->spn, state.sample, gf->second);
+                    ok = false;
+                }
 
-                    for(auto &d : dest) {
-                        unprocessed_states.push_back(state_details { d.first, get_sample(state.sample, d.second), state.automata });
-                    }
+                for(auto &d : dest) {
+                    unprocessed_states.push_back(state_details { d.first, get_sample(state.sample, d.second), state.automata });
+                }
             }
             else {
                 // If the nfa action indicates a goto - then we need to process that automata also
@@ -477,6 +477,63 @@ namespace dc
         }
 
         return ok;
+    }
+
+    inline auto split_position_character_transitions(dfa &dfa, wchar_t ch) -> void
+    {
+        for(auto &s : dfa.transitions) {
+            size_t i = 0;
+            size_t cnt = s.second.size();
+            while(i < cnt) {
+                if (s.second[i].First == ch) {
+                    // ch -- y
+                    if (s.second[i].Last == ch) {
+                        // ch -- ch
+                        // skip this transition
+                        i++;
+                    } else {
+                        // ch -- y (y > ch) since Last >= First thus Last >= ch, but Last != ch, thus Last > ch
+                        // split to:
+                        // ch -- ch
+                        // ch+1 -- y
+                        s.second.emplace_back(s.second[i].FromState, false, ch+1, s.second[i].Last, s.second[i].ToState);
+                        s.second[i].Last = ch;
+                    }
+                } else if (s.second[i].First < ch) {
+                    // x < ch
+                    if (s.second[i].Last == ch) {
+                        // x -- ch
+                        // split to:
+                        // x -- ch-1
+                        // ch -- ch
+                        s.second.emplace_back(s.second[i].FromState, false, s.second[i].First, ch-1, s.second[i].ToState);
+                        s.second[i].First = ch;
+                    } else if (s.second[i].Last > ch) {
+                        // x -- ch -- y
+                        // split to:
+                        // x - ch-1
+                        // ch -- ch
+                        // ch+1 - y
+                        s.second.emplace_back(s.second[i].FromState, false, s.second[i].First, ch-1, s.second[i].ToState);
+                        s.second.emplace_back(s.second[i].FromState, false, ch+1, s.second[i].Last, s.second[i].ToState);
+                        s.second[i].First = ch;
+                        s.second[i].Last = ch;
+                    } else {
+                        // Last < ch thus skip
+                        i++;
+                    }
+                } else {
+                    // First > ch thus skip
+                    i++;
+                }
+            }
+        }
+    }
+
+    auto split_position_character_transitions(dfa &dfa) -> void
+    {
+        split_position_character_transitions(dfa, L'\n');
+        split_position_character_transitions(dfa, L'\r');
     }
 }
 

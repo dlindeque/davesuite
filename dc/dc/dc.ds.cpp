@@ -11,7 +11,7 @@
 
 namespace dc
 {
-    auto BuildNfaReAst::visit(const CardinalReAst* ast) -> void
+    auto BuildNfaReAst::visit(const std::shared_ptr<CardinalReAst> &ast) -> void
     {
         // from -r-> t1 -r-> t2 -r-> t3 -r-> t4 -r-> to
         //                              -e-> to
@@ -32,13 +32,13 @@ namespace dc
             size_t t = _nfa.next_state++;
             _from = f;
             _to = t;
-            ast->RE->accept(this);
+            ast->RE->accept(ast->RE, this);
             f = t;
         }
         if (ast->Max == -1) {
             _from = f;
             _to = f;
-            ast->RE->accept(this);
+            ast->RE->accept(ast->RE, this);
             _nfa.transitions.emplace_back(f, true, L' ', L' ', tt);
         }
         else if (ast->Max == ast->Min) {
@@ -53,7 +53,7 @@ namespace dc
                 size_t t = _nfa.next_state++;
                 _from = f;
                 _to = t;
-                ast->RE->accept(this);
+                ast->RE->accept(ast->RE, this);
                 f = t;
             }
             _nfa.transitions.emplace_back(f, true, L' ', L' ', tt);
@@ -66,7 +66,7 @@ namespace dc
         _start_is_final = ast->Min == 0;
     }
     
-    auto BuildNfaReAst::visit(const ReferenceReAst* ast) -> void
+    auto BuildNfaReAst::visit(const std::shared_ptr<ReferenceReAst> &ast) -> void
     {
         auto logger = _logger;
         bool found = false;
@@ -91,7 +91,7 @@ namespace dc
                         prev_spn = p->Spn;
                         found = true;
                         cntr_stack.push_back(found_cntr);
-                        p->Value->accept(_this);
+                        p->Value->accept(p->Value, _this);
                         cntr_stack.pop_back();
                     }
                 }

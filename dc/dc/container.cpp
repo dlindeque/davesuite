@@ -26,6 +26,11 @@ namespace dc
         find_ns_container(ns).enums.emplace(symbol->Name.value(), symbol);
     }
     
+    auto container::add_symbol(const symbolreference &ns, const std::shared_ptr<TypeAst> &symbol) -> void
+    {
+        find_ns_container(ns).types.emplace(symbol->Name.value(), symbol);
+    }
+    
     auto container::add_symbol(const symbolreference &ns, const std::shared_ptr<AutomataAst> &symbol, size_t start_state) -> void
     {
         find_ns_container(ns).dl_automatas.emplace(symbol->Name.value(), std::pair<std::shared_ptr<AutomataAst>, size_t>(symbol, start_state));

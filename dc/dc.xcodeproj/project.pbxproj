@@ -10,10 +10,13 @@
 		96093E671C4E3738005CC7A5 /* dc.dl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 96093E5A1C4E3738005CC7A5 /* dc.dl.cpp */; };
 		96093E691C4E3738005CC7A5 /* dc.ds.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 96093E601C4E3738005CC7A5 /* dc.ds.cpp */; };
 		96093E6C1C4E391F005CC7A5 /* container.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 96093E6A1C4E391F005CC7A5 /* container.cpp */; };
-		96093E6E1C4E3FA2005CC7A5 /* dc.dp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 96093E6D1C4E3FA2005CC7A5 /* dc.dp.cpp */; };
-		96434B701C5D259300CBF3CB /* smcpp.ds.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 96434B6E1C5D259300CBF3CB /* smcpp.ds.cpp */; };
+		96434B701C5D259300CBF3CB /* lexer_formatter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 96434B6E1C5D259300CBF3CB /* lexer_formatter.cpp */; };
 		966652B61C43A44900D779CF /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 966652B51C43A44900D779CF /* main.cpp */; };
 		96F315991C5B6624005E1C8B /* dfa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 96F315971C5B6624005E1C8B /* dfa.cpp */; };
+		96F8A2261C79FBE50089E31F /* lexer.ds.lexer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 96F8A2221C79FBE50089E31F /* lexer.ds.lexer.cpp */; };
+		96F8A2271C79FBE50089E31F /* lexer.ds.model.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 96F8A2241C79FBE50089E31F /* lexer.ds.model.cpp */; };
+		96F8A2321C84E4430089E31F /* dc.dpp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 96F8A2311C84E4430089E31F /* dc.dpp.cpp */; };
+		96F9655F1C6CF51C00A0EF00 /* model_formatter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 96F9655D1C6CF51C00A0EF00 /* model_formatter.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -33,7 +36,7 @@
 		96093E5A1C4E3738005CC7A5 /* dc.dl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dc.dl.cpp; sourceTree = "<group>"; };
 		96093E5B1C4E3738005CC7A5 /* dc.dl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dc.dl.h; sourceTree = "<group>"; };
 		96093E5C1C4E3738005CC7A5 /* dc.dp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dc.dp; sourceTree = "<group>"; };
-		96093E5E1C4E3738005CC7A5 /* dc.dp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dc.dp.h; sourceTree = "<group>"; };
+		96093E5E1C4E3738005CC7A5 /* dc.dpp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dc.dpp.h; sourceTree = "<group>"; };
 		96093E5F1C4E3738005CC7A5 /* dc.ds */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dc.ds; sourceTree = "<group>"; };
 		96093E601C4E3738005CC7A5 /* dc.ds.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dc.ds.cpp; sourceTree = "<group>"; };
 		96093E611C4E3738005CC7A5 /* dc.ds.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dc.ds.h; sourceTree = "<group>"; };
@@ -44,16 +47,28 @@
 		96093E661C4E3738005CC7A5 /* symbolreference.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = symbolreference.h; sourceTree = "<group>"; };
 		96093E6A1C4E391F005CC7A5 /* container.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = container.cpp; sourceTree = "<group>"; };
 		96093E6B1C4E391F005CC7A5 /* container.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = container.h; sourceTree = "<group>"; };
-		96093E6D1C4E3FA2005CC7A5 /* dc.dp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dc.dp.cpp; sourceTree = "<group>"; };
 		960FDD681C64A7BA006131C2 /* graph_formatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = graph_formatter.h; sourceTree = "<group>"; };
+		96135BAA1C6FB41F00DEC19D /* output_writer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = output_writer.h; sourceTree = "<group>"; };
 		96434B6B1C5CBA1500CBF3CB /* astformat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = astformat.h; sourceTree = "<group>"; };
 		96434B6C1C5CBD7700CBF3CB /* containerspan.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = containerspan.h; sourceTree = "<group>"; };
-		96434B6D1C5D251200CBF3CB /* smcpp.ds.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = smcpp.ds.h; sourceTree = "<group>"; };
-		96434B6E1C5D259300CBF3CB /* smcpp.ds.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = smcpp.ds.cpp; sourceTree = "<group>"; };
+		96434B6D1C5D251200CBF3CB /* lexer_formatter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = lexer_formatter.h; sourceTree = "<group>"; };
+		96434B6E1C5D259300CBF3CB /* lexer_formatter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = lexer_formatter.cpp; sourceTree = "<group>"; };
+		9644DE111C7637D500B1AC68 /* lexer.ds */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = lexer.ds; sourceTree = "<group>"; };
 		966652B21C43A44900D779CF /* dc */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = dc; sourceTree = BUILT_PRODUCTS_DIR; };
 		966652B51C43A44900D779CF /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		96C2A3F41C67C8E200011064 /* compiler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = compiler.h; sourceTree = "<group>"; };
 		96F315971C5B6624005E1C8B /* dfa.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dfa.cpp; sourceTree = "<group>"; };
 		96F315981C5B6624005E1C8B /* dfa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dfa.h; sourceTree = "<group>"; };
+		96F8A2221C79FBE50089E31F /* lexer.ds.lexer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = lexer.ds.lexer.cpp; sourceTree = "<group>"; };
+		96F8A2231C79FBE50089E31F /* lexer.ds.lexer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lexer.ds.lexer.h; sourceTree = "<group>"; };
+		96F8A2241C79FBE50089E31F /* lexer.ds.model.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = lexer.ds.model.cpp; sourceTree = "<group>"; };
+		96F8A2251C79FBE50089E31F /* lexer.ds.model.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lexer.ds.model.h; sourceTree = "<group>"; };
+		96F8A2301C84E4430089E31F /* dc.dpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dc.dpp; sourceTree = "<group>"; };
+		96F8A2311C84E4430089E31F /* dc.dpp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dc.dpp.cpp; sourceTree = "<group>"; };
+		96F8A24D1C876F6B0089E31F /* helpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = helpers.h; sourceTree = "<group>"; };
+		96F9655D1C6CF51C00A0EF00 /* model_formatter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = model_formatter.cpp; sourceTree = "<group>"; };
+		96F9655E1C6CF51C00A0EF00 /* model_formatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = model_formatter.h; sourceTree = "<group>"; };
+		96F9EA4D1C7263EE003D27FB /* cpp_helpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cpp_helpers.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -86,14 +101,25 @@
 		966652B41C43A44900D779CF /* dc */ = {
 			isa = PBXGroup;
 			children = (
+				96F8A24D1C876F6B0089E31F /* helpers.h */,
+				96F8A2301C84E4430089E31F /* dc.dpp */,
+				96F8A2311C84E4430089E31F /* dc.dpp.cpp */,
+				96093E5E1C4E3738005CC7A5 /* dc.dpp.h */,
+				9644DE111C7637D500B1AC68 /* lexer.ds */,
+				96F8A2221C79FBE50089E31F /* lexer.ds.lexer.cpp */,
+				96F8A2231C79FBE50089E31F /* lexer.ds.lexer.h */,
+				96F8A2241C79FBE50089E31F /* lexer.ds.model.cpp */,
+				96F8A2251C79FBE50089E31F /* lexer.ds.model.h */,
+				96F9EA4D1C7263EE003D27FB /* cpp_helpers.h */,
+				96F9655D1C6CF51C00A0EF00 /* model_formatter.cpp */,
+				96F9655E1C6CF51C00A0EF00 /* model_formatter.h */,
+				96C2A3F41C67C8E200011064 /* compiler.h */,
 				960FDD681C64A7BA006131C2 /* graph_formatter.h */,
 				96434B6C1C5CBD7700CBF3CB /* containerspan.h */,
 				96434B6B1C5CBA1500CBF3CB /* astformat.h */,
 				96F315971C5B6624005E1C8B /* dfa.cpp */,
 				96F315981C5B6624005E1C8B /* dfa.h */,
 				96093E5C1C4E3738005CC7A5 /* dc.dp */,
-				96093E6D1C4E3FA2005CC7A5 /* dc.dp.cpp */,
-				96093E5E1C4E3738005CC7A5 /* dc.dp.h */,
 				96093E591C4E3738005CC7A5 /* dc.dl */,
 				96093E5A1C4E3738005CC7A5 /* dc.dl.cpp */,
 				96093E5B1C4E3738005CC7A5 /* dc.dl.h */,
@@ -108,8 +134,9 @@
 				966652B51C43A44900D779CF /* main.cpp */,
 				96093E6A1C4E391F005CC7A5 /* container.cpp */,
 				96093E6B1C4E391F005CC7A5 /* container.h */,
-				96434B6D1C5D251200CBF3CB /* smcpp.ds.h */,
-				96434B6E1C5D259300CBF3CB /* smcpp.ds.cpp */,
+				96434B6D1C5D251200CBF3CB /* lexer_formatter.h */,
+				96434B6E1C5D259300CBF3CB /* lexer_formatter.cpp */,
+				96135BAA1C6FB41F00DEC19D /* output_writer.h */,
 			);
 			path = dc;
 			sourceTree = "<group>";
@@ -170,9 +197,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				96434B701C5D259300CBF3CB /* smcpp.ds.cpp in Sources */,
+				96F8A2321C84E4430089E31F /* dc.dpp.cpp in Sources */,
+				96F9655F1C6CF51C00A0EF00 /* model_formatter.cpp in Sources */,
+				96434B701C5D259300CBF3CB /* lexer_formatter.cpp in Sources */,
 				96093E671C4E3738005CC7A5 /* dc.dl.cpp in Sources */,
-				96093E6E1C4E3FA2005CC7A5 /* dc.dp.cpp in Sources */,
+				96F8A2271C79FBE50089E31F /* lexer.ds.model.cpp in Sources */,
+				96F8A2261C79FBE50089E31F /* lexer.ds.lexer.cpp in Sources */,
 				96093E6C1C4E391F005CC7A5 /* container.cpp in Sources */,
 				96F315991C5B6624005E1C8B /* dfa.cpp in Sources */,
 				966652B61C43A44900D779CF /* main.cpp in Sources */,

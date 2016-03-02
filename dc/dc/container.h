@@ -25,6 +25,7 @@ namespace dc
     class PatternAst;
     class SetAst;
     class EnumAst;
+    class TypeAst;
     class AutomataAst;
     
     class logger;
@@ -34,6 +35,7 @@ namespace dc
         symbol_table<std::shared_ptr<PatternAst>> dl_patterns;
         symbol_table<std::shared_ptr<SetAst>> dl_sets;
         symbol_table<std::shared_ptr<EnumAst>> enums;
+        symbol_table<std::shared_ptr<TypeAst>> types;
         symbol_table<std::pair<std::shared_ptr<AutomataAst>, size_t>> dl_automatas;
         std::unordered_map<std::wstring, namespace_container> namespaces;
     };
@@ -65,6 +67,9 @@ namespace dc
         
         // The name of the file to open when referencing this container
         virtual auto filename() const -> std::string = 0;
+
+        // A flag indicating whether this container is virtual (i.e.: doesn't have an actual file backing)
+        virtual auto is_virtual() const -> bool = 0;
         
         // The span as mapped to the file when referencing this container
         virtual auto map_to_file(const span &spn) const -> span = 0;
@@ -72,10 +77,14 @@ namespace dc
         inline auto add_reference(const std::shared_ptr<container> &reference) -> void {
             _references.push_back(reference);
         }
+
+        inline auto references() const -> const std::vector<std::shared_ptr<container>>& { return _references; }
+        inline auto root_namespace() const -> const namespace_container& { return _anonymous_namespace; }
         
         auto add_symbol(const symbolreference &ns, const std::shared_ptr<PatternAst> &symbol) -> void;
         auto add_symbol(const symbolreference &ns, const std::shared_ptr<SetAst> &symbol) -> void;
         auto add_symbol(const symbolreference &ns, const std::shared_ptr<EnumAst> &symbol) -> void;
+        auto add_symbol(const symbolreference &ns, const std::shared_ptr<TypeAst> &symbol) -> void;
         auto add_symbol(const symbolreference &ns, const std::shared_ptr<AutomataAst> &symbol, size_t start_state) -> void;
         
         // Find the symbol by searching the specified namespaces
@@ -168,6 +177,7 @@ namespace dc
     template<> struct symbols_accessor<std::shared_ptr<PatternAst>> { static inline auto get(const namespace_container *ns) -> const symbol_table<std::shared_ptr<PatternAst>>& { return ns->dl_patterns; } };
     template<> struct symbols_accessor<std::shared_ptr<SetAst>> { static inline auto get(const namespace_container *ns) -> const symbol_table<std::shared_ptr<SetAst>>& { return ns->dl_sets; } };
     template<> struct symbols_accessor<std::shared_ptr<EnumAst>> { static inline auto get(const namespace_container *ns) -> const symbol_table<std::shared_ptr<EnumAst>>& { return ns->enums; } };
+    template<> struct symbols_accessor<std::shared_ptr<TypeAst>> { static inline auto get(const namespace_container *ns) -> const symbol_table<std::shared_ptr<TypeAst>>& { return ns->types; } };
     template<> struct symbols_accessor<std::pair<std::shared_ptr<AutomataAst>, size_t>> { static inline auto get(const namespace_container *ns) -> const symbol_table<std::pair<std::shared_ptr<AutomataAst>, size_t>>& { return ns->dl_automatas; } };
 }
 

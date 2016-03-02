@@ -7,5 +7,6 @@ namespace dc
 {
 	auto build_dfa(logger *logger, const nfa &nfa) -> dfa;
 	auto valid_and_find_default_actions(logger *logger, dfa &dfa) -> bool;
+    auto split_position_character_transitions(dfa &dfa) -> void;
 }
 
