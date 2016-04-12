@@ -26,6 +26,7 @@ namespace dc
     class SetAst;
     class EnumAst;
     class TypeAst;
+    class TypeAliasAst;
     class AutomataAst;
     
     class logger;
@@ -36,6 +37,7 @@ namespace dc
         symbol_table<std::shared_ptr<SetAst>> dl_sets;
         symbol_table<std::shared_ptr<EnumAst>> enums;
         symbol_table<std::shared_ptr<TypeAst>> types;
+        symbol_table<std::shared_ptr<TypeAliasAst>> aliases;
         symbol_table<std::pair<std::shared_ptr<AutomataAst>, size_t>> dl_automatas;
         std::unordered_map<std::wstring, namespace_container> namespaces;
     };
@@ -80,11 +82,13 @@ namespace dc
 
         inline auto references() const -> const std::vector<std::shared_ptr<container>>& { return _references; }
         inline auto root_namespace() const -> const namespace_container& { return _anonymous_namespace; }
+        inline auto root_namespace() -> namespace_container& { return _anonymous_namespace; }
         
         auto add_symbol(const symbolreference &ns, const std::shared_ptr<PatternAst> &symbol) -> void;
         auto add_symbol(const symbolreference &ns, const std::shared_ptr<SetAst> &symbol) -> void;
         auto add_symbol(const symbolreference &ns, const std::shared_ptr<EnumAst> &symbol) -> void;
         auto add_symbol(const symbolreference &ns, const std::shared_ptr<TypeAst> &symbol) -> void;
+        auto add_symbol(const symbolreference &ns, const std::shared_ptr<TypeAliasAst> &symbol) -> void;
         auto add_symbol(const symbolreference &ns, const std::shared_ptr<AutomataAst> &symbol, size_t start_state) -> void;
         
         // Find the symbol by searching the specified namespaces
@@ -178,6 +182,7 @@ namespace dc
     template<> struct symbols_accessor<std::shared_ptr<SetAst>> { static inline auto get(const namespace_container *ns) -> const symbol_table<std::shared_ptr<SetAst>>& { return ns->dl_sets; } };
     template<> struct symbols_accessor<std::shared_ptr<EnumAst>> { static inline auto get(const namespace_container *ns) -> const symbol_table<std::shared_ptr<EnumAst>>& { return ns->enums; } };
     template<> struct symbols_accessor<std::shared_ptr<TypeAst>> { static inline auto get(const namespace_container *ns) -> const symbol_table<std::shared_ptr<TypeAst>>& { return ns->types; } };
+    template<> struct symbols_accessor<std::shared_ptr<TypeAliasAst>> { static inline auto get(const namespace_container *ns) -> const symbol_table<std::shared_ptr<TypeAliasAst>>& { return ns->aliases; } };
     template<> struct symbols_accessor<std::pair<std::shared_ptr<AutomataAst>, size_t>> { static inline auto get(const namespace_container *ns) -> const symbol_table<std::pair<std::shared_ptr<AutomataAst>, size_t>>& { return ns->dl_automatas; } };
 }
 

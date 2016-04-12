@@ -4,6 +4,3 @@
 namespace dc {
     
 }
-namespace System {
-    
-}

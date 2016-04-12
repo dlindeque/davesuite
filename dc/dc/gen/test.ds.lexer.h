@@ -42,6 +42,6 @@ namespace davelexer {
         inline auto states() const -> const std::vector<size_t>& { return _states; }
         inline auto states() -> std::vector<size_t>& { return _states; }
 
-        auto try_read_next_token(long &start_line, long &start_column, long &end_line, long &end_column, std::wstring &value, davelexer.TokenType &token) -> bool;
+        auto try_read_next_token(long &start_line, long &start_column, long &end_line, long &end_column, std::wstring &value, davelexer::TokenType &token) -> bool;
     };
 }

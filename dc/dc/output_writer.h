@@ -18,6 +18,12 @@ namespace dc
             }
         }
     };
+
+    inline auto operator << (output_writer &ow, const int &value) -> output_writer&
+    {
+        ow.append(std::to_wstring(value).c_str());
+        return ow;
+    }
     
     inline auto operator << (output_writer &ow, const wchar_t *txt) -> output_writer&
     {

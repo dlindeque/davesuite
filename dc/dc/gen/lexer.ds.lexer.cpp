@@ -5,8 +5,8 @@
 #include <string>
 #include <assert.h>
 
-namespace davelexer {
-    auto lexer::try_read_next_token(long &start_line, long &start_column, long &end_line, long &end_column, std::wstring &value, davelexer::TokenType &token) -> bool
+namespace dc {
+    auto lexer::try_read_next_token(long &start_line, long &start_column, long &end_line, long &end_column, std::wstring &value, dc::TokenType &token) -> bool
     {
         start_line = _line;
         start_column = _column;
@@ -22,7 +22,7 @@ namespace davelexer {
             case 0:
                 switch(_ch) {
                 case 2147483647: // <eod>
-                    token = davelexer::TokenType::EOD;
+                    token = dc::TokenType::EOD;
                     value += _ch;
                     _column++;
                     end_line = _line;
@@ -30,7 +30,7 @@ namespace davelexer {
                     _ch = _stm.get();
                     return true;
                 case 124: // |
-                    token = davelexer::TokenType::Error;
+                    token = dc::TokenType::Error;
                     value += _ch;
                     _column++;
                     end_line = _line;
@@ -38,7 +38,7 @@ namespace davelexer {
                     _ch = _stm.get();
                     return true;
                 case 96: // `
-                    token = davelexer::TokenType::Error;
+                    token = dc::TokenType::Error;
                     value += _ch;
                     _column++;
                     end_line = _line;
@@ -46,7 +46,7 @@ namespace davelexer {
                     _ch = _stm.get();
                     return true;
                 case 94: // ^
-                    token = davelexer::TokenType::Error;
+                    token = dc::TokenType::Error;
                     value += _ch;
                     _column++;
                     end_line = _line;
@@ -54,7 +54,7 @@ namespace davelexer {
                     _ch = _stm.get();
                     return true;
                 case 92: // {backslash}
-                    token = davelexer::TokenType::Error;
+                    token = dc::TokenType::Error;
                     value += _ch;
                     _column++;
                     end_line = _line;
@@ -62,7 +62,7 @@ namespace davelexer {
                     _ch = _stm.get();
                     return true;
                 case 33: // !
-                    token = davelexer::TokenType::Error;
+                    token = dc::TokenType::Error;
                     value += _ch;
                     _column++;
                     end_line = _line;
@@ -70,43 +70,39 @@ namespace davelexer {
                     _ch = _stm.get();
                     return true;
                 case 101: // e
-                    s = 371;
+                    s = 403;
                     _column++;
                     break;
                 case 95: // _
-                    s = 372;
+                    s = 404;
                     _column++;
                     break;
                 case 113: // q
-                    s = 372;
+                    s = 404;
                     _column++;
                     break;
                 case 111: // o
-                    s = 372;
+                    s = 404;
                     _column++;
                     break;
                 case 59: // ;
-                    token = davelexer::TokenType::Semicolon;
+                    token = dc::TokenType::Semicolon;
                     value += _ch;
                     _column++;
                     end_line = _line;
                     end_column = _column;
                     _ch = _stm.get();
                     return true;
-                case 102: // f
-                    s = 372;
-                    _column++;
-                    break;
                 case 34: // "
-                    s = 374;
+                    s = 406;
                     _column++;
                     break;
                 case 47: // /
-                    s = 375;
+                    s = 407;
                     _column++;
                     break;
                 case 39: // '
-                    token = davelexer::TokenType::ReStart;
+                    token = dc::TokenType::ReStart;
                     _states.push_back(79);
                     value += _ch;
                     _column++;
@@ -114,8 +110,16 @@ namespace davelexer {
                     end_column = _column;
                     _ch = _stm.get();
                     return true;
+                case 62: // >
+                    token = dc::TokenType::CloseTriangle;
+                    value += _ch;
+                    _column++;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
                 case 91: // [
-                    token = davelexer::TokenType::OpenSquare;
+                    token = dc::TokenType::OpenSquare;
                     value += _ch;
                     _column++;
                     end_line = _line;
@@ -123,15 +127,19 @@ namespace davelexer {
                     _ch = _stm.get();
                     return true;
                 case 44: // ,
-                    token = davelexer::TokenType::Comma;
+                    token = dc::TokenType::Comma;
                     value += _ch;
                     _column++;
                     end_line = _line;
                     end_column = _column;
                     _ch = _stm.get();
                     return true;
+                case 45: // -
+                    s = 412;
+                    _column++;
+                    break;
                 case 61: // =
-                    token = davelexer::TokenType::Equals;
+                    token = dc::TokenType::Equals;
                     value += _ch;
                     _column++;
                     end_line = _line;
@@ -139,7 +147,7 @@ namespace davelexer {
                     _ch = _stm.get();
                     return true;
                 case 123: // {
-                    token = davelexer::TokenType::OpenBrace;
+                    token = dc::TokenType::OpenBrace;
                     value += _ch;
                     _column++;
                     end_line = _line;
@@ -147,27 +155,23 @@ namespace davelexer {
                     _ch = _stm.get();
                     return true;
                 case 100: // d
-                    s = 381;
+                    s = 415;
                     _column++;
                     break;
                 case 119: // w
-                    s = 382;
+                    s = 416;
                     _column++;
                     break;
                 case 116: // t
-                    s = 383;
-                    _column++;
-                    break;
-                case 45: // -
-                    s = 384;
+                    s = 417;
                     _column++;
                     break;
                 case 114: // r
-                    s = 385;
+                    s = 418;
                     _column++;
                     break;
                 case 93: // ]
-                    token = davelexer::TokenType::CloseSquare;
+                    token = dc::TokenType::CloseSquare;
                     value += _ch;
                     _column++;
                     end_line = _line;
@@ -175,7 +179,7 @@ namespace davelexer {
                     _ch = _stm.get();
                     return true;
                 case 46: // .
-                    token = davelexer::TokenType::Dot;
+                    token = dc::TokenType::Dot;
                     value += _ch;
                     _column++;
                     end_line = _line;
@@ -183,15 +187,15 @@ namespace davelexer {
                     _ch = _stm.get();
                     return true;
                 case 115: // s
-                    s = 388;
+                    s = 421;
                     _column++;
                     break;
                 case 12: // {backslash}f
-                    s = 389;
+                    s = 422;
                     _column++;
                     break;
                 case 60: // <
-                    token = davelexer::TokenType::Error;
+                    token = dc::TokenType::OpenTriangle;
                     value += _ch;
                     _column++;
                     end_line = _line;
@@ -199,15 +203,15 @@ namespace davelexer {
                     _ch = _stm.get();
                     return true;
                 case 110: // n
-                    s = 390;
+                    s = 424;
                     _column++;
                     break;
                 case 13: // {backslash}r
-                    s = 389;
+                    s = 422;
                     _column = 1;
                     break;
                 case 58: // :
-                    token = davelexer::TokenType::Colon;
+                    token = dc::TokenType::Colon;
                     value += _ch;
                     _column++;
                     end_line = _line;
@@ -215,61 +219,57 @@ namespace davelexer {
                     _ch = _stm.get();
                     return true;
                 case 11: // {backslash}v
-                    s = 389;
+                    s = 422;
                     _column++;
                     break;
                 case 105: // i
-                    s = 392;
+                    s = 426;
                     _column++;
                     break;
                 case 9: // {backslash}t
-                    s = 389;
+                    s = 422;
                     _column++;
                     break;
                 case 103: // g
-                    s = 393;
+                    s = 427;
                     _column++;
                     break;
                 case 112: // p
-                    s = 394;
+                    s = 428;
                     _column++;
                     break;
                 case 32: //  
-                    s = 389;
+                    s = 422;
                     _column++;
                     break;
                 case 125: // }
-                    token = davelexer::TokenType::CloseBrace;
+                    token = dc::TokenType::CloseBrace;
                     value += _ch;
                     _column++;
                     end_line = _line;
                     end_column = _column;
                     _ch = _stm.get();
                     return true;
+                case 102: // f
+                    s = 430;
+                    _column++;
+                    break;
                 case 104: // h
-                    s = 372;
+                    s = 404;
                     _column++;
                     break;
                 case 10: // {backslash}n
-                    s = 389;
+                    s = 422;
                     _line++;
                     _column = 1;
                     break;
                 case 97: // a
-                    s = 396;
+                    s = 431;
                     _column++;
                     break;
                 default:
-                    if (_ch >= 62 && _ch <= 64) { // > - @
-                        token = davelexer::TokenType::Error;
-                        value += _ch;
-                        _column++;
-                        end_line = _line;
-                        end_column = _column;
-                        _ch = _stm.get();
-                        return true;
-                    } else if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        token = davelexer::TokenType::Error;
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        token = dc::TokenType::Error;
                         value += _ch;
                         _column++;
                         end_line = _line;
@@ -277,7 +277,7 @@ namespace davelexer {
                         _ch = _stm.get();
                         return true;
                     } else if (_ch >= 0 && _ch <= 8) { // <start> - {backslash}b
-                        token = davelexer::TokenType::Error;
+                        token = dc::TokenType::Error;
                         value += _ch;
                         _column++;
                         end_line = _line;
@@ -285,7 +285,7 @@ namespace davelexer {
                         _ch = _stm.get();
                         return true;
                     } else if (_ch >= 126 && _ch <= 2147483646) { // ~ - <end>
-                        token = davelexer::TokenType::Error;
+                        token = dc::TokenType::Error;
                         value += _ch;
                         _column++;
                         end_line = _line;
@@ -293,19 +293,19 @@ namespace davelexer {
                         _ch = _stm.get();
                         return true;
                     } else if (_ch >= 120 && _ch <= 122) { // x - z
-                        s = 372;
+                        s = 404;
                         _column++;
                     } else if (_ch >= 106 && _ch <= 109) { // j - m
-                        s = 372;
+                        s = 404;
                         _column++;
                     } else if (_ch >= 98 && _ch <= 99) { // b - c
-                        s = 372;
+                        s = 404;
                         _column++;
                     } else if (_ch >= 117 && _ch <= 118) { // u - v
-                        s = 372;
+                        s = 404;
                         _column++;
                     } else if (_ch >= 14 && _ch <= 31) { // {backslash}x14 - {backslash}x31
-                        token = davelexer::TokenType::Error;
+                        token = dc::TokenType::Error;
                         value += _ch;
                         _column++;
                         end_line = _line;
@@ -313,7 +313,7 @@ namespace davelexer {
                         _ch = _stm.get();
                         return true;
                     } else if (_ch >= 35 && _ch <= 38) { // # - &
-                        token = davelexer::TokenType::Error;
+                        token = dc::TokenType::Error;
                         value += _ch;
                         _column++;
                         end_line = _line;
@@ -321,7 +321,15 @@ namespace davelexer {
                         _ch = _stm.get();
                         return true;
                     } else if (_ch >= 40 && _ch <= 43) { // ( - +
-                        token = davelexer::TokenType::Error;
+                        token = dc::TokenType::Error;
+                        value += _ch;
+                        _column++;
+                        end_line = _line;
+                        end_column = _column;
+                        _ch = _stm.get();
+                        return true;
+                    } else if (_ch >= 63 && _ch <= 64) { // ? - @
+                        token = dc::TokenType::Error;
                         value += _ch;
                         _column++;
                         end_line = _line;
@@ -329,7 +337,7 @@ namespace davelexer {
                         _ch = _stm.get();
                         return true;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 372;
+                        s = 404;
                         _column++;
                     }
                 }
@@ -342,7 +350,7 @@ namespace davelexer {
                     _column = 1;
                     break;
                 case 2147483647: // <eod>
-                    token = davelexer::TokenType::Error;
+                    token = dc::TokenType::Error;
                     value += _ch;
                     _column++;
                     end_line = _line;
@@ -350,7 +358,7 @@ namespace davelexer {
                     _ch = _stm.get();
                     return true;
                 case 42: // *
-                    s = 517;
+                    s = 571;
                     _column++;
                     break;
                 case 13: // {backslash}r
@@ -402,7 +410,7 @@ namespace davelexer {
                         // Yield
                         end_line = _line;
                         end_column = _column;
-                        token = davelexer::TokenType::Comment;
+                        token = dc::TokenType::Comment;
                         return true;
                     }
                 }
@@ -410,7 +418,7 @@ namespace davelexer {
             case 19:
                 switch(_ch) {
                 case 96: // `
-                    token = davelexer::TokenType::Error;
+                    token = dc::TokenType::Error;
                     value += _ch;
                     _column++;
                     end_line = _line;
@@ -418,7 +426,7 @@ namespace davelexer {
                     _ch = _stm.get();
                     return true;
                 case 47: // /
-                    token = davelexer::TokenType::Error;
+                    token = dc::TokenType::Error;
                     value += _ch;
                     _column++;
                     end_line = _line;
@@ -426,7 +434,7 @@ namespace davelexer {
                     _ch = _stm.get();
                     return true;
                 case 45: // -
-                    token = davelexer::TokenType::Error;
+                    token = dc::TokenType::Error;
                     value += _ch;
                     _column++;
                     end_line = _line;
@@ -434,7 +442,7 @@ namespace davelexer {
                     _ch = _stm.get();
                     return true;
                 case 2147483647: // <eod>
-                    token = davelexer::TokenType::Error;
+                    token = dc::TokenType::Error;
                     value += _ch;
                     _column++;
                     end_line = _line;
@@ -442,7 +450,7 @@ namespace davelexer {
                     _ch = _stm.get();
                     return true;
                 case 44: // ,
-                    token = davelexer::TokenType::Comma;
+                    token = dc::TokenType::Comma;
                     value += _ch;
                     _column++;
                     end_line = _line;
@@ -450,7 +458,7 @@ namespace davelexer {
                     _ch = _stm.get();
                     return true;
                 case 46: // .
-                    token = davelexer::TokenType::Dot;
+                    token = dc::TokenType::Dot;
                     value += _ch;
                     _column++;
                     end_line = _line;
@@ -458,7 +466,7 @@ namespace davelexer {
                     _ch = _stm.get();
                     return true;
                 case 125: // }
-                    token = davelexer::TokenType::CloseBrace;
+                    token = dc::TokenType::CloseBrace;
                     _states.pop_back();
                     value += _ch;
                     _column++;
@@ -467,7 +475,7 @@ namespace davelexer {
                     _ch = _stm.get();
                     return true;
                 case 10: // {backslash}n
-                    token = davelexer::TokenType::Error;
+                    token = dc::TokenType::Error;
                     value += _ch;
                     _line++;
                     _column = 1;
@@ -476,11 +484,11 @@ namespace davelexer {
                     _ch = _stm.get();
                     return true;
                 case 95: // _
-                    s = 508;
+                    s = 562;
                     _column++;
                     break;
                 case 48: // 0
-                    token = davelexer::TokenType::Number;
+                    token = dc::TokenType::Number;
                     value += _ch;
                     _column++;
                     end_line = _line;
@@ -488,7 +496,7 @@ namespace davelexer {
                     _ch = _stm.get();
                     return true;
                 case 13: // {backslash}r
-                    token = davelexer::TokenType::Error;
+                    token = dc::TokenType::Error;
                     value += _ch;
                     _column = 1;
                     end_line = _line;
@@ -497,7 +505,7 @@ namespace davelexer {
                     return true;
                 default:
                     if (_ch >= 126 && _ch <= 2147483646) { // ~ - <end>
-                        token = davelexer::TokenType::Error;
+                        token = dc::TokenType::Error;
                         value += _ch;
                         _column++;
                         end_line = _line;
@@ -505,7 +513,7 @@ namespace davelexer {
                         _ch = _stm.get();
                         return true;
                     } else if (_ch >= 91 && _ch <= 94) { // [ - ^
-                        token = davelexer::TokenType::Error;
+                        token = dc::TokenType::Error;
                         value += _ch;
                         _column++;
                         end_line = _line;
@@ -513,7 +521,7 @@ namespace davelexer {
                         _ch = _stm.get();
                         return true;
                     } else if (_ch >= 58 && _ch <= 64) { // : - @
-                        token = davelexer::TokenType::Error;
+                        token = dc::TokenType::Error;
                         value += _ch;
                         _column++;
                         end_line = _line;
@@ -521,13 +529,13 @@ namespace davelexer {
                         _ch = _stm.get();
                         return true;
                     } else if (_ch >= 49 && _ch <= 57) { // 1 - 9
-                        s = 504;
+                        s = 558;
                         _column++;
                     } else if (_ch >= 97 && _ch <= 122) { // a - z
-                        s = 508;
+                        s = 562;
                         _column++;
                     } else if (_ch >= 123 && _ch <= 124) { // { - |
-                        token = davelexer::TokenType::Error;
+                        token = dc::TokenType::Error;
                         value += _ch;
                         _column++;
                         end_line = _line;
@@ -535,10 +543,10 @@ namespace davelexer {
                         _ch = _stm.get();
                         return true;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 508;
+                        s = 562;
                         _column++;
                     } else if (_ch >= 0 && _ch <= 9) { // <start> - {backslash}t
-                        token = davelexer::TokenType::Error;
+                        token = dc::TokenType::Error;
                         value += _ch;
                         _column++;
                         end_line = _line;
@@ -546,7 +554,7 @@ namespace davelexer {
                         _ch = _stm.get();
                         return true;
                     } else if (_ch >= 11 && _ch <= 12) { // {backslash}v - {backslash}f
-                        token = davelexer::TokenType::Error;
+                        token = dc::TokenType::Error;
                         value += _ch;
                         _column++;
                         end_line = _line;
@@ -554,7 +562,7 @@ namespace davelexer {
                         _ch = _stm.get();
                         return true;
                     } else if (_ch >= 14 && _ch <= 43) { // {backslash}x14 - +
-                        token = davelexer::TokenType::Error;
+                        token = dc::TokenType::Error;
                         value += _ch;
                         _column++;
                         end_line = _line;
@@ -585,7 +593,7 @@ namespace davelexer {
                         // Yield
                         end_line = _line;
                         end_column = _column;
-                        token = davelexer::TokenType::Identifier;
+                        token = dc::TokenType::Identifier;
                         return true;
                     }
                 }
@@ -601,7 +609,7 @@ namespace davelexer {
                         // Yield
                         end_line = _line;
                         end_column = _column;
-                        token = davelexer::TokenType::Number;
+                        token = dc::TokenType::Number;
                         return true;
                     }
                 }
@@ -609,7 +617,7 @@ namespace davelexer {
             case 42:
                 switch(_ch) {
                 case 10: // {backslash}n
-                    token = davelexer::TokenType::Char;
+                    token = dc::TokenType::Char;
                     value += _ch;
                     _line++;
                     _column = 1;
@@ -618,7 +626,7 @@ namespace davelexer {
                     _ch = _stm.get();
                     return true;
                 case 46: // .
-                    token = davelexer::TokenType::CharClass;
+                    token = dc::TokenType::CharClass;
                     value += _ch;
                     _column++;
                     end_line = _line;
@@ -626,11 +634,11 @@ namespace davelexer {
                     _ch = _stm.get();
                     return true;
                 case 92: // {backslash}
-                    s = 495;
+                    s = 549;
                     _column++;
                     break;
                 case 2147483647: // <eod>
-                    token = davelexer::TokenType::Error;
+                    token = dc::TokenType::Error;
                     value += _ch;
                     _column++;
                     end_line = _line;
@@ -638,7 +646,7 @@ namespace davelexer {
                     _ch = _stm.get();
                     return true;
                 case 45: // -
-                    token = davelexer::TokenType::Hyphen;
+                    token = dc::TokenType::Hyphen;
                     value += _ch;
                     _column++;
                     end_line = _line;
@@ -646,7 +654,7 @@ namespace davelexer {
                     _ch = _stm.get();
                     return true;
                 case 94: // ^
-                    token = davelexer::TokenType::Hat;
+                    token = dc::TokenType::Hat;
                     value += _ch;
                     _column++;
                     end_line = _line;
@@ -654,7 +662,7 @@ namespace davelexer {
                     _ch = _stm.get();
                     return true;
                 case 93: // ]
-                    token = davelexer::TokenType::CloseSquare;
+                    token = dc::TokenType::CloseSquare;
                     _states.pop_back();
                     value += _ch;
                     _column++;
@@ -663,7 +671,7 @@ namespace davelexer {
                     _ch = _stm.get();
                     return true;
                 case 13: // {backslash}r
-                    token = davelexer::TokenType::Char;
+                    token = dc::TokenType::Char;
                     value += _ch;
                     _column = 1;
                     end_line = _line;
@@ -672,7 +680,7 @@ namespace davelexer {
                     return true;
                 default:
                     if (_ch >= 95 && _ch <= 2147483646) { // _ - <end>
-                        token = davelexer::TokenType::Char;
+                        token = dc::TokenType::Char;
                         value += _ch;
                         _column++;
                         end_line = _line;
@@ -680,7 +688,7 @@ namespace davelexer {
                         _ch = _stm.get();
                         return true;
                     } else if (_ch >= 47 && _ch <= 91) { // / - [
-                        token = davelexer::TokenType::Char;
+                        token = dc::TokenType::Char;
                         value += _ch;
                         _column++;
                         end_line = _line;
@@ -688,7 +696,7 @@ namespace davelexer {
                         _ch = _stm.get();
                         return true;
                     } else if (_ch >= 0 && _ch <= 9) { // <start> - {backslash}t
-                        token = davelexer::TokenType::Char;
+                        token = dc::TokenType::Char;
                         value += _ch;
                         _column++;
                         end_line = _line;
@@ -696,7 +704,7 @@ namespace davelexer {
                         _ch = _stm.get();
                         return true;
                     } else if (_ch >= 11 && _ch <= 12) { // {backslash}v - {backslash}f
-                        token = davelexer::TokenType::Char;
+                        token = dc::TokenType::Char;
                         value += _ch;
                         _column++;
                         end_line = _line;
@@ -704,7 +712,7 @@ namespace davelexer {
                         _ch = _stm.get();
                         return true;
                     } else if (_ch >= 14 && _ch <= 44) { // {backslash}x14 - ,
-                        token = davelexer::TokenType::Char;
+                        token = dc::TokenType::Char;
                         value += _ch;
                         _column++;
                         end_line = _line;
@@ -717,7 +725,7 @@ namespace davelexer {
             case 79:
                 switch(_ch) {
                 case 2147483647: // <eod>
-                    token = davelexer::TokenType::Error;
+                    token = dc::TokenType::Error;
                     value += _ch;
                     _column++;
                     end_line = _line;
@@ -725,7 +733,7 @@ namespace davelexer {
                     _ch = _stm.get();
                     return true;
                 case 46: // .
-                    token = davelexer::TokenType::CharClass;
+                    token = dc::TokenType::CharClass;
                     value += _ch;
                     _column++;
                     end_line = _line;
@@ -733,11 +741,11 @@ namespace davelexer {
                     _ch = _stm.get();
                     return true;
                 case 92: // {backslash}
-                    s = 483;
+                    s = 537;
                     _column++;
                     break;
                 case 43: // +
-                    token = davelexer::TokenType::Plus;
+                    token = dc::TokenType::Plus;
                     value += _ch;
                     _column++;
                     end_line = _line;
@@ -745,7 +753,7 @@ namespace davelexer {
                     _ch = _stm.get();
                     return true;
                 case 10: // {backslash}n
-                    token = davelexer::TokenType::Char;
+                    token = dc::TokenType::Char;
                     value += _ch;
                     _line++;
                     _column = 1;
@@ -754,7 +762,7 @@ namespace davelexer {
                     _ch = _stm.get();
                     return true;
                 case 42: // *
-                    token = davelexer::TokenType::Asterisk;
+                    token = dc::TokenType::Asterisk;
                     value += _ch;
                     _column++;
                     end_line = _line;
@@ -762,7 +770,7 @@ namespace davelexer {
                     _ch = _stm.get();
                     return true;
                 case 123: // {
-                    token = davelexer::TokenType::OpenBrace;
+                    token = dc::TokenType::OpenBrace;
                     _states.push_back(19);
                     value += _ch;
                     _column++;
@@ -771,7 +779,7 @@ namespace davelexer {
                     _ch = _stm.get();
                     return true;
                 case 124: // |
-                    token = davelexer::TokenType::Pipe;
+                    token = dc::TokenType::Pipe;
                     value += _ch;
                     _column++;
                     end_line = _line;
@@ -779,7 +787,7 @@ namespace davelexer {
                     _ch = _stm.get();
                     return true;
                 case 91: // [
-                    token = davelexer::TokenType::OpenSquare;
+                    token = dc::TokenType::OpenSquare;
                     _states.push_back(42);
                     value += _ch;
                     _column++;
@@ -788,7 +796,7 @@ namespace davelexer {
                     _ch = _stm.get();
                     return true;
                 case 40: // (
-                    token = davelexer::TokenType::OpenParenthesis;
+                    token = dc::TokenType::OpenParenthesis;
                     value += _ch;
                     _column++;
                     end_line = _line;
@@ -796,7 +804,7 @@ namespace davelexer {
                     _ch = _stm.get();
                     return true;
                 case 63: // ?
-                    token = davelexer::TokenType::Question;
+                    token = dc::TokenType::Question;
                     value += _ch;
                     _column++;
                     end_line = _line;
@@ -804,7 +812,7 @@ namespace davelexer {
                     _ch = _stm.get();
                     return true;
                 case 41: // )
-                    token = davelexer::TokenType::CloseParenthesis;
+                    token = dc::TokenType::CloseParenthesis;
                     value += _ch;
                     _column++;
                     end_line = _line;
@@ -812,7 +820,7 @@ namespace davelexer {
                     _ch = _stm.get();
                     return true;
                 case 39: // '
-                    token = davelexer::TokenType::ReEnd;
+                    token = dc::TokenType::ReEnd;
                     _states.pop_back();
                     value += _ch;
                     _column++;
@@ -821,7 +829,7 @@ namespace davelexer {
                     _ch = _stm.get();
                     return true;
                 case 13: // {backslash}r
-                    token = davelexer::TokenType::Char;
+                    token = dc::TokenType::Char;
                     value += _ch;
                     _column = 1;
                     end_line = _line;
@@ -830,7 +838,7 @@ namespace davelexer {
                     return true;
                 default:
                     if (_ch >= 125 && _ch <= 2147483646) { // } - <end>
-                        token = davelexer::TokenType::Char;
+                        token = dc::TokenType::Char;
                         value += _ch;
                         _column++;
                         end_line = _line;
@@ -838,7 +846,7 @@ namespace davelexer {
                         _ch = _stm.get();
                         return true;
                     } else if (_ch >= 93 && _ch <= 122) { // ] - z
-                        token = davelexer::TokenType::Char;
+                        token = dc::TokenType::Char;
                         value += _ch;
                         _column++;
                         end_line = _line;
@@ -846,7 +854,7 @@ namespace davelexer {
                         _ch = _stm.get();
                         return true;
                     } else if (_ch >= 44 && _ch <= 45) { // , - -
-                        token = davelexer::TokenType::Char;
+                        token = dc::TokenType::Char;
                         value += _ch;
                         _column++;
                         end_line = _line;
@@ -854,7 +862,7 @@ namespace davelexer {
                         _ch = _stm.get();
                         return true;
                     } else if (_ch >= 47 && _ch <= 62) { // / - >
-                        token = davelexer::TokenType::Char;
+                        token = dc::TokenType::Char;
                         value += _ch;
                         _column++;
                         end_line = _line;
@@ -862,7 +870,7 @@ namespace davelexer {
                         _ch = _stm.get();
                         return true;
                     } else if (_ch >= 64 && _ch <= 90) { // @ - Z
-                        token = davelexer::TokenType::Char;
+                        token = dc::TokenType::Char;
                         value += _ch;
                         _column++;
                         end_line = _line;
@@ -870,7 +878,7 @@ namespace davelexer {
                         _ch = _stm.get();
                         return true;
                     } else if (_ch >= 0 && _ch <= 9) { // <start> - {backslash}t
-                        token = davelexer::TokenType::Char;
+                        token = dc::TokenType::Char;
                         value += _ch;
                         _column++;
                         end_line = _line;
@@ -878,7 +886,7 @@ namespace davelexer {
                         _ch = _stm.get();
                         return true;
                     } else if (_ch >= 11 && _ch <= 12) { // {backslash}v - {backslash}f
-                        token = davelexer::TokenType::Char;
+                        token = dc::TokenType::Char;
                         value += _ch;
                         _column++;
                         end_line = _line;
@@ -886,7 +894,7 @@ namespace davelexer {
                         _ch = _stm.get();
                         return true;
                     } else if (_ch >= 14 && _ch <= 38) { // {backslash}x14 - &
-                        token = davelexer::TokenType::Char;
+                        token = dc::TokenType::Char;
                         value += _ch;
                         _column++;
                         end_line = _line;
@@ -927,158 +935,14 @@ namespace davelexer {
                     // Yield
                     end_line = _line;
                     end_column = _column;
-                    token = davelexer::TokenType::Whitespace;
+                    token = dc::TokenType::Whitespace;
                     return true;
-                }
-                break;
-            case 303:
-                switch(_ch) {
-                case 10: // {backslash}n
-                    token = davelexer::TokenType::Comment;
-                    value += _ch;
-                    _line++;
-                    _column = 1;
-                    end_line = _line;
-                    end_column = _column;
-                    _ch = _stm.get();
-                    return true;
-                case 13: // {backslash}r
-                    s = 306;
-                    _column = 1;
-                    break;
-                case 2147483647: // <eod>
-                    token = davelexer::TokenType::Comment;
-                    value += _ch;
-                    _column++;
-                    end_line = _line;
-                    end_column = _column;
-                    _ch = _stm.get();
-                    return true;
-                default:
-                    if (_ch >= 0 && _ch <= 9) { // <start> - {backslash}t
-                        s = 306;
-                        _column++;
-                    } else if (_ch >= 11 && _ch <= 12) { // {backslash}v - {backslash}f
-                        s = 306;
-                        _column++;
-                    } else if (_ch >= 14 && _ch <= 2147483646) { // {backslash}x14 - <end>
-                        s = 306;
-                        _column++;
-                    }
-                }
-                break;
-            case 306:
-                switch(_ch) {
-                case 10: // {backslash}n
-                    token = davelexer::TokenType::Comment;
-                    value += _ch;
-                    _line++;
-                    _column = 1;
-                    end_line = _line;
-                    end_column = _column;
-                    _ch = _stm.get();
-                    return true;
-                case 13: // {backslash}r
-                    s = 306;
-                    _column = 1;
-                    break;
-                case 2147483647: // <eod>
-                    token = davelexer::TokenType::Comment;
-                    value += _ch;
-                    _column++;
-                    end_line = _line;
-                    end_column = _column;
-                    _ch = _stm.get();
-                    return true;
-                default:
-                    if (_ch >= 0 && _ch <= 9) { // <start> - {backslash}t
-                        s = 306;
-                        _column++;
-                    } else if (_ch >= 11 && _ch <= 12) { // {backslash}v - {backslash}f
-                        s = 306;
-                        _column++;
-                    } else if (_ch >= 14 && _ch <= 2147483646) { // {backslash}x14 - <end>
-                        s = 306;
-                        _column++;
-                    }
-                }
-                break;
-            case 314:
-                switch(_ch) {
-                case 10: // {backslash}n
-                    token = davelexer::TokenType::Comment;
-                    value += _ch;
-                    _line++;
-                    _column = 1;
-                    end_line = _line;
-                    end_column = _column;
-                    _ch = _stm.get();
-                    return true;
-                case 13: // {backslash}r
-                    s = 318;
-                    _column = 1;
-                    break;
-                case 2147483647: // <eod>
-                    token = davelexer::TokenType::Comment;
-                    value += _ch;
-                    _column++;
-                    end_line = _line;
-                    end_column = _column;
-                    _ch = _stm.get();
-                    return true;
-                default:
-                    if (_ch >= 0 && _ch <= 9) { // <start> - {backslash}t
-                        s = 318;
-                        _column++;
-                    } else if (_ch >= 11 && _ch <= 12) { // {backslash}v - {backslash}f
-                        s = 318;
-                        _column++;
-                    } else if (_ch >= 14 && _ch <= 2147483646) { // {backslash}x14 - <end>
-                        s = 318;
-                        _column++;
-                    }
-                }
-                break;
-            case 318:
-                switch(_ch) {
-                case 10: // {backslash}n
-                    token = davelexer::TokenType::Comment;
-                    value += _ch;
-                    _line++;
-                    _column = 1;
-                    end_line = _line;
-                    end_column = _column;
-                    _ch = _stm.get();
-                    return true;
-                case 13: // {backslash}r
-                    s = 318;
-                    _column = 1;
-                    break;
-                case 2147483647: // <eod>
-                    token = davelexer::TokenType::Comment;
-                    value += _ch;
-                    _column++;
-                    end_line = _line;
-                    end_column = _column;
-                    _ch = _stm.get();
-                    return true;
-                default:
-                    if (_ch >= 0 && _ch <= 9) { // <start> - {backslash}t
-                        s = 318;
-                        _column++;
-                    } else if (_ch >= 11 && _ch <= 12) { // {backslash}v - {backslash}f
-                        s = 318;
-                        _column++;
-                    } else if (_ch >= 14 && _ch <= 2147483646) { // {backslash}x14 - <end>
-                        s = 318;
-                        _column++;
-                    }
                 }
                 break;
             case 335:
                 switch(_ch) {
                 case 10: // {backslash}n
-                    token = davelexer::TokenType::Documentation;
+                    token = dc::TokenType::Comment;
                     value += _ch;
                     _line++;
                     _column = 1;
@@ -1087,11 +951,11 @@ namespace davelexer {
                     _ch = _stm.get();
                     return true;
                 case 13: // {backslash}r
-                    s = 339;
+                    s = 338;
                     _column = 1;
                     break;
                 case 2147483647: // <eod>
-                    token = davelexer::TokenType::Documentation;
+                    token = dc::TokenType::Comment;
                     value += _ch;
                     _column++;
                     end_line = _line;
@@ -1100,21 +964,21 @@ namespace davelexer {
                     return true;
                 default:
                     if (_ch >= 0 && _ch <= 9) { // <start> - {backslash}t
-                        s = 339;
+                        s = 338;
                         _column++;
                     } else if (_ch >= 11 && _ch <= 12) { // {backslash}v - {backslash}f
-                        s = 339;
+                        s = 338;
                         _column++;
                     } else if (_ch >= 14 && _ch <= 2147483646) { // {backslash}x14 - <end>
-                        s = 339;
+                        s = 338;
                         _column++;
                     }
                 }
                 break;
-            case 339:
+            case 338:
                 switch(_ch) {
                 case 10: // {backslash}n
-                    token = davelexer::TokenType::Documentation;
+                    token = dc::TokenType::Comment;
                     value += _ch;
                     _line++;
                     _column = 1;
@@ -1123,11 +987,11 @@ namespace davelexer {
                     _ch = _stm.get();
                     return true;
                 case 13: // {backslash}r
-                    s = 339;
+                    s = 338;
                     _column = 1;
                     break;
                 case 2147483647: // <eod>
-                    token = davelexer::TokenType::Documentation;
+                    token = dc::TokenType::Comment;
                     value += _ch;
                     _column++;
                     end_line = _line;
@@ -1136,318 +1000,165 @@ namespace davelexer {
                     return true;
                 default:
                     if (_ch >= 0 && _ch <= 9) { // <start> - {backslash}t
-                        s = 339;
+                        s = 338;
                         _column++;
                     } else if (_ch >= 11 && _ch <= 12) { // {backslash}v - {backslash}f
-                        s = 339;
+                        s = 338;
                         _column++;
                     } else if (_ch >= 14 && _ch <= 2147483646) { // {backslash}x14 - <end>
-                        s = 339;
+                        s = 338;
                         _column++;
                     }
                 }
                 break;
-            case 354:
+            case 346:
                 switch(_ch) {
-                case 34: // "
-                    token = davelexer::TokenType::String;
+                case 10: // {backslash}n
+                    token = dc::TokenType::Comment;
+                    value += _ch;
+                    _line++;
+                    _column = 1;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                case 13: // {backslash}r
+                    s = 350;
+                    _column = 1;
+                    break;
+                case 2147483647: // <eod>
+                    token = dc::TokenType::Comment;
                     value += _ch;
                     _column++;
                     end_line = _line;
                     end_column = _column;
                     _ch = _stm.get();
                     return true;
-                case 2147483647: // <eod>
-                    s = 356;
-                    _column++;
-                    break;
-                case 92: // {backslash}
-                    s = 357;
-                    _column++;
-                    break;
-                case 10: // {backslash}n
-                    s = 354;
-                    _line++;
-                    _column = 1;
-                    break;
-                case 13: // {backslash}r
-                    s = 354;
-                    _column = 1;
-                    break;
-                default:
-                    if (_ch >= 93 && _ch <= 2147483646) { // ] - <end>
-                        s = 354;
-                        _column++;
-                    } else if (_ch >= 35 && _ch <= 91) { // # - [
-                        s = 354;
-                        _column++;
-                    } else if (_ch >= 0 && _ch <= 9) { // <start> - {backslash}t
-                        s = 354;
-                        _column++;
-                    } else if (_ch >= 11 && _ch <= 12) { // {backslash}v - {backslash}f
-                        s = 354;
-                        _column++;
-                    } else if (_ch >= 14 && _ch <= 33) { // {backslash}x14 - !
-                        s = 354;
-                        _column++;
-                    }
-                }
-                break;
-            case 356:
-                switch(_ch) {
-                case 34: // "
-                    token = davelexer::TokenType::String;
-                    value += _ch;
-                    _column++;
-                    end_line = _line;
-                    end_column = _column;
-                    _ch = _stm.get();
-                    return true;
-                case 2147483647: // <eod>
-                    s = 356;
-                    _column++;
-                    break;
-                case 92: // {backslash}
-                    s = 357;
-                    _column++;
-                    break;
-                case 10: // {backslash}n
-                    s = 354;
-                    _line++;
-                    _column = 1;
-                    break;
-                case 13: // {backslash}r
-                    s = 354;
-                    _column = 1;
-                    break;
-                default:
-                    if (_ch >= 93 && _ch <= 2147483646) { // ] - <end>
-                        s = 354;
-                        _column++;
-                    } else if (_ch >= 35 && _ch <= 91) { // # - [
-                        s = 354;
-                        _column++;
-                    } else if (_ch >= 0 && _ch <= 9) { // <start> - {backslash}t
-                        s = 354;
-                        _column++;
-                    } else if (_ch >= 11 && _ch <= 12) { // {backslash}v - {backslash}f
-                        s = 354;
-                        _column++;
-                    } else if (_ch >= 14 && _ch <= 33) { // {backslash}x14 - !
-                        s = 354;
-                        _column++;
-                    }
-                }
-                break;
-            case 357:
-                switch(_ch) {
-                case 10: // {backslash}n
-                    s = 359;
-                    _line++;
-                    _column = 1;
-                    break;
-                case 2147483647: // <eod>
-                    s = 361;
-                    _column++;
-                    break;
-                case 13: // {backslash}r
-                    s = 359;
-                    _column = 1;
-                    break;
                 default:
                     if (_ch >= 0 && _ch <= 9) { // <start> - {backslash}t
-                        s = 359;
+                        s = 350;
                         _column++;
                     } else if (_ch >= 11 && _ch <= 12) { // {backslash}v - {backslash}f
-                        s = 359;
+                        s = 350;
                         _column++;
                     } else if (_ch >= 14 && _ch <= 2147483646) { // {backslash}x14 - <end>
-                        s = 359;
+                        s = 350;
                         _column++;
                     }
                 }
                 break;
-            case 359:
+            case 350:
                 switch(_ch) {
-                case 34: // "
-                    token = davelexer::TokenType::String;
+                case 10: // {backslash}n
+                    token = dc::TokenType::Comment;
+                    value += _ch;
+                    _line++;
+                    _column = 1;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                case 13: // {backslash}r
+                    s = 350;
+                    _column = 1;
+                    break;
+                case 2147483647: // <eod>
+                    token = dc::TokenType::Comment;
                     value += _ch;
                     _column++;
                     end_line = _line;
                     end_column = _column;
                     _ch = _stm.get();
                     return true;
-                case 2147483647: // <eod>
-                    s = 356;
-                    _column++;
-                    break;
-                case 92: // {backslash}
-                    s = 357;
-                    _column++;
-                    break;
-                case 10: // {backslash}n
-                    s = 354;
-                    _line++;
-                    _column = 1;
-                    break;
-                case 13: // {backslash}r
-                    s = 354;
-                    _column = 1;
-                    break;
                 default:
-                    if (_ch >= 93 && _ch <= 2147483646) { // ] - <end>
-                        s = 354;
-                        _column++;
-                    } else if (_ch >= 35 && _ch <= 91) { // # - [
-                        s = 354;
-                        _column++;
-                    } else if (_ch >= 0 && _ch <= 9) { // <start> - {backslash}t
-                        s = 354;
+                    if (_ch >= 0 && _ch <= 9) { // <start> - {backslash}t
+                        s = 350;
                         _column++;
                     } else if (_ch >= 11 && _ch <= 12) { // {backslash}v - {backslash}f
-                        s = 354;
+                        s = 350;
                         _column++;
-                    } else if (_ch >= 14 && _ch <= 33) { // {backslash}x14 - !
-                        s = 354;
+                    } else if (_ch >= 14 && _ch <= 2147483646) { // {backslash}x14 - <end>
+                        s = 350;
                         _column++;
                     }
                 }
                 break;
-            case 361:
+            case 367:
                 switch(_ch) {
-                case 34: // "
-                    token = davelexer::TokenType::String;
+                case 10: // {backslash}n
+                    token = dc::TokenType::Documentation;
+                    value += _ch;
+                    _line++;
+                    _column = 1;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                case 13: // {backslash}r
+                    s = 371;
+                    _column = 1;
+                    break;
+                case 2147483647: // <eod>
+                    token = dc::TokenType::Documentation;
                     value += _ch;
                     _column++;
                     end_line = _line;
                     end_column = _column;
                     _ch = _stm.get();
                     return true;
-                case 2147483647: // <eod>
-                    s = 356;
-                    _column++;
-                    break;
-                case 92: // {backslash}
-                    s = 357;
-                    _column++;
-                    break;
-                case 10: // {backslash}n
-                    s = 354;
-                    _line++;
-                    _column = 1;
-                    break;
-                case 13: // {backslash}r
-                    s = 354;
-                    _column = 1;
-                    break;
                 default:
-                    if (_ch >= 93 && _ch <= 2147483646) { // ] - <end>
-                        s = 354;
-                        _column++;
-                    } else if (_ch >= 35 && _ch <= 91) { // # - [
-                        s = 354;
-                        _column++;
-                    } else if (_ch >= 0 && _ch <= 9) { // <start> - {backslash}t
-                        s = 354;
+                    if (_ch >= 0 && _ch <= 9) { // <start> - {backslash}t
+                        s = 371;
                         _column++;
                     } else if (_ch >= 11 && _ch <= 12) { // {backslash}v - {backslash}f
-                        s = 354;
+                        s = 371;
                         _column++;
-                    } else if (_ch >= 14 && _ch <= 33) { // {backslash}x14 - !
-                        s = 354;
+                    } else if (_ch >= 14 && _ch <= 2147483646) { // {backslash}x14 - <end>
+                        s = 371;
                         _column++;
-                    }
-                }
-                break;
-            case 365:
-                switch(_ch) {
-                case 95: // _
-                    s = 365;
-                    _column++;
-                    break;
-                default:
-                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 122) { // a - z
-                        s = 365;
-                        _column++;
-                    }
-                    else {
-                        // Yield
-                        end_line = _line;
-                        end_column = _column;
-                        token = davelexer::TokenType::Identifier;
-                        return true;
                     }
                 }
                 break;
             case 371:
                 switch(_ch) {
-                case 95: // _
-                    s = 365;
-                    _column++;
+                case 10: // {backslash}n
+                    token = dc::TokenType::Documentation;
+                    value += _ch;
+                    _line++;
+                    _column = 1;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                case 13: // {backslash}r
+                    s = 371;
+                    _column = 1;
                     break;
-                case 110: // n
-                    s = 519;
+                case 2147483647: // <eod>
+                    token = dc::TokenType::Documentation;
+                    value += _ch;
                     _column++;
-                    break;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
                 default:
-                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 365;
+                    if (_ch >= 0 && _ch <= 9) { // <start> - {backslash}t
+                        s = 371;
                         _column++;
-                    } else if (_ch >= 111 && _ch <= 122) { // o - z
-                        s = 365;
+                    } else if (_ch >= 11 && _ch <= 12) { // {backslash}v - {backslash}f
+                        s = 371;
                         _column++;
-                    } else if (_ch >= 97 && _ch <= 109) { // a - m
-                        s = 365;
+                    } else if (_ch >= 14 && _ch <= 2147483646) { // {backslash}x14 - <end>
+                        s = 371;
                         _column++;
-                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 365;
-                        _column++;
-                    }
-                    else {
-                        // Yield
-                        end_line = _line;
-                        end_column = _column;
-                        token = davelexer::TokenType::Identifier;
-                        return true;
                     }
                 }
                 break;
-            case 372:
-                switch(_ch) {
-                case 95: // _
-                    s = 365;
-                    _column++;
-                    break;
-                default:
-                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 122) { // a - z
-                        s = 365;
-                        _column++;
-                    }
-                    else {
-                        // Yield
-                        end_line = _line;
-                        end_column = _column;
-                        token = davelexer::TokenType::Identifier;
-                        return true;
-                    }
-                }
-                break;
-            case 374:
+            case 386:
                 switch(_ch) {
                 case 34: // "
-                    token = davelexer::TokenType::String;
+                    token = dc::TokenType::String;
                     value += _ch;
                     _column++;
                     end_line = _line;
@@ -1455,52 +1166,349 @@ namespace davelexer {
                     _ch = _stm.get();
                     return true;
                 case 2147483647: // <eod>
-                    s = 356;
+                    s = 388;
                     _column++;
                     break;
                 case 92: // {backslash}
-                    s = 357;
+                    s = 389;
                     _column++;
                     break;
                 case 10: // {backslash}n
-                    s = 354;
+                    s = 386;
                     _line++;
                     _column = 1;
                     break;
                 case 13: // {backslash}r
-                    s = 354;
+                    s = 386;
                     _column = 1;
                     break;
                 default:
                     if (_ch >= 93 && _ch <= 2147483646) { // ] - <end>
-                        s = 354;
+                        s = 386;
                         _column++;
                     } else if (_ch >= 35 && _ch <= 91) { // # - [
-                        s = 354;
+                        s = 386;
                         _column++;
                     } else if (_ch >= 0 && _ch <= 9) { // <start> - {backslash}t
-                        s = 354;
+                        s = 386;
                         _column++;
                     } else if (_ch >= 11 && _ch <= 12) { // {backslash}v - {backslash}f
-                        s = 354;
+                        s = 386;
                         _column++;
                     } else if (_ch >= 14 && _ch <= 33) { // {backslash}x14 - !
-                        s = 354;
+                        s = 386;
+                        _column++;
+                    }
+                }
+                break;
+            case 388:
+                switch(_ch) {
+                case 34: // "
+                    token = dc::TokenType::String;
+                    value += _ch;
+                    _column++;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                case 2147483647: // <eod>
+                    s = 388;
+                    _column++;
+                    break;
+                case 92: // {backslash}
+                    s = 389;
+                    _column++;
+                    break;
+                case 10: // {backslash}n
+                    s = 386;
+                    _line++;
+                    _column = 1;
+                    break;
+                case 13: // {backslash}r
+                    s = 386;
+                    _column = 1;
+                    break;
+                default:
+                    if (_ch >= 93 && _ch <= 2147483646) { // ] - <end>
+                        s = 386;
+                        _column++;
+                    } else if (_ch >= 35 && _ch <= 91) { // # - [
+                        s = 386;
+                        _column++;
+                    } else if (_ch >= 0 && _ch <= 9) { // <start> - {backslash}t
+                        s = 386;
+                        _column++;
+                    } else if (_ch >= 11 && _ch <= 12) { // {backslash}v - {backslash}f
+                        s = 386;
+                        _column++;
+                    } else if (_ch >= 14 && _ch <= 33) { // {backslash}x14 - !
+                        s = 386;
+                        _column++;
+                    }
+                }
+                break;
+            case 389:
+                switch(_ch) {
+                case 10: // {backslash}n
+                    s = 391;
+                    _line++;
+                    _column = 1;
+                    break;
+                case 2147483647: // <eod>
+                    s = 393;
+                    _column++;
+                    break;
+                case 13: // {backslash}r
+                    s = 391;
+                    _column = 1;
+                    break;
+                default:
+                    if (_ch >= 0 && _ch <= 9) { // <start> - {backslash}t
+                        s = 391;
+                        _column++;
+                    } else if (_ch >= 11 && _ch <= 12) { // {backslash}v - {backslash}f
+                        s = 391;
+                        _column++;
+                    } else if (_ch >= 14 && _ch <= 2147483646) { // {backslash}x14 - <end>
+                        s = 391;
+                        _column++;
+                    }
+                }
+                break;
+            case 391:
+                switch(_ch) {
+                case 34: // "
+                    token = dc::TokenType::String;
+                    value += _ch;
+                    _column++;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                case 2147483647: // <eod>
+                    s = 388;
+                    _column++;
+                    break;
+                case 92: // {backslash}
+                    s = 389;
+                    _column++;
+                    break;
+                case 10: // {backslash}n
+                    s = 386;
+                    _line++;
+                    _column = 1;
+                    break;
+                case 13: // {backslash}r
+                    s = 386;
+                    _column = 1;
+                    break;
+                default:
+                    if (_ch >= 93 && _ch <= 2147483646) { // ] - <end>
+                        s = 386;
+                        _column++;
+                    } else if (_ch >= 35 && _ch <= 91) { // # - [
+                        s = 386;
+                        _column++;
+                    } else if (_ch >= 0 && _ch <= 9) { // <start> - {backslash}t
+                        s = 386;
+                        _column++;
+                    } else if (_ch >= 11 && _ch <= 12) { // {backslash}v - {backslash}f
+                        s = 386;
+                        _column++;
+                    } else if (_ch >= 14 && _ch <= 33) { // {backslash}x14 - !
+                        s = 386;
+                        _column++;
+                    }
+                }
+                break;
+            case 393:
+                switch(_ch) {
+                case 34: // "
+                    token = dc::TokenType::String;
+                    value += _ch;
+                    _column++;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                case 2147483647: // <eod>
+                    s = 388;
+                    _column++;
+                    break;
+                case 92: // {backslash}
+                    s = 389;
+                    _column++;
+                    break;
+                case 10: // {backslash}n
+                    s = 386;
+                    _line++;
+                    _column = 1;
+                    break;
+                case 13: // {backslash}r
+                    s = 386;
+                    _column = 1;
+                    break;
+                default:
+                    if (_ch >= 93 && _ch <= 2147483646) { // ] - <end>
+                        s = 386;
+                        _column++;
+                    } else if (_ch >= 35 && _ch <= 91) { // # - [
+                        s = 386;
+                        _column++;
+                    } else if (_ch >= 0 && _ch <= 9) { // <start> - {backslash}t
+                        s = 386;
+                        _column++;
+                    } else if (_ch >= 11 && _ch <= 12) { // {backslash}v - {backslash}f
+                        s = 386;
+                        _column++;
+                    } else if (_ch >= 14 && _ch <= 33) { // {backslash}x14 - !
+                        s = 386;
+                        _column++;
+                    }
+                }
+                break;
+            case 397:
+                switch(_ch) {
+                case 95: // _
+                    s = 397;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 122) { // a - z
+                        s = 397;
                         _column++;
                     }
                     else {
                         // Yield
                         end_line = _line;
                         end_column = _column;
-                        token = davelexer::TokenType::Error;
+                        token = dc::TokenType::Identifier;
                         return true;
                     }
                 }
                 break;
-            case 375:
+            case 403:
+                switch(_ch) {
+                case 95: // _
+                    s = 397;
+                    _column++;
+                    break;
+                case 110: // n
+                    s = 573;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 111 && _ch <= 122) { // o - z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 109) { // a - m
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 397;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 404:
+                switch(_ch) {
+                case 95: // _
+                    s = 397;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 122) { // a - z
+                        s = 397;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 406:
+                switch(_ch) {
+                case 34: // "
+                    token = dc::TokenType::String;
+                    value += _ch;
+                    _column++;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                case 2147483647: // <eod>
+                    s = 388;
+                    _column++;
+                    break;
+                case 92: // {backslash}
+                    s = 389;
+                    _column++;
+                    break;
+                case 10: // {backslash}n
+                    s = 386;
+                    _line++;
+                    _column = 1;
+                    break;
+                case 13: // {backslash}r
+                    s = 386;
+                    _column = 1;
+                    break;
+                default:
+                    if (_ch >= 93 && _ch <= 2147483646) { // ] - <end>
+                        s = 386;
+                        _column++;
+                    } else if (_ch >= 35 && _ch <= 91) { // # - [
+                        s = 386;
+                        _column++;
+                    } else if (_ch >= 0 && _ch <= 9) { // <start> - {backslash}t
+                        s = 386;
+                        _column++;
+                    } else if (_ch >= 11 && _ch <= 12) { // {backslash}v - {backslash}f
+                        s = 386;
+                        _column++;
+                    } else if (_ch >= 14 && _ch <= 33) { // {backslash}x14 - !
+                        s = 386;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Error;
+                        return true;
+                    }
+                }
+                break;
+            case 407:
                 switch(_ch) {
                 case 42: // *
-                    token = davelexer::TokenType::Comment;
+                    token = dc::TokenType::Comment;
                     _states.push_back(1);
                     value += _ch;
                     _column++;
@@ -1509,121 +1517,21 @@ namespace davelexer {
                     _ch = _stm.get();
                     return true;
                 case 47: // /
-                    s = 515;
+                    s = 569;
                     _column++;
                     break;
                 default:
                     // Yield
                     end_line = _line;
                     end_column = _column;
-                    token = davelexer::TokenType::Error;
+                    token = dc::TokenType::Error;
                     return true;
                 }
                 break;
-            case 381:
-                switch(_ch) {
-                case 95: // _
-                    s = 365;
-                    _column++;
-                    break;
-                case 119: // w
-                    s = 477;
-                    _column++;
-                    break;
-                default:
-                    if (_ch >= 120 && _ch <= 122) { // x - z
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 118) { // a - v
-                        s = 365;
-                        _column++;
-                    }
-                    else {
-                        // Yield
-                        end_line = _line;
-                        end_column = _column;
-                        token = davelexer::TokenType::Identifier;
-                        return true;
-                    }
-                }
-                break;
-            case 382:
-                switch(_ch) {
-                case 95: // _
-                    s = 365;
-                    _column++;
-                    break;
-                case 111: // o
-                    s = 474;
-                    _column++;
-                    break;
-                default:
-                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 112 && _ch <= 122) { // p - z
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 110) { // a - n
-                        s = 365;
-                        _column++;
-                    }
-                    else {
-                        // Yield
-                        end_line = _line;
-                        end_column = _column;
-                        token = davelexer::TokenType::Identifier;
-                        return true;
-                    }
-                }
-                break;
-            case 383:
-                switch(_ch) {
-                case 95: // _
-                    s = 365;
-                    _column++;
-                    break;
-                case 122: // z
-                    s = 365;
-                    _column++;
-                    break;
-                case 121: // y
-                    s = 471;
-                    _column++;
-                    break;
-                default:
-                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 120) { // a - x
-                        s = 365;
-                        _column++;
-                    }
-                    else {
-                        // Yield
-                        end_line = _line;
-                        end_column = _column;
-                        token = davelexer::TokenType::Identifier;
-                        return true;
-                    }
-                }
-                break;
-            case 384:
+            case 412:
                 switch(_ch) {
                 case 62: // >
-                    token = davelexer::TokenType::ProducedBy;
+                    token = dc::TokenType::ProducedBy;
                     value += _ch;
                     _column++;
                     end_line = _line;
@@ -1634,84 +1542,198 @@ namespace davelexer {
                     // Yield
                     end_line = _line;
                     end_column = _column;
-                    token = davelexer::TokenType::Error;
+                    token = dc::TokenType::Error;
                     return true;
                 }
                 break;
-            case 385:
+            case 415:
                 switch(_ch) {
                 case 95: // _
-                    s = 365;
+                    s = 397;
                     _column++;
                     break;
-                case 101: // e
-                    s = 466;
+                case 119: // w
+                    s = 526;
+                    _column++;
+                    break;
+                case 102: // f
+                    s = 527;
                     _column++;
                     break;
                 default:
-                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 365;
+                    if (_ch >= 97 && _ch <= 101) { // a - e
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 120 && _ch <= 122) { // x - z
+                        s = 397;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 365;
+                        s = 397;
                         _column++;
-                    } else if (_ch >= 102 && _ch <= 122) { // f - z
-                        s = 365;
+                    } else if (_ch >= 103 && _ch <= 118) { // g - v
+                        s = 397;
                         _column++;
-                    } else if (_ch >= 97 && _ch <= 100) { // a - d
-                        s = 365;
+                    } else if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 397;
                         _column++;
                     }
                     else {
                         // Yield
                         end_line = _line;
                         end_column = _column;
-                        token = davelexer::TokenType::Identifier;
+                        token = dc::TokenType::Identifier;
                         return true;
                     }
                 }
                 break;
-            case 388:
+            case 416:
                 switch(_ch) {
                 case 95: // _
-                    s = 365;
+                    s = 397;
+                    _column++;
+                    break;
+                case 111: // o
+                    s = 517;
+                    _column++;
+                    break;
+                case 115: // s
+                    s = 518;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 116 && _ch <= 122) { // t - z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 112 && _ch <= 114) { // p - r
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 110) { // a - n
+                        s = 397;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 417:
+                switch(_ch) {
+                case 95: // _
+                    s = 397;
+                    _column++;
+                    break;
+                case 122: // z
+                    s = 397;
+                    _column++;
+                    break;
+                case 121: // y
+                    s = 514;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 120) { // a - x
+                        s = 397;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 418:
+                switch(_ch) {
+                case 95: // _
+                    s = 397;
                     _column++;
                     break;
                 case 101: // e
-                    s = 456;
+                    s = 509;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 102 && _ch <= 122) { // f - z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 100) { // a - d
+                        s = 397;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 421:
+                switch(_ch) {
+                case 95: // _
+                    s = 397;
+                    _column++;
+                    break;
+                case 101: // e
+                    s = 495;
                     _column++;
                     break;
                 case 116: // t
-                    s = 457;
+                    s = 496;
                     _column++;
                     break;
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 365;
+                        s = 397;
                         _column++;
                     } else if (_ch >= 117 && _ch <= 122) { // u - z
-                        s = 365;
+                        s = 397;
                         _column++;
                     } else if (_ch >= 102 && _ch <= 115) { // f - s
-                        s = 365;
+                        s = 397;
                         _column++;
                     } else if (_ch >= 97 && _ch <= 100) { // a - d
-                        s = 365;
+                        s = 397;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 365;
+                        s = 397;
                         _column++;
                     }
                     else {
                         // Yield
                         end_line = _line;
                         end_column = _column;
-                        token = davelexer::TokenType::Identifier;
+                        token = dc::TokenType::Identifier;
                         return true;
                     }
                 }
                 break;
-            case 389:
+            case 422:
                 switch(_ch) {
                 case 12: // {backslash}f
                     s = 130;
@@ -1742,14 +1764,697 @@ namespace davelexer {
                     // Yield
                     end_line = _line;
                     end_column = _column;
-                    token = davelexer::TokenType::Whitespace;
+                    token = dc::TokenType::Whitespace;
                     return true;
                 }
                 break;
-            case 390:
+            case 424:
                 switch(_ch) {
                 case 95: // _
-                    s = 365;
+                    s = 397;
+                    _column++;
+                    break;
+                case 97: // a
+                    s = 487;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 98 && _ch <= 122) { // b - z
+                        s = 397;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 426:
+                switch(_ch) {
+                case 95: // _
+                    s = 397;
+                    _column++;
+                    break;
+                case 109: // m
+                    s = 468;
+                    _column++;
+                    break;
+                case 110: // n
+                    s = 469;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 111 && _ch <= 122) { // o - z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 108) { // a - l
+                        s = 397;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 427:
+                switch(_ch) {
+                case 95: // _
+                    s = 397;
+                    _column++;
+                    break;
+                case 111: // o
+                    s = 465;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 112 && _ch <= 122) { // p - z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 110) { // a - n
+                        s = 397;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 428:
+                switch(_ch) {
+                case 95: // _
+                    s = 397;
+                    _column++;
+                    break;
+                case 97: // a
+                    s = 450;
+                    _column++;
+                    break;
+                case 114: // r
+                    s = 451;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 115 && _ch <= 122) { // s - z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 98 && _ch <= 113) { // b - q
+                        s = 397;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 430:
+                switch(_ch) {
+                case 95: // _
+                    s = 397;
+                    _column++;
+                    break;
+                case 108: // l
+                    s = 446;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 107) { // a - k
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 109 && _ch <= 122) { // m - z
+                        s = 397;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 431:
+                switch(_ch) {
+                case 98: // b
+                    s = 432;
+                    _column++;
+                    break;
+                case 97: // a
+                    s = 397;
+                    _column++;
+                    break;
+                case 95: // _
+                    s = 397;
+                    _column++;
+                    break;
+                case 117: // u
+                    s = 433;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 118 && _ch <= 122) { // v - z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 99 && _ch <= 116) { // c - t
+                        s = 397;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 432:
+                switch(_ch) {
+                case 95: // _
+                    s = 397;
+                    _column++;
+                    break;
+                case 115: // s
+                    s = 440;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 116 && _ch <= 122) { // t - z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 114) { // a - r
+                        s = 397;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 433:
+                switch(_ch) {
+                case 95: // _
+                    s = 397;
+                    _column++;
+                    break;
+                case 116: // t
+                    s = 434;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 115) { // a - s
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 117 && _ch <= 122) { // u - z
+                        s = 397;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 434:
+                switch(_ch) {
+                case 95: // _
+                    s = 397;
+                    _column++;
+                    break;
+                case 111: // o
+                    s = 435;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 112 && _ch <= 122) { // p - z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 110) { // a - n
+                        s = 397;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 435:
+                switch(_ch) {
+                case 109: // m
+                    s = 436;
+                    _column++;
+                    break;
+                case 95: // _
+                    s = 397;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 110 && _ch <= 122) { // n - z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 108) { // a - l
+                        s = 397;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 436:
+                switch(_ch) {
+                case 95: // _
+                    s = 397;
+                    _column++;
+                    break;
+                case 97: // a
+                    s = 437;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 98 && _ch <= 122) { // b - z
+                        s = 397;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 437:
+                switch(_ch) {
+                case 95: // _
+                    s = 397;
+                    _column++;
+                    break;
+                case 116: // t
+                    s = 438;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 115) { // a - s
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 117 && _ch <= 122) { // u - z
+                        s = 397;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 438:
+                switch(_ch) {
+                case 95: // _
+                    s = 397;
+                    _column++;
+                    break;
+                case 97: // a
+                    s = 439;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 98 && _ch <= 122) { // b - z
+                        s = 397;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 439:
+                switch(_ch) {
+                case 95: // _
+                    s = 397;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 122) { // a - z
+                        s = 397;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Automata;
+                        return true;
+                    }
+                }
+                break;
+            case 440:
+                switch(_ch) {
+                case 95: // _
+                    s = 397;
+                    _column++;
+                    break;
+                case 116: // t
+                    s = 441;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 115) { // a - s
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 117 && _ch <= 122) { // u - z
+                        s = 397;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 441:
+                switch(_ch) {
+                case 114: // r
+                    s = 442;
+                    _column++;
+                    break;
+                case 95: // _
+                    s = 397;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 115 && _ch <= 122) { // s - z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 113) { // a - q
+                        s = 397;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 442:
+                switch(_ch) {
+                case 95: // _
+                    s = 397;
+                    _column++;
+                    break;
+                case 97: // a
+                    s = 443;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 98 && _ch <= 122) { // b - z
+                        s = 397;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 443:
+                switch(_ch) {
+                case 99: // c
+                    s = 444;
+                    _column++;
+                    break;
+                case 95: // _
+                    s = 397;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 100 && _ch <= 122) { // d - z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 98) { // a - b
+                        s = 397;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 444:
+                switch(_ch) {
+                case 95: // _
+                    s = 397;
+                    _column++;
+                    break;
+                case 116: // t
+                    s = 445;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 115) { // a - s
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 117 && _ch <= 122) { // u - z
+                        s = 397;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 445:
+                switch(_ch) {
+                case 95: // _
+                    s = 397;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 122) { // a - z
+                        s = 397;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Abstract;
+                        return true;
+                    }
+                }
+                break;
+            case 446:
+                switch(_ch) {
+                case 95: // _
+                    s = 397;
+                    _column++;
+                    break;
+                case 111: // o
+                    s = 447;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 112 && _ch <= 122) { // p - z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 110) { // a - n
+                        s = 397;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 447:
+                switch(_ch) {
+                case 95: // _
+                    s = 397;
                     _column++;
                     break;
                 case 97: // a
@@ -1758,1830 +2463,53 @@ namespace davelexer {
                     break;
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 365;
+                        s = 397;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 365;
+                        s = 397;
                         _column++;
                     } else if (_ch >= 98 && _ch <= 122) { // b - z
-                        s = 365;
+                        s = 397;
                         _column++;
                     }
                     else {
                         // Yield
                         end_line = _line;
                         end_column = _column;
-                        token = davelexer::TokenType::Identifier;
-                        return true;
-                    }
-                }
-                break;
-            case 392:
-                switch(_ch) {
-                case 95: // _
-                    s = 365;
-                    _column++;
-                    break;
-                case 109: // m
-                    s = 429;
-                    _column++;
-                    break;
-                case 110: // n
-                    s = 430;
-                    _column++;
-                    break;
-                default:
-                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 111 && _ch <= 122) { // o - z
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 108) { // a - l
-                        s = 365;
-                        _column++;
-                    }
-                    else {
-                        // Yield
-                        end_line = _line;
-                        end_column = _column;
-                        token = davelexer::TokenType::Identifier;
-                        return true;
-                    }
-                }
-                break;
-            case 393:
-                switch(_ch) {
-                case 95: // _
-                    s = 365;
-                    _column++;
-                    break;
-                case 111: // o
-                    s = 426;
-                    _column++;
-                    break;
-                default:
-                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 112 && _ch <= 122) { // p - z
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 110) { // a - n
-                        s = 365;
-                        _column++;
-                    }
-                    else {
-                        // Yield
-                        end_line = _line;
-                        end_column = _column;
-                        token = davelexer::TokenType::Identifier;
-                        return true;
-                    }
-                }
-                break;
-            case 394:
-                switch(_ch) {
-                case 95: // _
-                    s = 365;
-                    _column++;
-                    break;
-                case 97: // a
-                    s = 411;
-                    _column++;
-                    break;
-                case 114: // r
-                    s = 412;
-                    _column++;
-                    break;
-                default:
-                    if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 115 && _ch <= 122) { // s - z
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 98 && _ch <= 113) { // b - q
-                        s = 365;
-                        _column++;
-                    }
-                    else {
-                        // Yield
-                        end_line = _line;
-                        end_column = _column;
-                        token = davelexer::TokenType::Identifier;
-                        return true;
-                    }
-                }
-                break;
-            case 396:
-                switch(_ch) {
-                case 98: // b
-                    s = 397;
-                    _column++;
-                    break;
-                case 97: // a
-                    s = 365;
-                    _column++;
-                    break;
-                case 95: // _
-                    s = 365;
-                    _column++;
-                    break;
-                case 117: // u
-                    s = 398;
-                    _column++;
-                    break;
-                default:
-                    if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 118 && _ch <= 122) { // v - z
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 99 && _ch <= 116) { // c - t
-                        s = 365;
-                        _column++;
-                    }
-                    else {
-                        // Yield
-                        end_line = _line;
-                        end_column = _column;
-                        token = davelexer::TokenType::Identifier;
-                        return true;
-                    }
-                }
-                break;
-            case 397:
-                switch(_ch) {
-                case 95: // _
-                    s = 365;
-                    _column++;
-                    break;
-                case 115: // s
-                    s = 405;
-                    _column++;
-                    break;
-                default:
-                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 116 && _ch <= 122) { // t - z
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 114) { // a - r
-                        s = 365;
-                        _column++;
-                    }
-                    else {
-                        // Yield
-                        end_line = _line;
-                        end_column = _column;
-                        token = davelexer::TokenType::Identifier;
-                        return true;
-                    }
-                }
-                break;
-            case 398:
-                switch(_ch) {
-                case 95: // _
-                    s = 365;
-                    _column++;
-                    break;
-                case 116: // t
-                    s = 399;
-                    _column++;
-                    break;
-                default:
-                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 115) { // a - s
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 117 && _ch <= 122) { // u - z
-                        s = 365;
-                        _column++;
-                    }
-                    else {
-                        // Yield
-                        end_line = _line;
-                        end_column = _column;
-                        token = davelexer::TokenType::Identifier;
-                        return true;
-                    }
-                }
-                break;
-            case 399:
-                switch(_ch) {
-                case 95: // _
-                    s = 365;
-                    _column++;
-                    break;
-                case 111: // o
-                    s = 400;
-                    _column++;
-                    break;
-                default:
-                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 112 && _ch <= 122) { // p - z
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 110) { // a - n
-                        s = 365;
-                        _column++;
-                    }
-                    else {
-                        // Yield
-                        end_line = _line;
-                        end_column = _column;
-                        token = davelexer::TokenType::Identifier;
-                        return true;
-                    }
-                }
-                break;
-            case 400:
-                switch(_ch) {
-                case 109: // m
-                    s = 401;
-                    _column++;
-                    break;
-                case 95: // _
-                    s = 365;
-                    _column++;
-                    break;
-                default:
-                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 110 && _ch <= 122) { // n - z
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 108) { // a - l
-                        s = 365;
-                        _column++;
-                    }
-                    else {
-                        // Yield
-                        end_line = _line;
-                        end_column = _column;
-                        token = davelexer::TokenType::Identifier;
-                        return true;
-                    }
-                }
-                break;
-            case 401:
-                switch(_ch) {
-                case 95: // _
-                    s = 365;
-                    _column++;
-                    break;
-                case 97: // a
-                    s = 402;
-                    _column++;
-                    break;
-                default:
-                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 98 && _ch <= 122) { // b - z
-                        s = 365;
-                        _column++;
-                    }
-                    else {
-                        // Yield
-                        end_line = _line;
-                        end_column = _column;
-                        token = davelexer::TokenType::Identifier;
-                        return true;
-                    }
-                }
-                break;
-            case 402:
-                switch(_ch) {
-                case 95: // _
-                    s = 365;
-                    _column++;
-                    break;
-                case 116: // t
-                    s = 403;
-                    _column++;
-                    break;
-                default:
-                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 115) { // a - s
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 117 && _ch <= 122) { // u - z
-                        s = 365;
-                        _column++;
-                    }
-                    else {
-                        // Yield
-                        end_line = _line;
-                        end_column = _column;
-                        token = davelexer::TokenType::Identifier;
-                        return true;
-                    }
-                }
-                break;
-            case 403:
-                switch(_ch) {
-                case 95: // _
-                    s = 365;
-                    _column++;
-                    break;
-                case 97: // a
-                    s = 404;
-                    _column++;
-                    break;
-                default:
-                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 98 && _ch <= 122) { // b - z
-                        s = 365;
-                        _column++;
-                    }
-                    else {
-                        // Yield
-                        end_line = _line;
-                        end_column = _column;
-                        token = davelexer::TokenType::Identifier;
-                        return true;
-                    }
-                }
-                break;
-            case 404:
-                switch(_ch) {
-                case 95: // _
-                    s = 365;
-                    _column++;
-                    break;
-                default:
-                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 122) { // a - z
-                        s = 365;
-                        _column++;
-                    }
-                    else {
-                        // Yield
-                        end_line = _line;
-                        end_column = _column;
-                        token = davelexer::TokenType::Automata;
-                        return true;
-                    }
-                }
-                break;
-            case 405:
-                switch(_ch) {
-                case 95: // _
-                    s = 365;
-                    _column++;
-                    break;
-                case 116: // t
-                    s = 406;
-                    _column++;
-                    break;
-                default:
-                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 115) { // a - s
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 117 && _ch <= 122) { // u - z
-                        s = 365;
-                        _column++;
-                    }
-                    else {
-                        // Yield
-                        end_line = _line;
-                        end_column = _column;
-                        token = davelexer::TokenType::Identifier;
-                        return true;
-                    }
-                }
-                break;
-            case 406:
-                switch(_ch) {
-                case 114: // r
-                    s = 407;
-                    _column++;
-                    break;
-                case 95: // _
-                    s = 365;
-                    _column++;
-                    break;
-                default:
-                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 115 && _ch <= 122) { // s - z
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 113) { // a - q
-                        s = 365;
-                        _column++;
-                    }
-                    else {
-                        // Yield
-                        end_line = _line;
-                        end_column = _column;
-                        token = davelexer::TokenType::Identifier;
-                        return true;
-                    }
-                }
-                break;
-            case 407:
-                switch(_ch) {
-                case 95: // _
-                    s = 365;
-                    _column++;
-                    break;
-                case 97: // a
-                    s = 408;
-                    _column++;
-                    break;
-                default:
-                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 98 && _ch <= 122) { // b - z
-                        s = 365;
-                        _column++;
-                    }
-                    else {
-                        // Yield
-                        end_line = _line;
-                        end_column = _column;
-                        token = davelexer::TokenType::Identifier;
-                        return true;
-                    }
-                }
-                break;
-            case 408:
-                switch(_ch) {
-                case 99: // c
-                    s = 409;
-                    _column++;
-                    break;
-                case 95: // _
-                    s = 365;
-                    _column++;
-                    break;
-                default:
-                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 100 && _ch <= 122) { // d - z
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 98) { // a - b
-                        s = 365;
-                        _column++;
-                    }
-                    else {
-                        // Yield
-                        end_line = _line;
-                        end_column = _column;
-                        token = davelexer::TokenType::Identifier;
-                        return true;
-                    }
-                }
-                break;
-            case 409:
-                switch(_ch) {
-                case 95: // _
-                    s = 365;
-                    _column++;
-                    break;
-                case 116: // t
-                    s = 410;
-                    _column++;
-                    break;
-                default:
-                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 115) { // a - s
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 117 && _ch <= 122) { // u - z
-                        s = 365;
-                        _column++;
-                    }
-                    else {
-                        // Yield
-                        end_line = _line;
-                        end_column = _column;
-                        token = davelexer::TokenType::Identifier;
-                        return true;
-                    }
-                }
-                break;
-            case 410:
-                switch(_ch) {
-                case 95: // _
-                    s = 365;
-                    _column++;
-                    break;
-                default:
-                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 122) { // a - z
-                        s = 365;
-                        _column++;
-                    }
-                    else {
-                        // Yield
-                        end_line = _line;
-                        end_column = _column;
-                        token = davelexer::TokenType::Abstract;
-                        return true;
-                    }
-                }
-                break;
-            case 411:
-                switch(_ch) {
-                case 95: // _
-                    s = 365;
-                    _column++;
-                    break;
-                case 116: // t
-                    s = 421;
-                    _column++;
-                    break;
-                default:
-                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 115) { // a - s
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 117 && _ch <= 122) { // u - z
-                        s = 365;
-                        _column++;
-                    }
-                    else {
-                        // Yield
-                        end_line = _line;
-                        end_column = _column;
-                        token = davelexer::TokenType::Identifier;
-                        return true;
-                    }
-                }
-                break;
-            case 412:
-                switch(_ch) {
-                case 95: // _
-                    s = 365;
-                    _column++;
-                    break;
-                case 111: // o
-                    s = 413;
-                    _column++;
-                    break;
-                default:
-                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 112 && _ch <= 122) { // p - z
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 110) { // a - n
-                        s = 365;
-                        _column++;
-                    }
-                    else {
-                        // Yield
-                        end_line = _line;
-                        end_column = _column;
-                        token = davelexer::TokenType::Identifier;
-                        return true;
-                    }
-                }
-                break;
-            case 413:
-                switch(_ch) {
-                case 95: // _
-                    s = 365;
-                    _column++;
-                    break;
-                case 100: // d
-                    s = 414;
-                    _column++;
-                    break;
-                default:
-                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 101 && _ch <= 122) { // e - z
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 99) { // a - c
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 365;
-                        _column++;
-                    }
-                    else {
-                        // Yield
-                        end_line = _line;
-                        end_column = _column;
-                        token = davelexer::TokenType::Identifier;
-                        return true;
-                    }
-                }
-                break;
-            case 414:
-                switch(_ch) {
-                case 117: // u
-                    s = 415;
-                    _column++;
-                    break;
-                case 95: // _
-                    s = 365;
-                    _column++;
-                    break;
-                default:
-                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 118 && _ch <= 122) { // v - z
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 116) { // a - t
-                        s = 365;
-                        _column++;
-                    }
-                    else {
-                        // Yield
-                        end_line = _line;
-                        end_column = _column;
-                        token = davelexer::TokenType::Identifier;
-                        return true;
-                    }
-                }
-                break;
-            case 415:
-                switch(_ch) {
-                case 95: // _
-                    s = 365;
-                    _column++;
-                    break;
-                case 99: // c
-                    s = 416;
-                    _column++;
-                    break;
-                default:
-                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 100 && _ch <= 122) { // d - z
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 98) { // a - b
-                        s = 365;
-                        _column++;
-                    }
-                    else {
-                        // Yield
-                        end_line = _line;
-                        end_column = _column;
-                        token = davelexer::TokenType::Identifier;
-                        return true;
-                    }
-                }
-                break;
-            case 416:
-                switch(_ch) {
-                case 95: // _
-                    s = 365;
-                    _column++;
-                    break;
-                case 116: // t
-                    s = 417;
-                    _column++;
-                    break;
-                default:
-                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 115) { // a - s
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 117 && _ch <= 122) { // u - z
-                        s = 365;
-                        _column++;
-                    }
-                    else {
-                        // Yield
-                        end_line = _line;
-                        end_column = _column;
-                        token = davelexer::TokenType::Identifier;
-                        return true;
-                    }
-                }
-                break;
-            case 417:
-                switch(_ch) {
-                case 95: // _
-                    s = 365;
-                    _column++;
-                    break;
-                case 105: // i
-                    s = 418;
-                    _column++;
-                    break;
-                default:
-                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 106 && _ch <= 122) { // j - z
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 104) { // a - h
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 365;
-                        _column++;
-                    }
-                    else {
-                        // Yield
-                        end_line = _line;
-                        end_column = _column;
-                        token = davelexer::TokenType::Identifier;
-                        return true;
-                    }
-                }
-                break;
-            case 418:
-                switch(_ch) {
-                case 95: // _
-                    s = 365;
-                    _column++;
-                    break;
-                case 111: // o
-                    s = 419;
-                    _column++;
-                    break;
-                default:
-                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 112 && _ch <= 122) { // p - z
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 110) { // a - n
-                        s = 365;
-                        _column++;
-                    }
-                    else {
-                        // Yield
-                        end_line = _line;
-                        end_column = _column;
-                        token = davelexer::TokenType::Identifier;
-                        return true;
-                    }
-                }
-                break;
-            case 419:
-                switch(_ch) {
-                case 95: // _
-                    s = 365;
-                    _column++;
-                    break;
-                case 110: // n
-                    s = 420;
-                    _column++;
-                    break;
-                default:
-                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 111 && _ch <= 122) { // o - z
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 109) { // a - m
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 365;
-                        _column++;
-                    }
-                    else {
-                        // Yield
-                        end_line = _line;
-                        end_column = _column;
-                        token = davelexer::TokenType::Identifier;
-                        return true;
-                    }
-                }
-                break;
-            case 420:
-                switch(_ch) {
-                case 95: // _
-                    s = 365;
-                    _column++;
-                    break;
-                default:
-                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 122) { // a - z
-                        s = 365;
-                        _column++;
-                    }
-                    else {
-                        // Yield
-                        end_line = _line;
-                        end_column = _column;
-                        token = davelexer::TokenType::Production;
-                        return true;
-                    }
-                }
-                break;
-            case 421:
-                switch(_ch) {
-                case 95: // _
-                    s = 365;
-                    _column++;
-                    break;
-                case 116: // t
-                    s = 422;
-                    _column++;
-                    break;
-                default:
-                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 115) { // a - s
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 117 && _ch <= 122) { // u - z
-                        s = 365;
-                        _column++;
-                    }
-                    else {
-                        // Yield
-                        end_line = _line;
-                        end_column = _column;
-                        token = davelexer::TokenType::Identifier;
-                        return true;
-                    }
-                }
-                break;
-            case 422:
-                switch(_ch) {
-                case 95: // _
-                    s = 365;
-                    _column++;
-                    break;
-                case 101: // e
-                    s = 423;
-                    _column++;
-                    break;
-                default:
-                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 102 && _ch <= 122) { // f - z
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 100) { // a - d
-                        s = 365;
-                        _column++;
-                    }
-                    else {
-                        // Yield
-                        end_line = _line;
-                        end_column = _column;
-                        token = davelexer::TokenType::Identifier;
-                        return true;
-                    }
-                }
-                break;
-            case 423:
-                switch(_ch) {
-                case 95: // _
-                    s = 365;
-                    _column++;
-                    break;
-                case 114: // r
-                    s = 424;
-                    _column++;
-                    break;
-                default:
-                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 115 && _ch <= 122) { // s - z
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 113) { // a - q
-                        s = 365;
-                        _column++;
-                    }
-                    else {
-                        // Yield
-                        end_line = _line;
-                        end_column = _column;
-                        token = davelexer::TokenType::Identifier;
-                        return true;
-                    }
-                }
-                break;
-            case 424:
-                switch(_ch) {
-                case 95: // _
-                    s = 365;
-                    _column++;
-                    break;
-                case 110: // n
-                    s = 425;
-                    _column++;
-                    break;
-                default:
-                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 111 && _ch <= 122) { // o - z
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 109) { // a - m
-                        s = 365;
-                        _column++;
-                    }
-                    else {
-                        // Yield
-                        end_line = _line;
-                        end_column = _column;
-                        token = davelexer::TokenType::Identifier;
-                        return true;
-                    }
-                }
-                break;
-            case 425:
-                switch(_ch) {
-                case 95: // _
-                    s = 365;
-                    _column++;
-                    break;
-                default:
-                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 122) { // a - z
-                        s = 365;
-                        _column++;
-                    }
-                    else {
-                        // Yield
-                        end_line = _line;
-                        end_column = _column;
-                        token = davelexer::TokenType::Pattern;
-                        return true;
-                    }
-                }
-                break;
-            case 426:
-                switch(_ch) {
-                case 95: // _
-                    s = 365;
-                    _column++;
-                    break;
-                case 116: // t
-                    s = 427;
-                    _column++;
-                    break;
-                default:
-                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 115) { // a - s
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 117 && _ch <= 122) { // u - z
-                        s = 365;
-                        _column++;
-                    }
-                    else {
-                        // Yield
-                        end_line = _line;
-                        end_column = _column;
-                        token = davelexer::TokenType::Identifier;
-                        return true;
-                    }
-                }
-                break;
-            case 427:
-                switch(_ch) {
-                case 95: // _
-                    s = 365;
-                    _column++;
-                    break;
-                case 111: // o
-                    s = 428;
-                    _column++;
-                    break;
-                default:
-                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 112 && _ch <= 122) { // p - z
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 110) { // a - n
-                        s = 365;
-                        _column++;
-                    }
-                    else {
-                        // Yield
-                        end_line = _line;
-                        end_column = _column;
-                        token = davelexer::TokenType::Identifier;
-                        return true;
-                    }
-                }
-                break;
-            case 428:
-                switch(_ch) {
-                case 95: // _
-                    s = 365;
-                    _column++;
-                    break;
-                default:
-                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 122) { // a - z
-                        s = 365;
-                        _column++;
-                    }
-                    else {
-                        // Yield
-                        end_line = _line;
-                        end_column = _column;
-                        token = davelexer::TokenType::Goto;
-                        return true;
-                    }
-                }
-                break;
-            case 429:
-                switch(_ch) {
-                case 95: // _
-                    s = 365;
-                    _column++;
-                    break;
-                case 112: // p
-                    s = 444;
-                    _column++;
-                    break;
-                default:
-                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 113 && _ch <= 122) { // q - z
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 111) { // a - o
-                        s = 365;
-                        _column++;
-                    }
-                    else {
-                        // Yield
-                        end_line = _line;
-                        end_column = _column;
-                        token = davelexer::TokenType::Identifier;
-                        return true;
-                    }
-                }
-                break;
-            case 430:
-                switch(_ch) {
-                case 95: // _
-                    s = 365;
-                    _column++;
-                    break;
-                case 116: // t
-                    s = 431;
-                    _column++;
-                    break;
-                case 99: // c
-                    s = 432;
-                    _column++;
-                    break;
-                default:
-                    if (_ch >= 97 && _ch <= 98) { // a - b
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 117 && _ch <= 122) { // u - z
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 100 && _ch <= 115) { // d - s
-                        s = 365;
-                        _column++;
-                    }
-                    else {
-                        // Yield
-                        end_line = _line;
-                        end_column = _column;
-                        token = davelexer::TokenType::Identifier;
-                        return true;
-                    }
-                }
-                break;
-            case 431:
-                switch(_ch) {
-                case 57: // 9
-                    s = 365;
-                    _column++;
-                    break;
-                case 55: // 7
-                    s = 365;
-                    _column++;
-                    break;
-                case 48: // 0
-                    s = 365;
-                    _column++;
-                    break;
-                case 50: // 2
-                    s = 365;
-                    _column++;
-                    break;
-                case 95: // _
-                    s = 365;
-                    _column++;
-                    break;
-                case 49: // 1
-                    s = 437;
-                    _column++;
-                    break;
-                case 56: // 8
-                    s = 438;
-                    _column++;
-                    break;
-                case 51: // 3
-                    s = 439;
-                    _column++;
-                    break;
-                case 54: // 6
-                    s = 440;
-                    _column++;
-                    break;
-                default:
-                    if (_ch >= 52 && _ch <= 53) { // 4 - 5
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 122) { // a - z
-                        s = 365;
-                        _column++;
-                    }
-                    else {
-                        // Yield
-                        end_line = _line;
-                        end_column = _column;
-                        token = davelexer::TokenType::Identifier;
-                        return true;
-                    }
-                }
-                break;
-            case 432:
-                switch(_ch) {
-                case 95: // _
-                    s = 365;
-                    _column++;
-                    break;
-                case 108: // l
-                    s = 433;
-                    _column++;
-                    break;
-                default:
-                    if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 107) { // a - k
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 109 && _ch <= 122) { // m - z
-                        s = 365;
-                        _column++;
-                    }
-                    else {
-                        // Yield
-                        end_line = _line;
-                        end_column = _column;
-                        token = davelexer::TokenType::Identifier;
-                        return true;
-                    }
-                }
-                break;
-            case 433:
-                switch(_ch) {
-                case 117: // u
-                    s = 434;
-                    _column++;
-                    break;
-                case 95: // _
-                    s = 365;
-                    _column++;
-                    break;
-                default:
-                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 118 && _ch <= 122) { // v - z
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 116) { // a - t
-                        s = 365;
-                        _column++;
-                    }
-                    else {
-                        // Yield
-                        end_line = _line;
-                        end_column = _column;
-                        token = davelexer::TokenType::Identifier;
-                        return true;
-                    }
-                }
-                break;
-            case 434:
-                switch(_ch) {
-                case 95: // _
-                    s = 365;
-                    _column++;
-                    break;
-                case 100: // d
-                    s = 435;
-                    _column++;
-                    break;
-                default:
-                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 101 && _ch <= 122) { // e - z
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 99) { // a - c
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 365;
-                        _column++;
-                    }
-                    else {
-                        // Yield
-                        end_line = _line;
-                        end_column = _column;
-                        token = davelexer::TokenType::Identifier;
-                        return true;
-                    }
-                }
-                break;
-            case 435:
-                switch(_ch) {
-                case 95: // _
-                    s = 365;
-                    _column++;
-                    break;
-                case 101: // e
-                    s = 436;
-                    _column++;
-                    break;
-                default:
-                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 102 && _ch <= 122) { // f - z
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 100) { // a - d
-                        s = 365;
-                        _column++;
-                    }
-                    else {
-                        // Yield
-                        end_line = _line;
-                        end_column = _column;
-                        token = davelexer::TokenType::Identifier;
-                        return true;
-                    }
-                }
-                break;
-            case 436:
-                switch(_ch) {
-                case 95: // _
-                    s = 365;
-                    _column++;
-                    break;
-                default:
-                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 122) { // a - z
-                        s = 365;
-                        _column++;
-                    }
-                    else {
-                        // Yield
-                        end_line = _line;
-                        end_column = _column;
-                        token = davelexer::TokenType::Include;
-                        return true;
-                    }
-                }
-                break;
-            case 437:
-                switch(_ch) {
-                case 54: // 6
-                    s = 443;
-                    _column++;
-                    break;
-                case 95: // _
-                    s = 365;
-                    _column++;
-                    break;
-                default:
-                    if (_ch >= 55 && _ch <= 57) { // 7 - 9
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 48 && _ch <= 53) { // 0 - 5
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 122) { // a - z
-                        s = 365;
-                        _column++;
-                    }
-                    else {
-                        // Yield
-                        end_line = _line;
-                        end_column = _column;
-                        token = davelexer::TokenType::Identifier;
-                        return true;
-                    }
-                }
-                break;
-            case 438:
-                switch(_ch) {
-                case 95: // _
-                    s = 365;
-                    _column++;
-                    break;
-                default:
-                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 122) { // a - z
-                        s = 365;
-                        _column++;
-                    }
-                    else {
-                        // Yield
-                        end_line = _line;
-                        end_column = _column;
-                        token = davelexer::TokenType::Int8;
-                        return true;
-                    }
-                }
-                break;
-            case 439:
-                switch(_ch) {
-                case 50: // 2
-                    s = 442;
-                    _column++;
-                    break;
-                case 95: // _
-                    s = 365;
-                    _column++;
-                    break;
-                default:
-                    if (_ch >= 51 && _ch <= 57) { // 3 - 9
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 48 && _ch <= 49) { // 0 - 1
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 122) { // a - z
-                        s = 365;
-                        _column++;
-                    }
-                    else {
-                        // Yield
-                        end_line = _line;
-                        end_column = _column;
-                        token = davelexer::TokenType::Identifier;
-                        return true;
-                    }
-                }
-                break;
-            case 440:
-                switch(_ch) {
-                case 95: // _
-                    s = 365;
-                    _column++;
-                    break;
-                case 52: // 4
-                    s = 441;
-                    _column++;
-                    break;
-                default:
-                    if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 53 && _ch <= 57) { // 5 - 9
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 48 && _ch <= 51) { // 0 - 3
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 122) { // a - z
-                        s = 365;
-                        _column++;
-                    }
-                    else {
-                        // Yield
-                        end_line = _line;
-                        end_column = _column;
-                        token = davelexer::TokenType::Identifier;
-                        return true;
-                    }
-                }
-                break;
-            case 441:
-                switch(_ch) {
-                case 95: // _
-                    s = 365;
-                    _column++;
-                    break;
-                default:
-                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 122) { // a - z
-                        s = 365;
-                        _column++;
-                    }
-                    else {
-                        // Yield
-                        end_line = _line;
-                        end_column = _column;
-                        token = davelexer::TokenType::Int64;
-                        return true;
-                    }
-                }
-                break;
-            case 442:
-                switch(_ch) {
-                case 95: // _
-                    s = 365;
-                    _column++;
-                    break;
-                default:
-                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 122) { // a - z
-                        s = 365;
-                        _column++;
-                    }
-                    else {
-                        // Yield
-                        end_line = _line;
-                        end_column = _column;
-                        token = davelexer::TokenType::Int32;
-                        return true;
-                    }
-                }
-                break;
-            case 443:
-                switch(_ch) {
-                case 95: // _
-                    s = 365;
-                    _column++;
-                    break;
-                default:
-                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 122) { // a - z
-                        s = 365;
-                        _column++;
-                    }
-                    else {
-                        // Yield
-                        end_line = _line;
-                        end_column = _column;
-                        token = davelexer::TokenType::Int16;
-                        return true;
-                    }
-                }
-                break;
-            case 444:
-                switch(_ch) {
-                case 95: // _
-                    s = 365;
-                    _column++;
-                    break;
-                case 111: // o
-                    s = 445;
-                    _column++;
-                    break;
-                default:
-                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 112 && _ch <= 122) { // p - z
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 110) { // a - n
-                        s = 365;
-                        _column++;
-                    }
-                    else {
-                        // Yield
-                        end_line = _line;
-                        end_column = _column;
-                        token = davelexer::TokenType::Identifier;
-                        return true;
-                    }
-                }
-                break;
-            case 445:
-                switch(_ch) {
-                case 114: // r
-                    s = 446;
-                    _column++;
-                    break;
-                case 95: // _
-                    s = 365;
-                    _column++;
-                    break;
-                default:
-                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 115 && _ch <= 122) { // s - z
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 113) { // a - q
-                        s = 365;
-                        _column++;
-                    }
-                    else {
-                        // Yield
-                        end_line = _line;
-                        end_column = _column;
-                        token = davelexer::TokenType::Identifier;
-                        return true;
-                    }
-                }
-                break;
-            case 446:
-                switch(_ch) {
-                case 95: // _
-                    s = 365;
-                    _column++;
-                    break;
-                case 116: // t
-                    s = 447;
-                    _column++;
-                    break;
-                default:
-                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 115) { // a - s
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 117 && _ch <= 122) { // u - z
-                        s = 365;
-                        _column++;
-                    }
-                    else {
-                        // Yield
-                        end_line = _line;
-                        end_column = _column;
-                        token = davelexer::TokenType::Identifier;
-                        return true;
-                    }
-                }
-                break;
-            case 447:
-                switch(_ch) {
-                case 95: // _
-                    s = 365;
-                    _column++;
-                    break;
-                default:
-                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 122) { // a - z
-                        s = 365;
-                        _column++;
-                    }
-                    else {
-                        // Yield
-                        end_line = _line;
-                        end_column = _column;
-                        token = davelexer::TokenType::Import;
+                        token = dc::TokenType::Identifier;
                         return true;
                     }
                 }
                 break;
             case 448:
                 switch(_ch) {
-                case 109: // m
-                    s = 449;
+                case 95: // _
+                    s = 397;
                     _column++;
                     break;
-                case 95: // _
-                    s = 365;
+                case 116: // t
+                    s = 449;
                     _column++;
                     break;
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 365;
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 115) { // a - s
+                        s = 397;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 365;
+                        s = 397;
                         _column++;
-                    } else if (_ch >= 110 && _ch <= 122) { // n - z
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 108) { // a - l
-                        s = 365;
+                    } else if (_ch >= 117 && _ch <= 122) { // u - z
+                        s = 397;
                         _column++;
                     }
                     else {
                         // Yield
                         end_line = _line;
                         end_column = _column;
-                        token = davelexer::TokenType::Identifier;
+                        token = dc::TokenType::Identifier;
                         return true;
                     }
                 }
@@ -3589,32 +2517,25 @@ namespace davelexer {
             case 449:
                 switch(_ch) {
                 case 95: // _
-                    s = 365;
-                    _column++;
-                    break;
-                case 101: // e
-                    s = 450;
+                    s = 397;
                     _column++;
                     break;
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 365;
+                        s = 397;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 365;
+                        s = 397;
                         _column++;
-                    } else if (_ch >= 102 && _ch <= 122) { // f - z
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 100) { // a - d
-                        s = 365;
+                    } else if (_ch >= 97 && _ch <= 122) { // a - z
+                        s = 397;
                         _column++;
                     }
                     else {
                         // Yield
                         end_line = _line;
                         end_column = _column;
-                        token = davelexer::TokenType::Identifier;
+                        token = dc::TokenType::FloatKeyword;
                         return true;
                     }
                 }
@@ -3622,295 +2543,7 @@ namespace davelexer {
             case 450:
                 switch(_ch) {
                 case 95: // _
-                    s = 365;
-                    _column++;
-                    break;
-                case 115: // s
-                    s = 451;
-                    _column++;
-                    break;
-                default:
-                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 116 && _ch <= 122) { // t - z
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 114) { // a - r
-                        s = 365;
-                        _column++;
-                    }
-                    else {
-                        // Yield
-                        end_line = _line;
-                        end_column = _column;
-                        token = davelexer::TokenType::Identifier;
-                        return true;
-                    }
-                }
-                break;
-            case 451:
-                switch(_ch) {
-                case 95: // _
-                    s = 365;
-                    _column++;
-                    break;
-                case 112: // p
-                    s = 452;
-                    _column++;
-                    break;
-                default:
-                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 113 && _ch <= 122) { // q - z
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 111) { // a - o
-                        s = 365;
-                        _column++;
-                    }
-                    else {
-                        // Yield
-                        end_line = _line;
-                        end_column = _column;
-                        token = davelexer::TokenType::Identifier;
-                        return true;
-                    }
-                }
-                break;
-            case 452:
-                switch(_ch) {
-                case 95: // _
-                    s = 365;
-                    _column++;
-                    break;
-                case 97: // a
-                    s = 453;
-                    _column++;
-                    break;
-                default:
-                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 98 && _ch <= 122) { // b - z
-                        s = 365;
-                        _column++;
-                    }
-                    else {
-                        // Yield
-                        end_line = _line;
-                        end_column = _column;
-                        token = davelexer::TokenType::Identifier;
-                        return true;
-                    }
-                }
-                break;
-            case 453:
-                switch(_ch) {
-                case 95: // _
-                    s = 365;
-                    _column++;
-                    break;
-                case 99: // c
-                    s = 454;
-                    _column++;
-                    break;
-                default:
-                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 100 && _ch <= 122) { // d - z
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 98) { // a - b
-                        s = 365;
-                        _column++;
-                    }
-                    else {
-                        // Yield
-                        end_line = _line;
-                        end_column = _column;
-                        token = davelexer::TokenType::Identifier;
-                        return true;
-                    }
-                }
-                break;
-            case 454:
-                switch(_ch) {
-                case 95: // _
-                    s = 365;
-                    _column++;
-                    break;
-                case 101: // e
-                    s = 455;
-                    _column++;
-                    break;
-                default:
-                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 102 && _ch <= 122) { // f - z
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 100) { // a - d
-                        s = 365;
-                        _column++;
-                    }
-                    else {
-                        // Yield
-                        end_line = _line;
-                        end_column = _column;
-                        token = davelexer::TokenType::Identifier;
-                        return true;
-                    }
-                }
-                break;
-            case 455:
-                switch(_ch) {
-                case 95: // _
-                    s = 365;
-                    _column++;
-                    break;
-                default:
-                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 122) { // a - z
-                        s = 365;
-                        _column++;
-                    }
-                    else {
-                        // Yield
-                        end_line = _line;
-                        end_column = _column;
-                        token = davelexer::TokenType::Namespace;
-                        return true;
-                    }
-                }
-                break;
-            case 456:
-                switch(_ch) {
-                case 95: // _
-                    s = 365;
-                    _column++;
-                    break;
-                case 116: // t
-                    s = 461;
-                    _column++;
-                    break;
-                case 97: // a
-                    s = 462;
-                    _column++;
-                    break;
-                default:
-                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 98 && _ch <= 115) { // b - s
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 117 && _ch <= 122) { // u - z
-                        s = 365;
-                        _column++;
-                    }
-                    else {
-                        // Yield
-                        end_line = _line;
-                        end_column = _column;
-                        token = davelexer::TokenType::Identifier;
-                        return true;
-                    }
-                }
-                break;
-            case 457:
-                switch(_ch) {
-                case 95: // _
-                    s = 365;
-                    _column++;
-                    break;
-                case 97: // a
-                    s = 458;
-                    _column++;
-                    break;
-                default:
-                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 98 && _ch <= 122) { // b - z
-                        s = 365;
-                        _column++;
-                    }
-                    else {
-                        // Yield
-                        end_line = _line;
-                        end_column = _column;
-                        token = davelexer::TokenType::Identifier;
-                        return true;
-                    }
-                }
-                break;
-            case 458:
-                switch(_ch) {
-                case 95: // _
-                    s = 365;
-                    _column++;
-                    break;
-                case 114: // r
-                    s = 459;
-                    _column++;
-                    break;
-                default:
-                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 115 && _ch <= 122) { // s - z
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 113) { // a - q
-                        s = 365;
-                        _column++;
-                    }
-                    else {
-                        // Yield
-                        end_line = _line;
-                        end_column = _column;
-                        token = davelexer::TokenType::Identifier;
-                        return true;
-                    }
-                }
-                break;
-            case 459:
-                switch(_ch) {
-                case 95: // _
-                    s = 365;
+                    s = 397;
                     _column++;
                     break;
                 case 116: // t
@@ -3919,23 +2552,313 @@ namespace davelexer {
                     break;
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 365;
+                        s = 397;
                         _column++;
                     } else if (_ch >= 97 && _ch <= 115) { // a - s
-                        s = 365;
+                        s = 397;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 365;
+                        s = 397;
                         _column++;
                     } else if (_ch >= 117 && _ch <= 122) { // u - z
-                        s = 365;
+                        s = 397;
                         _column++;
                     }
                     else {
                         // Yield
                         end_line = _line;
                         end_column = _column;
-                        token = davelexer::TokenType::Identifier;
+                        token = dc::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 451:
+                switch(_ch) {
+                case 95: // _
+                    s = 397;
+                    _column++;
+                    break;
+                case 111: // o
+                    s = 452;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 112 && _ch <= 122) { // p - z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 110) { // a - n
+                        s = 397;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 452:
+                switch(_ch) {
+                case 95: // _
+                    s = 397;
+                    _column++;
+                    break;
+                case 100: // d
+                    s = 453;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 101 && _ch <= 122) { // e - z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 99) { // a - c
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 397;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 453:
+                switch(_ch) {
+                case 117: // u
+                    s = 454;
+                    _column++;
+                    break;
+                case 95: // _
+                    s = 397;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 118 && _ch <= 122) { // v - z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 116) { // a - t
+                        s = 397;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 454:
+                switch(_ch) {
+                case 95: // _
+                    s = 397;
+                    _column++;
+                    break;
+                case 99: // c
+                    s = 455;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 100 && _ch <= 122) { // d - z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 98) { // a - b
+                        s = 397;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 455:
+                switch(_ch) {
+                case 95: // _
+                    s = 397;
+                    _column++;
+                    break;
+                case 116: // t
+                    s = 456;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 115) { // a - s
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 117 && _ch <= 122) { // u - z
+                        s = 397;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 456:
+                switch(_ch) {
+                case 95: // _
+                    s = 397;
+                    _column++;
+                    break;
+                case 105: // i
+                    s = 457;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 106 && _ch <= 122) { // j - z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 104) { // a - h
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 397;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 457:
+                switch(_ch) {
+                case 95: // _
+                    s = 397;
+                    _column++;
+                    break;
+                case 111: // o
+                    s = 458;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 112 && _ch <= 122) { // p - z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 110) { // a - n
+                        s = 397;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 458:
+                switch(_ch) {
+                case 95: // _
+                    s = 397;
+                    _column++;
+                    break;
+                case 110: // n
+                    s = 459;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 111 && _ch <= 122) { // o - z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 109) { // a - m
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 397;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 459:
+                switch(_ch) {
+                case 95: // _
+                    s = 397;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 122) { // a - z
+                        s = 397;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Production;
                         return true;
                     }
                 }
@@ -3943,25 +2866,32 @@ namespace davelexer {
             case 460:
                 switch(_ch) {
                 case 95: // _
-                    s = 365;
+                    s = 397;
+                    _column++;
+                    break;
+                case 116: // t
+                    s = 461;
                     _column++;
                     break;
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 365;
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 115) { // a - s
+                        s = 397;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 365;
+                        s = 397;
                         _column++;
-                    } else if (_ch >= 97 && _ch <= 122) { // a - z
-                        s = 365;
+                    } else if (_ch >= 117 && _ch <= 122) { // u - z
+                        s = 397;
                         _column++;
                     }
                     else {
                         // Yield
                         end_line = _line;
                         end_column = _column;
-                        token = davelexer::TokenType::Start;
+                        token = dc::TokenType::Identifier;
                         return true;
                     }
                 }
@@ -3969,25 +2899,32 @@ namespace davelexer {
             case 461:
                 switch(_ch) {
                 case 95: // _
-                    s = 365;
+                    s = 397;
+                    _column++;
+                    break;
+                case 101: // e
+                    s = 462;
                     _column++;
                     break;
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 365;
+                        s = 397;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 365;
+                        s = 397;
                         _column++;
-                    } else if (_ch >= 97 && _ch <= 122) { // a - z
-                        s = 365;
+                    } else if (_ch >= 102 && _ch <= 122) { // f - z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 100) { // a - d
+                        s = 397;
                         _column++;
                     }
                     else {
                         // Yield
                         end_line = _line;
                         end_column = _column;
-                        token = davelexer::TokenType::Set;
+                        token = dc::TokenType::Identifier;
                         return true;
                     }
                 }
@@ -3995,32 +2932,32 @@ namespace davelexer {
             case 462:
                 switch(_ch) {
                 case 95: // _
-                    s = 365;
+                    s = 397;
                     _column++;
                     break;
-                case 108: // l
+                case 114: // r
                     s = 463;
                     _column++;
                     break;
                 default:
-                    if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 365;
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 397;
                         _column++;
-                    } else if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 365;
+                    } else if (_ch >= 115 && _ch <= 122) { // s - z
+                        s = 397;
                         _column++;
-                    } else if (_ch >= 97 && _ch <= 107) { // a - k
-                        s = 365;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 397;
                         _column++;
-                    } else if (_ch >= 109 && _ch <= 122) { // m - z
-                        s = 365;
+                    } else if (_ch >= 97 && _ch <= 113) { // a - q
+                        s = 397;
                         _column++;
                     }
                     else {
                         // Yield
                         end_line = _line;
                         end_column = _column;
-                        token = davelexer::TokenType::Identifier;
+                        token = dc::TokenType::Identifier;
                         return true;
                     }
                 }
@@ -4028,32 +2965,32 @@ namespace davelexer {
             case 463:
                 switch(_ch) {
                 case 95: // _
-                    s = 365;
+                    s = 397;
                     _column++;
                     break;
-                case 101: // e
+                case 110: // n
                     s = 464;
                     _column++;
                     break;
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 365;
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 111 && _ch <= 122) { // o - z
+                        s = 397;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 365;
+                        s = 397;
                         _column++;
-                    } else if (_ch >= 102 && _ch <= 122) { // f - z
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 100) { // a - d
-                        s = 365;
+                    } else if (_ch >= 97 && _ch <= 109) { // a - m
+                        s = 397;
                         _column++;
                     }
                     else {
                         // Yield
                         end_line = _line;
                         end_column = _column;
-                        token = davelexer::TokenType::Identifier;
+                        token = dc::TokenType::Identifier;
                         return true;
                     }
                 }
@@ -4061,32 +2998,25 @@ namespace davelexer {
             case 464:
                 switch(_ch) {
                 case 95: // _
-                    s = 365;
-                    _column++;
-                    break;
-                case 100: // d
-                    s = 465;
+                    s = 397;
                     _column++;
                     break;
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 101 && _ch <= 122) { // e - z
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 99) { // a - c
-                        s = 365;
+                        s = 397;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 365;
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 122) { // a - z
+                        s = 397;
                         _column++;
                     }
                     else {
                         // Yield
                         end_line = _line;
                         end_column = _column;
-                        token = davelexer::TokenType::Identifier;
+                        token = dc::TokenType::Pattern;
                         return true;
                     }
                 }
@@ -4094,25 +3024,32 @@ namespace davelexer {
             case 465:
                 switch(_ch) {
                 case 95: // _
-                    s = 365;
+                    s = 397;
+                    _column++;
+                    break;
+                case 116: // t
+                    s = 466;
                     _column++;
                     break;
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 365;
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 115) { // a - s
+                        s = 397;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 365;
+                        s = 397;
                         _column++;
-                    } else if (_ch >= 97 && _ch <= 122) { // a - z
-                        s = 365;
+                    } else if (_ch >= 117 && _ch <= 122) { // u - z
+                        s = 397;
                         _column++;
                     }
                     else {
                         // Yield
                         end_line = _line;
                         end_column = _column;
-                        token = davelexer::TokenType::Sealed;
+                        token = dc::TokenType::Identifier;
                         return true;
                     }
                 }
@@ -4120,98 +3057,91 @@ namespace davelexer {
             case 466:
                 switch(_ch) {
                 case 95: // _
-                    s = 365;
+                    s = 397;
                     _column++;
                     break;
-                case 116: // t
+                case 111: // o
                     s = 467;
                     _column++;
                     break;
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 365;
+                        s = 397;
                         _column++;
-                    } else if (_ch >= 97 && _ch <= 115) { // a - s
-                        s = 365;
+                    } else if (_ch >= 112 && _ch <= 122) { // p - z
+                        s = 397;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 365;
+                        s = 397;
                         _column++;
-                    } else if (_ch >= 117 && _ch <= 122) { // u - z
-                        s = 365;
+                    } else if (_ch >= 97 && _ch <= 110) { // a - n
+                        s = 397;
                         _column++;
                     }
                     else {
                         // Yield
                         end_line = _line;
                         end_column = _column;
-                        token = davelexer::TokenType::Identifier;
+                        token = dc::TokenType::Identifier;
                         return true;
                     }
                 }
                 break;
             case 467:
                 switch(_ch) {
-                case 117: // u
-                    s = 468;
-                    _column++;
-                    break;
                 case 95: // _
-                    s = 365;
+                    s = 397;
                     _column++;
                     break;
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 365;
+                        s = 397;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 365;
+                        s = 397;
                         _column++;
-                    } else if (_ch >= 118 && _ch <= 122) { // v - z
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 116) { // a - t
-                        s = 365;
+                    } else if (_ch >= 97 && _ch <= 122) { // a - z
+                        s = 397;
                         _column++;
                     }
                     else {
                         // Yield
                         end_line = _line;
                         end_column = _column;
-                        token = davelexer::TokenType::Identifier;
+                        token = dc::TokenType::Goto;
                         return true;
                     }
                 }
                 break;
             case 468:
                 switch(_ch) {
-                case 114: // r
-                    s = 469;
+                case 95: // _
+                    s = 397;
                     _column++;
                     break;
-                case 95: // _
-                    s = 365;
+                case 112: // p
+                    s = 483;
                     _column++;
                     break;
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 115 && _ch <= 122) { // s - z
-                        s = 365;
+                        s = 397;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 365;
+                        s = 397;
                         _column++;
-                    } else if (_ch >= 97 && _ch <= 113) { // a - q
-                        s = 365;
+                    } else if (_ch >= 113 && _ch <= 122) { // q - z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 111) { // a - o
+                        s = 397;
                         _column++;
                     }
                     else {
                         // Yield
                         end_line = _line;
                         end_column = _column;
-                        token = davelexer::TokenType::Identifier;
+                        token = dc::TokenType::Identifier;
                         return true;
                     }
                 }
@@ -4219,58 +3149,97 @@ namespace davelexer {
             case 469:
                 switch(_ch) {
                 case 95: // _
-                    s = 365;
+                    s = 397;
                     _column++;
                     break;
-                case 110: // n
+                case 116: // t
                     s = 470;
                     _column++;
                     break;
+                case 99: // c
+                    s = 471;
+                    _column++;
+                    break;
                 default:
-                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 365;
+                    if (_ch >= 97 && _ch <= 98) { // a - b
+                        s = 397;
                         _column++;
-                    } else if (_ch >= 111 && _ch <= 122) { // o - z
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 109) { // a - m
-                        s = 365;
+                    } else if (_ch >= 117 && _ch <= 122) { // u - z
+                        s = 397;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 365;
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 100 && _ch <= 115) { // d - s
+                        s = 397;
                         _column++;
                     }
                     else {
                         // Yield
                         end_line = _line;
                         end_column = _column;
-                        token = davelexer::TokenType::Identifier;
+                        token = dc::TokenType::Identifier;
                         return true;
                     }
                 }
                 break;
             case 470:
                 switch(_ch) {
+                case 57: // 9
+                    s = 397;
+                    _column++;
+                    break;
+                case 55: // 7
+                    s = 397;
+                    _column++;
+                    break;
+                case 48: // 0
+                    s = 397;
+                    _column++;
+                    break;
+                case 50: // 2
+                    s = 397;
+                    _column++;
+                    break;
                 case 95: // _
-                    s = 365;
+                    s = 397;
+                    _column++;
+                    break;
+                case 49: // 1
+                    s = 476;
+                    _column++;
+                    break;
+                case 51: // 3
+                    s = 477;
+                    _column++;
+                    break;
+                case 56: // 8
+                    s = 478;
+                    _column++;
+                    break;
+                case 54: // 6
+                    s = 479;
                     _column++;
                     break;
                 default:
-                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 365;
+                    if (_ch >= 52 && _ch <= 53) { // 4 - 5
+                        s = 397;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 365;
+                        s = 397;
                         _column++;
                     } else if (_ch >= 97 && _ch <= 122) { // a - z
-                        s = 365;
+                        s = 397;
                         _column++;
                     }
                     else {
                         // Yield
                         end_line = _line;
                         end_column = _column;
-                        token = davelexer::TokenType::Return;
+                        token = dc::TokenType::Identifier;
                         return true;
                     }
                 }
@@ -4278,65 +3247,65 @@ namespace davelexer {
             case 471:
                 switch(_ch) {
                 case 95: // _
-                    s = 365;
+                    s = 397;
                     _column++;
                     break;
-                case 112: // p
+                case 108: // l
                     s = 472;
                     _column++;
                     break;
                 default:
-                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 365;
+                    if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 397;
                         _column++;
-                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 365;
+                    } else if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 397;
                         _column++;
-                    } else if (_ch >= 113 && _ch <= 122) { // q - z
-                        s = 365;
+                    } else if (_ch >= 97 && _ch <= 107) { // a - k
+                        s = 397;
                         _column++;
-                    } else if (_ch >= 97 && _ch <= 111) { // a - o
-                        s = 365;
+                    } else if (_ch >= 109 && _ch <= 122) { // m - z
+                        s = 397;
                         _column++;
                     }
                     else {
                         // Yield
                         end_line = _line;
                         end_column = _column;
-                        token = davelexer::TokenType::Identifier;
+                        token = dc::TokenType::Identifier;
                         return true;
                     }
                 }
                 break;
             case 472:
                 switch(_ch) {
-                case 95: // _
-                    s = 365;
+                case 117: // u
+                    s = 473;
                     _column++;
                     break;
-                case 101: // e
-                    s = 473;
+                case 95: // _
+                    s = 397;
                     _column++;
                     break;
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 365;
+                        s = 397;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 365;
+                        s = 397;
                         _column++;
-                    } else if (_ch >= 102 && _ch <= 122) { // f - z
-                        s = 365;
+                    } else if (_ch >= 118 && _ch <= 122) { // v - z
+                        s = 397;
                         _column++;
-                    } else if (_ch >= 97 && _ch <= 100) { // a - d
-                        s = 365;
+                    } else if (_ch >= 97 && _ch <= 116) { // a - t
+                        s = 397;
                         _column++;
                     }
                     else {
                         // Yield
                         end_line = _line;
                         end_column = _column;
-                        token = davelexer::TokenType::Identifier;
+                        token = dc::TokenType::Identifier;
                         return true;
                     }
                 }
@@ -4344,58 +3313,65 @@ namespace davelexer {
             case 473:
                 switch(_ch) {
                 case 95: // _
-                    s = 365;
+                    s = 397;
+                    _column++;
+                    break;
+                case 100: // d
+                    s = 474;
                     _column++;
                     break;
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 365;
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 101 && _ch <= 122) { // e - z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 99) { // a - c
+                        s = 397;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 122) { // a - z
-                        s = 365;
+                        s = 397;
                         _column++;
                     }
                     else {
                         // Yield
                         end_line = _line;
                         end_column = _column;
-                        token = davelexer::TokenType::Type;
+                        token = dc::TokenType::Identifier;
                         return true;
                     }
                 }
                 break;
             case 474:
                 switch(_ch) {
-                case 114: // r
-                    s = 475;
+                case 95: // _
+                    s = 397;
                     _column++;
                     break;
-                case 95: // _
-                    s = 365;
+                case 101: // e
+                    s = 475;
                     _column++;
                     break;
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 115 && _ch <= 122) { // s - z
-                        s = 365;
+                        s = 397;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 365;
+                        s = 397;
                         _column++;
-                    } else if (_ch >= 97 && _ch <= 113) { // a - q
-                        s = 365;
+                    } else if (_ch >= 102 && _ch <= 122) { // f - z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 100) { // a - d
+                        s = 397;
                         _column++;
                     }
                     else {
                         // Yield
                         end_line = _line;
                         end_column = _column;
-                        token = davelexer::TokenType::Identifier;
+                        token = dc::TokenType::Identifier;
                         return true;
                     }
                 }
@@ -4403,91 +3379,91 @@ namespace davelexer {
             case 475:
                 switch(_ch) {
                 case 95: // _
-                    s = 365;
-                    _column++;
-                    break;
-                case 100: // d
-                    s = 476;
+                    s = 397;
                     _column++;
                     break;
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 101 && _ch <= 122) { // e - z
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 99) { // a - c
-                        s = 365;
+                        s = 397;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 365;
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 122) { // a - z
+                        s = 397;
                         _column++;
                     }
                     else {
                         // Yield
                         end_line = _line;
                         end_column = _column;
-                        token = davelexer::TokenType::Identifier;
+                        token = dc::TokenType::Include;
                         return true;
                     }
                 }
                 break;
             case 476:
                 switch(_ch) {
+                case 54: // 6
+                    s = 482;
+                    _column++;
+                    break;
                 case 95: // _
-                    s = 365;
+                    s = 397;
                     _column++;
                     break;
                 default:
-                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 365;
+                    if (_ch >= 55 && _ch <= 57) { // 7 - 9
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 48 && _ch <= 53) { // 0 - 5
+                        s = 397;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 365;
+                        s = 397;
                         _column++;
                     } else if (_ch >= 97 && _ch <= 122) { // a - z
-                        s = 365;
+                        s = 397;
                         _column++;
                     }
                     else {
                         // Yield
                         end_line = _line;
                         end_column = _column;
-                        token = davelexer::TokenType::Word;
+                        token = dc::TokenType::Identifier;
                         return true;
                     }
                 }
                 break;
             case 477:
                 switch(_ch) {
-                case 95: // _
-                    s = 365;
+                case 50: // 2
+                    s = 481;
                     _column++;
                     break;
-                case 111: // o
-                    s = 478;
+                case 95: // _
+                    s = 397;
                     _column++;
                     break;
                 default:
-                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 365;
+                    if (_ch >= 51 && _ch <= 57) { // 3 - 9
+                        s = 397;
                         _column++;
-                    } else if (_ch >= 112 && _ch <= 122) { // p - z
-                        s = 365;
+                    } else if (_ch >= 48 && _ch <= 49) { // 0 - 1
+                        s = 397;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 365;
+                        s = 397;
                         _column++;
-                    } else if (_ch >= 97 && _ch <= 110) { // a - n
-                        s = 365;
+                    } else if (_ch >= 97 && _ch <= 122) { // a - z
+                        s = 397;
                         _column++;
                     }
                     else {
                         // Yield
                         end_line = _line;
                         end_column = _column;
-                        token = davelexer::TokenType::Identifier;
+                        token = dc::TokenType::Identifier;
                         return true;
                     }
                 }
@@ -4495,32 +3471,25 @@ namespace davelexer {
             case 478:
                 switch(_ch) {
                 case 95: // _
-                    s = 365;
-                    _column++;
-                    break;
-                case 114: // r
-                    s = 479;
+                    s = 397;
                     _column++;
                     break;
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 365;
-                        _column++;
-                    } else if (_ch >= 115 && _ch <= 122) { // s - z
-                        s = 365;
+                        s = 397;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 365;
+                        s = 397;
                         _column++;
-                    } else if (_ch >= 97 && _ch <= 113) { // a - q
-                        s = 365;
+                    } else if (_ch >= 97 && _ch <= 122) { // a - z
+                        s = 397;
                         _column++;
                     }
                     else {
                         // Yield
                         end_line = _line;
                         end_column = _column;
-                        token = davelexer::TokenType::Identifier;
+                        token = dc::TokenType::Int8;
                         return true;
                     }
                 }
@@ -4528,32 +3497,32 @@ namespace davelexer {
             case 479:
                 switch(_ch) {
                 case 95: // _
-                    s = 365;
+                    s = 397;
                     _column++;
                     break;
-                case 100: // d
+                case 52: // 4
                     s = 480;
                     _column++;
                     break;
                 default:
-                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 365;
+                    if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 397;
                         _column++;
-                    } else if (_ch >= 101 && _ch <= 122) { // e - z
-                        s = 365;
+                    } else if (_ch >= 53 && _ch <= 57) { // 5 - 9
+                        s = 397;
                         _column++;
-                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 365;
+                    } else if (_ch >= 48 && _ch <= 51) { // 0 - 3
+                        s = 397;
                         _column++;
-                    } else if (_ch >= 97 && _ch <= 99) { // a - c
-                        s = 365;
+                    } else if (_ch >= 97 && _ch <= 122) { // a - z
+                        s = 397;
                         _column++;
                     }
                     else {
                         // Yield
                         end_line = _line;
                         end_column = _column;
-                        token = davelexer::TokenType::Identifier;
+                        token = dc::TokenType::Identifier;
                         return true;
                     }
                 }
@@ -4561,171 +3530,1719 @@ namespace davelexer {
             case 480:
                 switch(_ch) {
                 case 95: // _
-                    s = 365;
+                    s = 397;
                     _column++;
                     break;
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 365;
+                        s = 397;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 365;
+                        s = 397;
                         _column++;
                     } else if (_ch >= 97 && _ch <= 122) { // a - z
-                        s = 365;
+                        s = 397;
                         _column++;
                     }
                     else {
                         // Yield
                         end_line = _line;
                         end_column = _column;
-                        token = davelexer::TokenType::DWord;
+                        token = dc::TokenType::Int64;
+                        return true;
+                    }
+                }
+                break;
+            case 481:
+                switch(_ch) {
+                case 95: // _
+                    s = 397;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 122) { // a - z
+                        s = 397;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Int32;
+                        return true;
+                    }
+                }
+                break;
+            case 482:
+                switch(_ch) {
+                case 95: // _
+                    s = 397;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 122) { // a - z
+                        s = 397;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Int16;
                         return true;
                     }
                 }
                 break;
             case 483:
                 switch(_ch) {
-                case 10: // {backslash}n
-                    token = davelexer::TokenType::Char;
-                    value += _ch;
-                    _line++;
-                    _column = 1;
-                    end_line = _line;
-                    end_column = _column;
-                    _ch = _stm.get();
-                    return true;
-                case 101: // e
-                    token = davelexer::TokenType::CharClass;
-                    value += _ch;
-                    _column++;
-                    end_line = _line;
-                    end_column = _column;
-                    _ch = _stm.get();
-                    return true;
-                case 120: // x
-                    s = 511;
+                case 95: // _
+                    s = 397;
                     _column++;
                     break;
-                case 97: // a
-                    token = davelexer::TokenType::CharClass;
-                    value += _ch;
+                case 111: // o
+                    s = 484;
                     _column++;
-                    end_line = _line;
-                    end_column = _column;
-                    _ch = _stm.get();
-                    return true;
-                case 100: // d
-                    token = davelexer::TokenType::CharClass;
-                    value += _ch;
-                    _column++;
-                    end_line = _line;
-                    end_column = _column;
-                    _ch = _stm.get();
-                    return true;
-                case 65: // A
-                    token = davelexer::TokenType::CharClass;
-                    value += _ch;
-                    _column++;
-                    end_line = _line;
-                    end_column = _column;
-                    _ch = _stm.get();
-                    return true;
-                case 115: // s
-                    token = davelexer::TokenType::CharClass;
-                    value += _ch;
-                    _column++;
-                    end_line = _line;
-                    end_column = _column;
-                    _ch = _stm.get();
-                    return true;
-                case 13: // {backslash}r
-                    token = davelexer::TokenType::Char;
-                    value += _ch;
-                    _column = 1;
-                    end_line = _line;
-                    end_column = _column;
-                    _ch = _stm.get();
-                    return true;
+                    break;
                 default:
-                    if (_ch >= 66 && _ch <= 96) { // B - `
-                        token = davelexer::TokenType::Char;
-                        value += _ch;
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 397;
                         _column++;
-                        end_line = _line;
-                        end_column = _column;
-                        _ch = _stm.get();
-                        return true;
-                    } else if (_ch >= 116 && _ch <= 119) { // t - w
-                        token = davelexer::TokenType::Char;
-                        value += _ch;
+                    } else if (_ch >= 112 && _ch <= 122) { // p - z
+                        s = 397;
                         _column++;
-                        end_line = _line;
-                        end_column = _column;
-                        _ch = _stm.get();
-                        return true;
-                    } else if (_ch >= 102 && _ch <= 114) { // f - r
-                        token = davelexer::TokenType::Char;
-                        value += _ch;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 397;
                         _column++;
-                        end_line = _line;
-                        end_column = _column;
-                        _ch = _stm.get();
-                        return true;
-                    } else if (_ch >= 121 && _ch <= 2147483646) { // y - <end>
-                        token = davelexer::TokenType::Char;
-                        value += _ch;
+                    } else if (_ch >= 97 && _ch <= 110) { // a - n
+                        s = 397;
                         _column++;
-                        end_line = _line;
-                        end_column = _column;
-                        _ch = _stm.get();
-                        return true;
-                    } else if (_ch >= 98 && _ch <= 99) { // b - c
-                        token = davelexer::TokenType::Char;
-                        value += _ch;
-                        _column++;
-                        end_line = _line;
-                        end_column = _column;
-                        _ch = _stm.get();
-                        return true;
-                    } else if (_ch >= 0 && _ch <= 9) { // <start> - {backslash}t
-                        token = davelexer::TokenType::Char;
-                        value += _ch;
-                        _column++;
-                        end_line = _line;
-                        end_column = _column;
-                        _ch = _stm.get();
-                        return true;
-                    } else if (_ch >= 11 && _ch <= 12) { // {backslash}v - {backslash}f
-                        token = davelexer::TokenType::Char;
-                        value += _ch;
-                        _column++;
-                        end_line = _line;
-                        end_column = _column;
-                        _ch = _stm.get();
-                        return true;
-                    } else if (_ch >= 14 && _ch <= 64) { // {backslash}x14 - @
-                        token = davelexer::TokenType::Char;
-                        value += _ch;
-                        _column++;
-                        end_line = _line;
-                        end_column = _column;
-                        _ch = _stm.get();
-                        return true;
                     }
                     else {
                         // Yield
                         end_line = _line;
                         end_column = _column;
-                        token = davelexer::TokenType::Error;
+                        token = dc::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 484:
+                switch(_ch) {
+                case 114: // r
+                    s = 485;
+                    _column++;
+                    break;
+                case 95: // _
+                    s = 397;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 115 && _ch <= 122) { // s - z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 113) { // a - q
+                        s = 397;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 485:
+                switch(_ch) {
+                case 95: // _
+                    s = 397;
+                    _column++;
+                    break;
+                case 116: // t
+                    s = 486;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 115) { // a - s
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 117 && _ch <= 122) { // u - z
+                        s = 397;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 486:
+                switch(_ch) {
+                case 95: // _
+                    s = 397;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 122) { // a - z
+                        s = 397;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Import;
+                        return true;
+                    }
+                }
+                break;
+            case 487:
+                switch(_ch) {
+                case 109: // m
+                    s = 488;
+                    _column++;
+                    break;
+                case 95: // _
+                    s = 397;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 110 && _ch <= 122) { // n - z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 108) { // a - l
+                        s = 397;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 488:
+                switch(_ch) {
+                case 95: // _
+                    s = 397;
+                    _column++;
+                    break;
+                case 101: // e
+                    s = 489;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 102 && _ch <= 122) { // f - z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 100) { // a - d
+                        s = 397;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 489:
+                switch(_ch) {
+                case 95: // _
+                    s = 397;
+                    _column++;
+                    break;
+                case 115: // s
+                    s = 490;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 116 && _ch <= 122) { // t - z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 114) { // a - r
+                        s = 397;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 490:
+                switch(_ch) {
+                case 95: // _
+                    s = 397;
+                    _column++;
+                    break;
+                case 112: // p
+                    s = 491;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 113 && _ch <= 122) { // q - z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 111) { // a - o
+                        s = 397;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 491:
+                switch(_ch) {
+                case 95: // _
+                    s = 397;
+                    _column++;
+                    break;
+                case 97: // a
+                    s = 492;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 98 && _ch <= 122) { // b - z
+                        s = 397;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 492:
+                switch(_ch) {
+                case 95: // _
+                    s = 397;
+                    _column++;
+                    break;
+                case 99: // c
+                    s = 493;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 100 && _ch <= 122) { // d - z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 98) { // a - b
+                        s = 397;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 493:
+                switch(_ch) {
+                case 95: // _
+                    s = 397;
+                    _column++;
+                    break;
+                case 101: // e
+                    s = 494;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 102 && _ch <= 122) { // f - z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 100) { // a - d
+                        s = 397;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 494:
+                switch(_ch) {
+                case 95: // _
+                    s = 397;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 122) { // a - z
+                        s = 397;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Namespace;
                         return true;
                     }
                 }
                 break;
             case 495:
                 switch(_ch) {
+                case 95: // _
+                    s = 397;
+                    _column++;
+                    break;
+                case 116: // t
+                    s = 504;
+                    _column++;
+                    break;
+                case 97: // a
+                    s = 505;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 98 && _ch <= 115) { // b - s
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 117 && _ch <= 122) { // u - z
+                        s = 397;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 496:
+                switch(_ch) {
+                case 95: // _
+                    s = 397;
+                    _column++;
+                    break;
+                case 114: // r
+                    s = 497;
+                    _column++;
+                    break;
+                case 97: // a
+                    s = 498;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 115 && _ch <= 122) { // s - z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 98 && _ch <= 113) { // b - q
+                        s = 397;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 497:
+                switch(_ch) {
+                case 95: // _
+                    s = 397;
+                    _column++;
+                    break;
+                case 105: // i
+                    s = 501;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 106 && _ch <= 122) { // j - z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 104) { // a - h
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 397;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 498:
+                switch(_ch) {
+                case 95: // _
+                    s = 397;
+                    _column++;
+                    break;
+                case 114: // r
+                    s = 499;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 115 && _ch <= 122) { // s - z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 113) { // a - q
+                        s = 397;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 499:
+                switch(_ch) {
+                case 95: // _
+                    s = 397;
+                    _column++;
+                    break;
+                case 116: // t
+                    s = 500;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 115) { // a - s
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 117 && _ch <= 122) { // u - z
+                        s = 397;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 500:
+                switch(_ch) {
+                case 95: // _
+                    s = 397;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 122) { // a - z
+                        s = 397;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Start;
+                        return true;
+                    }
+                }
+                break;
+            case 501:
+                switch(_ch) {
+                case 95: // _
+                    s = 397;
+                    _column++;
+                    break;
+                case 110: // n
+                    s = 502;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 111 && _ch <= 122) { // o - z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 109) { // a - m
+                        s = 397;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 502:
+                switch(_ch) {
+                case 95: // _
+                    s = 397;
+                    _column++;
+                    break;
+                case 103: // g
+                    s = 503;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 102) { // a - f
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 104 && _ch <= 122) { // h - z
+                        s = 397;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 503:
+                switch(_ch) {
+                case 95: // _
+                    s = 397;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 122) { // a - z
+                        s = 397;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::StringKeyword;
+                        return true;
+                    }
+                }
+                break;
+            case 504:
+                switch(_ch) {
+                case 95: // _
+                    s = 397;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 122) { // a - z
+                        s = 397;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Set;
+                        return true;
+                    }
+                }
+                break;
+            case 505:
+                switch(_ch) {
+                case 95: // _
+                    s = 397;
+                    _column++;
+                    break;
+                case 108: // l
+                    s = 506;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 107) { // a - k
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 109 && _ch <= 122) { // m - z
+                        s = 397;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 506:
+                switch(_ch) {
+                case 95: // _
+                    s = 397;
+                    _column++;
+                    break;
+                case 101: // e
+                    s = 507;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 102 && _ch <= 122) { // f - z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 100) { // a - d
+                        s = 397;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 507:
+                switch(_ch) {
+                case 95: // _
+                    s = 397;
+                    _column++;
+                    break;
+                case 100: // d
+                    s = 508;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 101 && _ch <= 122) { // e - z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 99) { // a - c
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 397;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 508:
+                switch(_ch) {
+                case 95: // _
+                    s = 397;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 122) { // a - z
+                        s = 397;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Sealed;
+                        return true;
+                    }
+                }
+                break;
+            case 509:
+                switch(_ch) {
+                case 95: // _
+                    s = 397;
+                    _column++;
+                    break;
+                case 116: // t
+                    s = 510;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 115) { // a - s
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 117 && _ch <= 122) { // u - z
+                        s = 397;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 510:
+                switch(_ch) {
+                case 117: // u
+                    s = 511;
+                    _column++;
+                    break;
+                case 95: // _
+                    s = 397;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 118 && _ch <= 122) { // v - z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 116) { // a - t
+                        s = 397;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 511:
+                switch(_ch) {
+                case 114: // r
+                    s = 512;
+                    _column++;
+                    break;
+                case 95: // _
+                    s = 397;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 115 && _ch <= 122) { // s - z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 113) { // a - q
+                        s = 397;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 512:
+                switch(_ch) {
+                case 95: // _
+                    s = 397;
+                    _column++;
+                    break;
+                case 110: // n
+                    s = 513;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 111 && _ch <= 122) { // o - z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 109) { // a - m
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 397;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 513:
+                switch(_ch) {
+                case 95: // _
+                    s = 397;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 122) { // a - z
+                        s = 397;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Return;
+                        return true;
+                    }
+                }
+                break;
+            case 514:
+                switch(_ch) {
+                case 95: // _
+                    s = 397;
+                    _column++;
+                    break;
+                case 112: // p
+                    s = 515;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 113 && _ch <= 122) { // q - z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 111) { // a - o
+                        s = 397;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 515:
+                switch(_ch) {
+                case 95: // _
+                    s = 397;
+                    _column++;
+                    break;
+                case 101: // e
+                    s = 516;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 102 && _ch <= 122) { // f - z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 100) { // a - d
+                        s = 397;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 516:
+                switch(_ch) {
+                case 95: // _
+                    s = 397;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 122) { // a - z
+                        s = 397;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Type;
+                        return true;
+                    }
+                }
+                break;
+            case 517:
+                switch(_ch) {
+                case 114: // r
+                    s = 524;
+                    _column++;
+                    break;
+                case 95: // _
+                    s = 397;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 115 && _ch <= 122) { // s - z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 113) { // a - q
+                        s = 397;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 518:
+                switch(_ch) {
+                case 95: // _
+                    s = 397;
+                    _column++;
+                    break;
+                case 116: // t
+                    s = 519;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 115) { // a - s
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 117 && _ch <= 122) { // u - z
+                        s = 397;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 519:
+                switch(_ch) {
+                case 95: // _
+                    s = 397;
+                    _column++;
+                    break;
+                case 114: // r
+                    s = 520;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 115 && _ch <= 122) { // s - z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 113) { // a - q
+                        s = 397;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 520:
+                switch(_ch) {
+                case 95: // _
+                    s = 397;
+                    _column++;
+                    break;
+                case 105: // i
+                    s = 521;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 106 && _ch <= 122) { // j - z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 104) { // a - h
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 397;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 521:
+                switch(_ch) {
+                case 95: // _
+                    s = 397;
+                    _column++;
+                    break;
+                case 110: // n
+                    s = 522;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 111 && _ch <= 122) { // o - z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 109) { // a - m
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 397;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 522:
+                switch(_ch) {
+                case 95: // _
+                    s = 397;
+                    _column++;
+                    break;
+                case 103: // g
+                    s = 523;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 97 && _ch <= 102) { // a - f
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 104 && _ch <= 122) { // h - z
+                        s = 397;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 523:
+                switch(_ch) {
+                case 95: // _
+                    s = 397;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 122) { // a - z
+                        s = 397;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::WString;
+                        return true;
+                    }
+                }
+                break;
+            case 524:
+                switch(_ch) {
+                case 95: // _
+                    s = 397;
+                    _column++;
+                    break;
+                case 100: // d
+                    s = 525;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 101 && _ch <= 122) { // e - z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 99) { // a - c
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 397;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 525:
+                switch(_ch) {
+                case 95: // _
+                    s = 397;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 122) { // a - z
+                        s = 397;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Word;
+                        return true;
+                    }
+                }
+                break;
+            case 526:
+                switch(_ch) {
+                case 95: // _
+                    s = 397;
+                    _column++;
+                    break;
+                case 111: // o
+                    s = 532;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 112 && _ch <= 122) { // p - z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 110) { // a - n
+                        s = 397;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 527:
+                switch(_ch) {
+                case 95: // _
+                    s = 397;
+                    _column++;
+                    break;
+                case 108: // l
+                    s = 528;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 109 && _ch <= 122) { // m - z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 107) { // a - k
+                        s = 397;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 528:
+                switch(_ch) {
+                case 95: // _
+                    s = 397;
+                    _column++;
+                    break;
+                case 111: // o
+                    s = 529;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 112 && _ch <= 122) { // p - z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 110) { // a - n
+                        s = 397;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 529:
+                switch(_ch) {
+                case 95: // _
+                    s = 397;
+                    _column++;
+                    break;
+                case 97: // a
+                    s = 530;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 98 && _ch <= 122) { // b - z
+                        s = 397;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 530:
+                switch(_ch) {
+                case 95: // _
+                    s = 397;
+                    _column++;
+                    break;
+                case 116: // t
+                    s = 531;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 115) { // a - s
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 117 && _ch <= 122) { // u - z
+                        s = 397;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 531:
+                switch(_ch) {
+                case 95: // _
+                    s = 397;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 122) { // a - z
+                        s = 397;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::DFloat;
+                        return true;
+                    }
+                }
+                break;
+            case 532:
+                switch(_ch) {
+                case 95: // _
+                    s = 397;
+                    _column++;
+                    break;
+                case 114: // r
+                    s = 533;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 115 && _ch <= 122) { // s - z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 113) { // a - q
+                        s = 397;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 533:
+                switch(_ch) {
+                case 95: // _
+                    s = 397;
+                    _column++;
+                    break;
+                case 100: // d
+                    s = 534;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 101 && _ch <= 122) { // e - z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 99) { // a - c
+                        s = 397;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 534:
+                switch(_ch) {
+                case 95: // _
+                    s = 397;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 397;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 122) { // a - z
+                        s = 397;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::DWord;
+                        return true;
+                    }
+                }
+                break;
+            case 537:
+                switch(_ch) {
                 case 10: // {backslash}n
-                    token = davelexer::TokenType::Char;
+                    token = dc::TokenType::Char;
                     value += _ch;
                     _line++;
                     _column = 1;
@@ -4734,7 +5251,7 @@ namespace davelexer {
                     _ch = _stm.get();
                     return true;
                 case 101: // e
-                    token = davelexer::TokenType::CharClass;
+                    token = dc::TokenType::CharClass;
                     value += _ch;
                     _column++;
                     end_line = _line;
@@ -4742,11 +5259,11 @@ namespace davelexer {
                     _ch = _stm.get();
                     return true;
                 case 120: // x
-                    s = 500;
+                    s = 565;
                     _column++;
                     break;
                 case 97: // a
-                    token = davelexer::TokenType::CharClass;
+                    token = dc::TokenType::CharClass;
                     value += _ch;
                     _column++;
                     end_line = _line;
@@ -4754,7 +5271,7 @@ namespace davelexer {
                     _ch = _stm.get();
                     return true;
                 case 100: // d
-                    token = davelexer::TokenType::CharClass;
+                    token = dc::TokenType::CharClass;
                     value += _ch;
                     _column++;
                     end_line = _line;
@@ -4762,7 +5279,7 @@ namespace davelexer {
                     _ch = _stm.get();
                     return true;
                 case 65: // A
-                    token = davelexer::TokenType::CharClass;
+                    token = dc::TokenType::CharClass;
                     value += _ch;
                     _column++;
                     end_line = _line;
@@ -4770,7 +5287,7 @@ namespace davelexer {
                     _ch = _stm.get();
                     return true;
                 case 115: // s
-                    token = davelexer::TokenType::CharClass;
+                    token = dc::TokenType::CharClass;
                     value += _ch;
                     _column++;
                     end_line = _line;
@@ -4778,7 +5295,7 @@ namespace davelexer {
                     _ch = _stm.get();
                     return true;
                 case 13: // {backslash}r
-                    token = davelexer::TokenType::Char;
+                    token = dc::TokenType::Char;
                     value += _ch;
                     _column = 1;
                     end_line = _line;
@@ -4787,7 +5304,7 @@ namespace davelexer {
                     return true;
                 default:
                     if (_ch >= 66 && _ch <= 96) { // B - `
-                        token = davelexer::TokenType::Char;
+                        token = dc::TokenType::Char;
                         value += _ch;
                         _column++;
                         end_line = _line;
@@ -4795,7 +5312,7 @@ namespace davelexer {
                         _ch = _stm.get();
                         return true;
                     } else if (_ch >= 116 && _ch <= 119) { // t - w
-                        token = davelexer::TokenType::Char;
+                        token = dc::TokenType::Char;
                         value += _ch;
                         _column++;
                         end_line = _line;
@@ -4803,7 +5320,7 @@ namespace davelexer {
                         _ch = _stm.get();
                         return true;
                     } else if (_ch >= 102 && _ch <= 114) { // f - r
-                        token = davelexer::TokenType::Char;
+                        token = dc::TokenType::Char;
                         value += _ch;
                         _column++;
                         end_line = _line;
@@ -4811,7 +5328,7 @@ namespace davelexer {
                         _ch = _stm.get();
                         return true;
                     } else if (_ch >= 121 && _ch <= 2147483646) { // y - <end>
-                        token = davelexer::TokenType::Char;
+                        token = dc::TokenType::Char;
                         value += _ch;
                         _column++;
                         end_line = _line;
@@ -4819,7 +5336,7 @@ namespace davelexer {
                         _ch = _stm.get();
                         return true;
                     } else if (_ch >= 98 && _ch <= 99) { // b - c
-                        token = davelexer::TokenType::Char;
+                        token = dc::TokenType::Char;
                         value += _ch;
                         _column++;
                         end_line = _line;
@@ -4827,7 +5344,7 @@ namespace davelexer {
                         _ch = _stm.get();
                         return true;
                     } else if (_ch >= 0 && _ch <= 9) { // <start> - {backslash}t
-                        token = davelexer::TokenType::Char;
+                        token = dc::TokenType::Char;
                         value += _ch;
                         _column++;
                         end_line = _line;
@@ -4835,7 +5352,7 @@ namespace davelexer {
                         _ch = _stm.get();
                         return true;
                     } else if (_ch >= 11 && _ch <= 12) { // {backslash}v - {backslash}f
-                        token = davelexer::TokenType::Char;
+                        token = dc::TokenType::Char;
                         value += _ch;
                         _column++;
                         end_line = _line;
@@ -4843,7 +5360,7 @@ namespace davelexer {
                         _ch = _stm.get();
                         return true;
                     } else if (_ch >= 14 && _ch <= 64) { // {backslash}x14 - @
-                        token = davelexer::TokenType::Char;
+                        token = dc::TokenType::Char;
                         value += _ch;
                         _column++;
                         end_line = _line;
@@ -4855,82 +5372,220 @@ namespace davelexer {
                         // Yield
                         end_line = _line;
                         end_column = _column;
-                        token = davelexer::TokenType::Error;
+                        token = dc::TokenType::Error;
                         return true;
                     }
                 }
                 break;
-            case 500:
+            case 549:
+                switch(_ch) {
+                case 10: // {backslash}n
+                    token = dc::TokenType::Char;
+                    value += _ch;
+                    _line++;
+                    _column = 1;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                case 101: // e
+                    token = dc::TokenType::CharClass;
+                    value += _ch;
+                    _column++;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                case 120: // x
+                    s = 554;
+                    _column++;
+                    break;
+                case 97: // a
+                    token = dc::TokenType::CharClass;
+                    value += _ch;
+                    _column++;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                case 100: // d
+                    token = dc::TokenType::CharClass;
+                    value += _ch;
+                    _column++;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                case 65: // A
+                    token = dc::TokenType::CharClass;
+                    value += _ch;
+                    _column++;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                case 115: // s
+                    token = dc::TokenType::CharClass;
+                    value += _ch;
+                    _column++;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                case 13: // {backslash}r
+                    token = dc::TokenType::Char;
+                    value += _ch;
+                    _column = 1;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                default:
+                    if (_ch >= 66 && _ch <= 96) { // B - `
+                        token = dc::TokenType::Char;
+                        value += _ch;
+                        _column++;
+                        end_line = _line;
+                        end_column = _column;
+                        _ch = _stm.get();
+                        return true;
+                    } else if (_ch >= 116 && _ch <= 119) { // t - w
+                        token = dc::TokenType::Char;
+                        value += _ch;
+                        _column++;
+                        end_line = _line;
+                        end_column = _column;
+                        _ch = _stm.get();
+                        return true;
+                    } else if (_ch >= 102 && _ch <= 114) { // f - r
+                        token = dc::TokenType::Char;
+                        value += _ch;
+                        _column++;
+                        end_line = _line;
+                        end_column = _column;
+                        _ch = _stm.get();
+                        return true;
+                    } else if (_ch >= 121 && _ch <= 2147483646) { // y - <end>
+                        token = dc::TokenType::Char;
+                        value += _ch;
+                        _column++;
+                        end_line = _line;
+                        end_column = _column;
+                        _ch = _stm.get();
+                        return true;
+                    } else if (_ch >= 98 && _ch <= 99) { // b - c
+                        token = dc::TokenType::Char;
+                        value += _ch;
+                        _column++;
+                        end_line = _line;
+                        end_column = _column;
+                        _ch = _stm.get();
+                        return true;
+                    } else if (_ch >= 0 && _ch <= 9) { // <start> - {backslash}t
+                        token = dc::TokenType::Char;
+                        value += _ch;
+                        _column++;
+                        end_line = _line;
+                        end_column = _column;
+                        _ch = _stm.get();
+                        return true;
+                    } else if (_ch >= 11 && _ch <= 12) { // {backslash}v - {backslash}f
+                        token = dc::TokenType::Char;
+                        value += _ch;
+                        _column++;
+                        end_line = _line;
+                        end_column = _column;
+                        _ch = _stm.get();
+                        return true;
+                    } else if (_ch >= 14 && _ch <= 64) { // {backslash}x14 - @
+                        token = dc::TokenType::Char;
+                        value += _ch;
+                        _column++;
+                        end_line = _line;
+                        end_column = _column;
+                        _ch = _stm.get();
+                        return true;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Error;
+                        return true;
+                    }
+                }
+                break;
+            case 554:
                 switch(_ch) {
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 501;
+                        s = 555;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 70) { // A - F
-                        s = 501;
+                        s = 555;
                         _column++;
                     } else if (_ch >= 97 && _ch <= 102) { // a - f
-                        s = 501;
+                        s = 555;
                         _column++;
                     }
                     else {
                         // Yield
                         end_line = _line;
                         end_column = _column;
-                        token = davelexer::TokenType::Error;
+                        token = dc::TokenType::Error;
                         return true;
                     }
                 }
                 break;
-            case 501:
+            case 555:
                 switch(_ch) {
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 502;
+                        s = 556;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 70) { // A - F
-                        s = 502;
+                        s = 556;
                         _column++;
                     } else if (_ch >= 97 && _ch <= 102) { // a - f
-                        s = 502;
+                        s = 556;
                         _column++;
                     }
                     else {
                         // Yield
                         end_line = _line;
                         end_column = _column;
-                        token = davelexer::TokenType::Error;
+                        token = dc::TokenType::Error;
                         return true;
                     }
                 }
                 break;
-            case 502:
+            case 556:
                 switch(_ch) {
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 503;
+                        s = 557;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 70) { // A - F
-                        s = 503;
+                        s = 557;
                         _column++;
                     } else if (_ch >= 97 && _ch <= 102) { // a - f
-                        s = 503;
+                        s = 557;
                         _column++;
                     }
                     else {
                         // Yield
                         end_line = _line;
                         end_column = _column;
-                        token = davelexer::TokenType::Error;
+                        token = dc::TokenType::Error;
                         return true;
                     }
                 }
                 break;
-            case 503:
+            case 557:
                 switch(_ch) {
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        token = davelexer::TokenType::Char;
+                        token = dc::TokenType::Char;
                         value += _ch;
                         _column++;
                         end_line = _line;
@@ -4938,7 +5593,7 @@ namespace davelexer {
                         _ch = _stm.get();
                         return true;
                     } else if (_ch >= 65 && _ch <= 70) { // A - F
-                        token = davelexer::TokenType::Char;
+                        token = dc::TokenType::Char;
                         value += _ch;
                         _column++;
                         end_line = _line;
@@ -4946,7 +5601,7 @@ namespace davelexer {
                         _ch = _stm.get();
                         return true;
                     } else if (_ch >= 97 && _ch <= 102) { // a - f
-                        token = davelexer::TokenType::Char;
+                        token = dc::TokenType::Char;
                         value += _ch;
                         _column++;
                         end_line = _line;
@@ -4958,12 +5613,12 @@ namespace davelexer {
                         // Yield
                         end_line = _line;
                         end_column = _column;
-                        token = davelexer::TokenType::Error;
+                        token = dc::TokenType::Error;
                         return true;
                     }
                 }
                 break;
-            case 504:
+            case 558:
                 switch(_ch) {
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
@@ -4974,12 +5629,12 @@ namespace davelexer {
                         // Yield
                         end_line = _line;
                         end_column = _column;
-                        token = davelexer::TokenType::Number;
+                        token = dc::TokenType::Number;
                         return true;
                     }
                 }
                 break;
-            case 508:
+            case 562:
                 switch(_ch) {
                 case 95: // _
                     s = 24;
@@ -5000,82 +5655,82 @@ namespace davelexer {
                         // Yield
                         end_line = _line;
                         end_column = _column;
-                        token = davelexer::TokenType::Identifier;
+                        token = dc::TokenType::Identifier;
                         return true;
                     }
                 }
                 break;
-            case 511:
+            case 565:
                 switch(_ch) {
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 512;
+                        s = 566;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 70) { // A - F
-                        s = 512;
+                        s = 566;
                         _column++;
                     } else if (_ch >= 97 && _ch <= 102) { // a - f
-                        s = 512;
+                        s = 566;
                         _column++;
                     }
                     else {
                         // Yield
                         end_line = _line;
                         end_column = _column;
-                        token = davelexer::TokenType::Error;
+                        token = dc::TokenType::Error;
                         return true;
                     }
                 }
                 break;
-            case 512:
+            case 566:
                 switch(_ch) {
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 513;
+                        s = 567;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 70) { // A - F
-                        s = 513;
+                        s = 567;
                         _column++;
                     } else if (_ch >= 97 && _ch <= 102) { // a - f
-                        s = 513;
+                        s = 567;
                         _column++;
                     }
                     else {
                         // Yield
                         end_line = _line;
                         end_column = _column;
-                        token = davelexer::TokenType::Error;
+                        token = dc::TokenType::Error;
                         return true;
                     }
                 }
                 break;
-            case 513:
+            case 567:
                 switch(_ch) {
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 514;
+                        s = 568;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 70) { // A - F
-                        s = 514;
+                        s = 568;
                         _column++;
                     } else if (_ch >= 97 && _ch <= 102) { // a - f
-                        s = 514;
+                        s = 568;
                         _column++;
                     }
                     else {
                         // Yield
                         end_line = _line;
                         end_column = _column;
-                        token = davelexer::TokenType::Error;
+                        token = dc::TokenType::Error;
                         return true;
                     }
                 }
                 break;
-            case 514:
+            case 568:
                 switch(_ch) {
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        token = davelexer::TokenType::Char;
+                        token = dc::TokenType::Char;
                         value += _ch;
                         _column++;
                         end_line = _line;
@@ -5083,7 +5738,7 @@ namespace davelexer {
                         _ch = _stm.get();
                         return true;
                     } else if (_ch >= 65 && _ch <= 70) { // A - F
-                        token = davelexer::TokenType::Char;
+                        token = dc::TokenType::Char;
                         value += _ch;
                         _column++;
                         end_line = _line;
@@ -5091,7 +5746,7 @@ namespace davelexer {
                         _ch = _stm.get();
                         return true;
                     } else if (_ch >= 97 && _ch <= 102) { // a - f
-                        token = davelexer::TokenType::Char;
+                        token = dc::TokenType::Char;
                         value += _ch;
                         _column++;
                         end_line = _line;
@@ -5103,74 +5758,27 @@ namespace davelexer {
                         // Yield
                         end_line = _line;
                         end_column = _column;
-                        token = davelexer::TokenType::Error;
+                        token = dc::TokenType::Error;
                         return true;
                     }
                 }
                 break;
-            case 515:
-                switch(_ch) {
-                case 13: // {backslash}r
-                    s = 303;
-                    _column = 1;
-                    break;
-                case 2147483647: // <eod>
-                    token = davelexer::TokenType::Comment;
-                    value += _ch;
-                    _column++;
-                    end_line = _line;
-                    end_column = _column;
-                    _ch = _stm.get();
-                    return true;
-                case 10: // {backslash}n
-                    token = davelexer::TokenType::Comment;
-                    value += _ch;
-                    _line++;
-                    _column = 1;
-                    end_line = _line;
-                    end_column = _column;
-                    _ch = _stm.get();
-                    return true;
-                case 47: // /
-                    s = 516;
-                    _column++;
-                    break;
-                default:
-                    if (_ch >= 48 && _ch <= 2147483646) { // 0 - <end>
-                        s = 303;
-                        _column++;
-                    } else if (_ch >= 0 && _ch <= 9) { // <start> - {backslash}t
-                        s = 303;
-                        _column++;
-                    } else if (_ch >= 11 && _ch <= 12) { // {backslash}v - {backslash}f
-                        s = 303;
-                        _column++;
-                    } else if (_ch >= 14 && _ch <= 46) { // {backslash}x14 - .
-                        s = 303;
-                        _column++;
-                    }
-                }
-                break;
-            case 516:
+            case 569:
                 switch(_ch) {
                 case 13: // {backslash}r
                     s = 335;
                     _column = 1;
                     break;
                 case 2147483647: // <eod>
-                    token = davelexer::TokenType::Documentation;
+                    token = dc::TokenType::Comment;
                     value += _ch;
                     _column++;
                     end_line = _line;
                     end_column = _column;
                     _ch = _stm.get();
                     return true;
-                case 47: // /
-                    s = 314;
-                    _column++;
-                    break;
                 case 10: // {backslash}n
-                    token = davelexer::TokenType::Documentation;
+                    token = dc::TokenType::Comment;
                     value += _ch;
                     _line++;
                     _column = 1;
@@ -5178,6 +5786,10 @@ namespace davelexer {
                     end_column = _column;
                     _ch = _stm.get();
                     return true;
+                case 47: // /
+                    s = 570;
+                    _column++;
+                    break;
                 default:
                     if (_ch >= 48 && _ch <= 2147483646) { // 0 - <end>
                         s = 335;
@@ -5194,10 +5806,53 @@ namespace davelexer {
                     }
                 }
                 break;
-            case 517:
+            case 570:
+                switch(_ch) {
+                case 13: // {backslash}r
+                    s = 367;
+                    _column = 1;
+                    break;
+                case 2147483647: // <eod>
+                    token = dc::TokenType::Documentation;
+                    value += _ch;
+                    _column++;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                case 47: // /
+                    s = 346;
+                    _column++;
+                    break;
+                case 10: // {backslash}n
+                    token = dc::TokenType::Documentation;
+                    value += _ch;
+                    _line++;
+                    _column = 1;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                default:
+                    if (_ch >= 48 && _ch <= 2147483646) { // 0 - <end>
+                        s = 367;
+                        _column++;
+                    } else if (_ch >= 0 && _ch <= 9) { // <start> - {backslash}t
+                        s = 367;
+                        _column++;
+                    } else if (_ch >= 11 && _ch <= 12) { // {backslash}v - {backslash}f
+                        s = 367;
+                        _column++;
+                    } else if (_ch >= 14 && _ch <= 46) { // {backslash}x14 - .
+                        s = 367;
+                        _column++;
+                    }
+                }
+                break;
+            case 571:
                 switch(_ch) {
                 case 2147483647: // <eod>
-                    token = davelexer::TokenType::Error;
+                    token = dc::TokenType::Error;
                     value += _ch;
                     _column++;
                     end_line = _line;
@@ -5205,7 +5860,7 @@ namespace davelexer {
                     _ch = _stm.get();
                     return true;
                 case 10: // {backslash}n
-                    token = davelexer::TokenType::Comment;
+                    token = dc::TokenType::Comment;
                     value += _ch;
                     _line++;
                     _column = 1;
@@ -5214,7 +5869,7 @@ namespace davelexer {
                     _ch = _stm.get();
                     return true;
                 case 47: // /
-                    token = davelexer::TokenType::Comment;
+                    token = dc::TokenType::Comment;
                     _states.pop_back();
                     value += _ch;
                     _column++;
@@ -5223,11 +5878,11 @@ namespace davelexer {
                     _ch = _stm.get();
                     return true;
                 case 42: // *
-                    s = 518;
+                    s = 572;
                     _column++;
                     break;
                 case 13: // {backslash}r
-                    token = davelexer::TokenType::Comment;
+                    token = dc::TokenType::Comment;
                     value += _ch;
                     _column = 1;
                     end_line = _line;
@@ -5236,7 +5891,7 @@ namespace davelexer {
                     return true;
                 default:
                     if (_ch >= 48 && _ch <= 2147483646) { // 0 - <end>
-                        token = davelexer::TokenType::Comment;
+                        token = dc::TokenType::Comment;
                         value += _ch;
                         _column++;
                         end_line = _line;
@@ -5244,7 +5899,7 @@ namespace davelexer {
                         _ch = _stm.get();
                         return true;
                     } else if (_ch >= 43 && _ch <= 46) { // + - .
-                        token = davelexer::TokenType::Comment;
+                        token = dc::TokenType::Comment;
                         value += _ch;
                         _column++;
                         end_line = _line;
@@ -5252,7 +5907,7 @@ namespace davelexer {
                         _ch = _stm.get();
                         return true;
                     } else if (_ch >= 0 && _ch <= 9) { // <start> - {backslash}t
-                        token = davelexer::TokenType::Comment;
+                        token = dc::TokenType::Comment;
                         value += _ch;
                         _column++;
                         end_line = _line;
@@ -5260,7 +5915,7 @@ namespace davelexer {
                         _ch = _stm.get();
                         return true;
                     } else if (_ch >= 11 && _ch <= 12) { // {backslash}v - {backslash}f
-                        token = davelexer::TokenType::Comment;
+                        token = dc::TokenType::Comment;
                         value += _ch;
                         _column++;
                         end_line = _line;
@@ -5268,7 +5923,7 @@ namespace davelexer {
                         _ch = _stm.get();
                         return true;
                     } else if (_ch >= 14 && _ch <= 41) { // {backslash}x14 - )
-                        token = davelexer::TokenType::Comment;
+                        token = dc::TokenType::Comment;
                         value += _ch;
                         _column++;
                         end_line = _line;
@@ -5278,10 +5933,10 @@ namespace davelexer {
                     }
                 }
                 break;
-            case 518:
+            case 572:
                 switch(_ch) {
                 case 47: // /
-                    token = davelexer::TokenType::Comment;
+                    token = dc::TokenType::Comment;
                     _states.pop_back();
                     value += _ch;
                     _column++;
@@ -5290,7 +5945,7 @@ namespace davelexer {
                     _ch = _stm.get();
                     return true;
                 case 10: // {backslash}n
-                    token = davelexer::TokenType::Comment;
+                    token = dc::TokenType::Comment;
                     value += _ch;
                     _line++;
                     _column = 1;
@@ -5299,7 +5954,7 @@ namespace davelexer {
                     _ch = _stm.get();
                     return true;
                 case 2147483647: // <eod>
-                    token = davelexer::TokenType::Error;
+                    token = dc::TokenType::Error;
                     value += _ch;
                     _column++;
                     end_line = _line;
@@ -5307,11 +5962,11 @@ namespace davelexer {
                     _ch = _stm.get();
                     return true;
                 case 42: // *
-                    s = 518;
+                    s = 572;
                     _column++;
                     break;
                 case 13: // {backslash}r
-                    token = davelexer::TokenType::Comment;
+                    token = dc::TokenType::Comment;
                     value += _ch;
                     _column = 1;
                     end_line = _line;
@@ -5320,7 +5975,7 @@ namespace davelexer {
                     return true;
                 default:
                     if (_ch >= 48 && _ch <= 2147483646) { // 0 - <end>
-                        token = davelexer::TokenType::Comment;
+                        token = dc::TokenType::Comment;
                         value += _ch;
                         _column++;
                         end_line = _line;
@@ -5328,7 +5983,7 @@ namespace davelexer {
                         _ch = _stm.get();
                         return true;
                     } else if (_ch >= 43 && _ch <= 46) { // + - .
-                        token = davelexer::TokenType::Comment;
+                        token = dc::TokenType::Comment;
                         value += _ch;
                         _column++;
                         end_line = _line;
@@ -5336,7 +5991,7 @@ namespace davelexer {
                         _ch = _stm.get();
                         return true;
                     } else if (_ch >= 0 && _ch <= 9) { // <start> - {backslash}t
-                        token = davelexer::TokenType::Comment;
+                        token = dc::TokenType::Comment;
                         value += _ch;
                         _column++;
                         end_line = _line;
@@ -5344,7 +5999,7 @@ namespace davelexer {
                         _ch = _stm.get();
                         return true;
                     } else if (_ch >= 11 && _ch <= 12) { // {backslash}v - {backslash}f
-                        token = davelexer::TokenType::Comment;
+                        token = dc::TokenType::Comment;
                         value += _ch;
                         _column++;
                         end_line = _line;
@@ -5352,7 +6007,7 @@ namespace davelexer {
                         _ch = _stm.get();
                         return true;
                     } else if (_ch >= 14 && _ch <= 41) { // {backslash}x14 - )
-                        token = davelexer::TokenType::Comment;
+                        token = dc::TokenType::Comment;
                         value += _ch;
                         _column++;
                         end_line = _line;
@@ -5364,99 +6019,99 @@ namespace davelexer {
                         // Yield
                         end_line = _line;
                         end_column = _column;
-                        token = davelexer::TokenType::Comment;
+                        token = dc::TokenType::Comment;
                         return true;
                     }
                 }
                 break;
-            case 519:
+            case 573:
                 switch(_ch) {
                 case 117: // u
-                    s = 520;
+                    s = 574;
                     _column++;
                     break;
                 case 95: // _
-                    s = 365;
+                    s = 397;
                     _column++;
                     break;
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 365;
+                        s = 397;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 365;
+                        s = 397;
                         _column++;
                     } else if (_ch >= 118 && _ch <= 122) { // v - z
-                        s = 365;
+                        s = 397;
                         _column++;
                     } else if (_ch >= 97 && _ch <= 116) { // a - t
-                        s = 365;
+                        s = 397;
                         _column++;
                     }
                     else {
                         // Yield
                         end_line = _line;
                         end_column = _column;
-                        token = davelexer::TokenType::Identifier;
+                        token = dc::TokenType::Identifier;
                         return true;
                     }
                 }
                 break;
-            case 520:
+            case 574:
                 switch(_ch) {
                 case 95: // _
-                    s = 365;
+                    s = 397;
                     _column++;
                     break;
                 case 109: // m
-                    s = 521;
+                    s = 575;
                     _column++;
                     break;
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 365;
+                        s = 397;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 365;
+                        s = 397;
                         _column++;
                     } else if (_ch >= 110 && _ch <= 122) { // n - z
-                        s = 365;
+                        s = 397;
                         _column++;
                     } else if (_ch >= 97 && _ch <= 108) { // a - l
-                        s = 365;
+                        s = 397;
                         _column++;
                     }
                     else {
                         // Yield
                         end_line = _line;
                         end_column = _column;
-                        token = davelexer::TokenType::Identifier;
+                        token = dc::TokenType::Identifier;
                         return true;
                     }
                 }
                 break;
-            case 521:
+            case 575:
                 switch(_ch) {
                 case 95: // _
-                    s = 365;
+                    s = 397;
                     _column++;
                     break;
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 365;
+                        s = 397;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 365;
+                        s = 397;
                         _column++;
                     } else if (_ch >= 97 && _ch <= 122) { // a - z
-                        s = 365;
+                        s = 397;
                         _column++;
                     }
                     else {
                         // Yield
                         end_line = _line;
                         end_column = _column;
-                        token = davelexer::TokenType::Enum;
+                        token = dc::TokenType::Enum;
                         return true;
                     }
                 }

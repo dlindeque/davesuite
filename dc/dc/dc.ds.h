@@ -156,7 +156,8 @@ namespace dc {
     class EnumAst;
     class UsingNamespaceAst;
     class TypeAst;
-    
+    class TypeAliasAst;
+
     class NamespaceItemAstVisitor {
     public:
         virtual auto visit(const std::shared_ptr<PatternAst>&) -> void = 0;
@@ -165,6 +166,7 @@ namespace dc {
         virtual auto visit(const std::shared_ptr<EnumAst>&) -> void = 0;
         virtual auto visit(const std::shared_ptr<UsingNamespaceAst>&) -> void = 0;
         virtual auto visit(const std::shared_ptr<TypeAst>&) -> void = 0;
+        virtual auto visit(const std::shared_ptr<TypeAliasAst>&) -> void = 0;
     };
 
     class NamespaceItemAstMutatingVisitor {
@@ -175,6 +177,7 @@ namespace dc {
         virtual auto visit(std::shared_ptr<EnumAst>&) -> void = 0;
         virtual auto visit(std::shared_ptr<UsingNamespaceAst>&) -> void = 0;
         virtual auto visit(std::shared_ptr<TypeAst>&) -> void = 0;
+        virtual auto visit(std::shared_ptr<TypeAliasAst>&) -> void = 0;
     };
     
     class NamespaceItemAst : public Ast {
@@ -246,6 +249,7 @@ namespace dc {
             visitor->visit(s); }
     };
 
+    class TypeArgumentAst;
     class TypeReferenceAst : public Ast {
     public:
         TypeReferenceAst(const span &spn, symbolreference &&name, std::vector<std::shared_ptr<TypeReferenceAst>> &&arguments)
@@ -254,7 +258,8 @@ namespace dc {
 
         symbolreference Name;
         std::vector<std::shared_ptr<TypeReferenceAst>> Arguments;
-        std::shared_ptr<TypeDefinitionAst> Bound;
+        std::shared_ptr<TypeDefinitionAst> BoundType;
+        std::shared_ptr<TypeArgumentAst> BoundArgument;
     };
 
     class TypePropertyAst : public Ast {
@@ -266,6 +271,8 @@ namespace dc {
         spantext Name;
         std::vector<spantext> Documentation;
         std::shared_ptr<TypeReferenceAst> Type;
+
+        std::wstring BackingField;
     };
 
     class TypeArgumentAst : public Ast {
@@ -280,7 +287,7 @@ namespace dc {
     class TypeAst : public TypeDefinitionAst {
     public:
         TypeAst(const span &spn, std::vector<spantext> &&documentation, spantext &&name, std::vector<std::shared_ptr<TypeArgumentAst>> &&arguments, bool isAbstract, bool isSealed, std::shared_ptr<TypeReferenceAst> &&parent, std::vector<std::shared_ptr<TypePropertyAst>> &&properties)
-        : TypeDefinitionAst(spn, std::move(documentation), std::move(name)), Arguments(std::move(arguments)), IsAbstract(isAbstract), IsSealed(isSealed), Parent(std::move(parent)), Properties(std::move(properties))
+        : TypeDefinitionAst(spn, std::move(documentation), std::move(name)), Arguments(std::move(arguments)), IsAbstract(isAbstract), IsSealed(isSealed), Parent(std::move(parent)), Properties(std::move(properties)), MustBeReferenceType(false)
         {}
 
         std::vector<std::shared_ptr<TypeArgumentAst>> Arguments;
@@ -288,6 +295,10 @@ namespace dc {
         bool IsSealed;
         std::shared_ptr<TypeReferenceAst> Parent;
         std::vector<std::shared_ptr<TypePropertyAst>> Properties;
+
+        // This is an enriched property
+        std::vector<std::shared_ptr<TypeAst>> Children;
+        bool MustBeReferenceType;
         
         virtual auto accept(const std::shared_ptr<NamespaceItemAst>& ast, NamespaceItemAstVisitor * visitor) const -> void {
             assert(ast.get() == this);
@@ -297,6 +308,27 @@ namespace dc {
         virtual auto accept(std::shared_ptr<NamespaceItemAst>& ast, NamespaceItemAstMutatingVisitor * visitor) -> void {
             assert(ast.get() == this);
             auto s = std::dynamic_pointer_cast<TypeAst>(ast);
+            visitor->visit(s);
+        }
+    };
+
+    class TypeAliasAst : public TypeDefinitionAst {
+    public:
+        TypeAliasAst(const span &spn, std::vector<spantext> &&documentation, spantext &&name, std::vector<std::shared_ptr<TypeArgumentAst>> &&arguments, std::shared_ptr<TypeReferenceAst> &&value)
+        : TypeDefinitionAst(spn, std::move(documentation), std::move(name)), Arguments(std::move(arguments)), Value(std::move(value))
+        {}
+
+        std::vector<std::shared_ptr<TypeArgumentAst>> Arguments;
+        std::shared_ptr<TypeReferenceAst> Value;
+        
+        virtual auto accept(const std::shared_ptr<NamespaceItemAst>& ast, NamespaceItemAstVisitor * visitor) const -> void {
+            assert(ast.get() == this);
+            auto s = std::dynamic_pointer_cast<TypeAliasAst>(ast);
+            visitor->visit(s);
+        }
+        virtual auto accept(std::shared_ptr<NamespaceItemAst>& ast, NamespaceItemAstMutatingVisitor * visitor) -> void {
+            assert(ast.get() == this);
+            auto s = std::dynamic_pointer_cast<TypeAliasAst>(ast);
             visitor->visit(s);
         }
     };

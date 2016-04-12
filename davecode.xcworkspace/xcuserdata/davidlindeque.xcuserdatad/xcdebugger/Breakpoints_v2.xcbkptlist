@@ -178,7 +178,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "dc/dc/model_formatter.cpp"
-            timestampString = "477774347.099241"
+            timestampString = "478653091.580066"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "68"
@@ -224,11 +224,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "dc/dc/cpp_helpers.h"
-            timestampString = "477265105.926148"
+            timestampString = "479123399.056176"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "58"
-            endingLineNumber = "58">
+            startingLineNumber = "90"
+            endingLineNumber = "90">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -238,11 +238,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "dc/dc/cpp_helpers.h"
-            timestampString = "477265329.438078"
+            timestampString = "479123399.056176"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "81"
-            endingLineNumber = "81">
+            startingLineNumber = "113"
+            endingLineNumber = "113">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -252,11 +252,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "dc/dc/cpp_helpers.h"
-            timestampString = "477265269.85167"
+            timestampString = "479123399.056176"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "67"
-            endingLineNumber = "67">
+            startingLineNumber = "99"
+            endingLineNumber = "99">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -266,11 +266,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "dc/dc/cpp_helpers.h"
-            timestampString = "477265350.579367"
+            timestampString = "479123399.056176"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "88"
-            endingLineNumber = "88">
+            startingLineNumber = "120"
+            endingLineNumber = "120">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -358,7 +358,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "743"
             endingLineNumber = "743"
-            landmarkName = "class Transition"
+            landmarkName = "class CharRangesReAst"
             landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
@@ -631,13 +631,13 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "dc/dc/compiler.h"
-            timestampString = "478637182.159207"
+            timestampString = "478729713.07417"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "343"
-            endingLineNumber = "343"
-            landmarkName = "find_automata(ast-&gt;GotoLabel, _cntr_stack.back(), ast-&gt;Spn, _search_namespaces, _logger, _ok)"
-            landmarkType = "4">
+            startingLineNumber = "357"
+            endingLineNumber = "357"
+            landmarkName = "class NamespaceItemAstProcessor"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -663,11 +663,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "dc/dc/compiler.h"
-            timestampString = "478637246.387524"
+            timestampString = "478729713.07417"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "170"
-            endingLineNumber = "170">
+            startingLineNumber = "172"
+            endingLineNumber = "172">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -677,13 +677,13 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "dc/dc/compiler.h"
-            timestampString = "478640631.437689"
+            timestampString = "478729713.07417"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "416"
-            endingLineNumber = "416"
-            landmarkName = "class NamespaceItemAstProcessor"
-            landmarkType = "3">
+            startingLineNumber = "430"
+            endingLineNumber = "430"
+            landmarkName = "find&lt;std::shared_ptr&lt;SetAst&gt;&gt;(_cntr_stack.back(), ast-&gt;Name, _search_namespaces, [&amp;found, &amp;prev_cntr, &amp;prev_spn, &amp;_this, &amp;cntr_stack, &amp;logger, &amp;ast](const std::shared_ptr&lt;container&gt; &amp;cntr, const std::shared_ptr&lt;SetAst&gt; &amp;p, const symbolreference &amp;name, size_t index) { if (index == name.size() - 1) { if (found) { log::error::SymbolFoundMoreThanOnce(logger, L&quot;match set&quot;, cntr_stack.back(), ast-&gt;Spn, ast-&gt;Name, prev_cntr, prev_spn, cntr, p-&gt;Spn); return false; } // Set the found status found = true; prev_cntr = cntr; prev_spn = p-&gt;Spn; // Process the set cntr_stack.push_back(cntr); for(auto &amp;item : p-&gt;Items) { item-&gt;accept(item, _this); } cntr_stack.pop_back(); } // Search further (to find duplicate names) return true; })"
+            landmarkType = "4">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -712,6 +712,203 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "10"
             endingLineNumber = "10">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "dc/dc/compiler.h"
+            timestampString = "478729713.07417"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "589"
+            endingLineNumber = "589"
+            landmarkName = "class DocumentAstProcessor"
+            landmarkType = "3">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "dc/dc/compiler.h"
+            timestampString = "478729713.07417"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "555"
+            endingLineNumber = "555"
+            landmarkName = "class DocumentAstProcessor"
+            landmarkType = "3">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "dc/dc/compiler.h"
+            timestampString = "478729713.07417"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "536"
+            endingLineNumber = "536"
+            landmarkName = "class NamespaceItemAstProcessor"
+            landmarkType = "3">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "dc/dc/compiler.h"
+            timestampString = "478729713.07417"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "502"
+            endingLineNumber = "502"
+            landmarkName = "class NamespaceItemAstProcessor"
+            landmarkType = "3">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "dc/dc/model_formatter.cpp"
+            timestampString = "478691208.409964"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "72"
+            endingLineNumber = "72">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "dc/dc/compiler.h"
+            timestampString = "478729713.07417"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "453"
+            endingLineNumber = "453"
+            landmarkName = "class NamespaceItemAstProcessor"
+            landmarkType = "3">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "dc/dc/cpp_helpers.h"
+            timestampString = "479123399.056176"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "34"
+            endingLineNumber = "34">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "dc/dc/model_formatter.cpp"
+            timestampString = "479121597.36956"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "212"
+            endingLineNumber = "212">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "bool dc::write_all&lt;dc::forward_writer&gt;(dc::output_writer&amp;, dc::namespace_container const&amp;)"
+                  moduleName = "dc"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/davidlindeque/davesuite/dc/dc/model_formatter.cpp"
+                  timestampString = "479121600.475851"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "212"
+                  endingLineNumber = "212"
+                  offsetFromSymbolStart = "53">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "bool dc::write_all&lt;dc::declaration_writer&gt;(dc::output_writer&amp;, dc::namespace_container const&amp;)"
+                  moduleName = "dc"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/davidlindeque/davesuite/dc/dc/model_formatter.cpp"
+                  timestampString = "479121600.476644"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "212"
+                  endingLineNumber = "212"
+                  offsetFromSymbolStart = "53">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "bool dc::write_all&lt;dc::implementation_writer&gt;(dc::output_writer&amp;, dc::namespace_container const&amp;)"
+                  moduleName = "dc"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/davidlindeque/davesuite/dc/dc/model_formatter.cpp"
+                  timestampString = "479121600.476894"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "212"
+                  endingLineNumber = "212"
+                  offsetFromSymbolStart = "53">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "dc/dc/model_formatter.cpp"
+            timestampString = "479158800.522025"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "165"
+            endingLineNumber = "165">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "dc/dc/model_formatter.cpp"
+            timestampString = "479158915.511402"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "59"
+            endingLineNumber = "59">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

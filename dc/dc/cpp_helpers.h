@@ -1,10 +1,12 @@
 #pragma once
 
 #include "cpp_helpers.h"
+#include "helpers.h"
+#include "output_writer.h"
 
 namespace dc
 {
-	inline auto to_cpp_enum(const symbolreference &name) -> std::wstring
+	inline auto to_cpp_symbol(const symbolreference &name) -> std::wstring
     {
         std::wstring s;
         if (name.empty()) return L"";
@@ -14,6 +16,79 @@ namespace dc
             s.append(name[i].value());
         }
         return s;
+    }
+    
+    inline auto is_type(const std::shared_ptr<TypeDefinitionAst> &type, const std::wstring &ns, const std::wstring &name) -> bool {
+        if (type->Name.value() != name) return false;
+        auto dns = ((const NamespaceAst*)type->DeclaringAst.get())->Name;
+        return dns.size() == 1 && dns[0].value() == ns;
+    }
+
+    inline auto write_cpp_type(output_writer &os, const std::shared_ptr<TypeReferenceAst> &type, bool structural = false) -> output_writer&
+    {
+    	if (!structural && type->BoundType != nullptr) {
+            auto bt = dynamic_cast<const TypeAst*>(type->BoundType.get());
+            if (bt != nullptr && bt->MustBeReferenceType) {
+                os << L"std::shared_ptr<";
+                write_cpp_type(os, type, true);
+                return os << L'>';
+            }
+    	}
+            
+        if (type->BoundArgument != nullptr) {
+            os << type->BoundArgument->Name.value();
+        }
+        else if (is_type(type->BoundType, L"System", L"Collection") && type->Arguments.size() == 1) {
+    		os << L"std::vector<";
+    		write_cpp_type(os, type->Arguments[0]);
+    		os << L'>';
+    	}
+    	else if (is_type(type->BoundType, L"System", L"Word")) {
+    		os << L"unsigned int";
+    	}
+    	else if (is_type(type->BoundType, L"System", L"DoubleWord")) {
+    		os << L"unsigned long";
+    	}
+    	else if (is_type(type->BoundType, L"System", L"Int8")) {
+    		os << L"char";
+    	}
+    	else if (is_type(type->BoundType, L"System", L"Int16")) {
+    		os << L"short";
+    	}
+    	else if (is_type(type->BoundType, L"System", L"Int32")) {
+    		os << L"int";
+    	}
+    	else if (is_type(type->BoundType, L"System", L"Int64")) {
+    		os << L"long long";
+    	}
+    	else if (is_type(type->BoundType, L"System", L"String")) {
+    		os << L"std::string";
+    	}
+    	else if (is_type(type->BoundType, L"System", L"WString")) {
+    		os << L"std::wstring";
+    	}
+    	else if (is_type(type->BoundType, L"System", L"Float")) {
+    		os << L"float";
+    	}
+    	else if (is_type(type->BoundType, L"System", L"DFloat")) {
+    		os << L"double";
+    	} else {
+    		os << to_cpp_symbol(get_nsitem_symbol_reference(type->BoundType));
+    		if (!type->Arguments.empty()) {
+    			os << L'<';
+    			bool first = true;
+    			for(auto &a : type->Arguments) {
+    				if (first) {
+    					first = false;
+    				} else {
+    					os << L',';
+    				}
+    				write_cpp_type(os, a);
+    			}
+    			os << L'>';
+    		}
+    	}
+        return os;
     }
 
     inline auto extract_filename(const std::string &path) -> std::string
@@ -30,6 +105,24 @@ namespace dc
 	        return path;
 	    }
 	}
+    
+    inline auto extract_file_directory(const std::string &path) -> std::string
+    {
+        // Get '/path1/path2/' from /path1/path2/abc.xyz
+        // Get '' from abc.xyz
+        // Get '/' from /abc.xyz
+        // Get 'path1/' from path1/abc.xyz
+        
+        auto f = path.find_last_of("/");
+        if (f == std::string::npos) {
+            // We have no '/'
+            return "";
+        }
+        else {
+            // We've got at least one '/'
+            return path.substr(0, f + 1);
+        }
+    }
 
 	inline auto combine_path_filename(const std::string &path, const std::string &fn) -> std::string
 	{
@@ -115,5 +208,21 @@ namespace dc
     		}
     	}
         return r;
+    }
+
+    inline auto cpp_string(const std::wstring &v) -> std::wstring {
+    	std::wstring r;
+    	for(auto &c : v) {
+    		switch(c) {
+    			case L'\\': r.append(L"\\\\");break;
+    			case L'\n': r.append(L"\\n");break;
+    			case L'\r': r.append(L"\\r");break;
+    			case L'\t': r.append(L"\\t");break;
+    			case L'\v': r.append(L"\\v");break;
+    			case L'\f': r.append(L"\\f");break;
+    			default: r += c;
+    		}
+    	}
+        return r;	
     }
 }

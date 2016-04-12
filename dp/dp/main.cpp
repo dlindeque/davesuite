@@ -790,7 +790,7 @@ int main(int argc, const char * argv[]) {
     stm << L"    struct lexical_value {" << std::endl;
     stm << L"        std::wstring desc;" << std::endl;
 #ifdef NEW_LEXER
-    stm << L"        davelexer::TokenType tkn_type;" << std::endl;
+    stm << L"        dc::TokenType tkn_type;" << std::endl;
 #else
     stm << L"        TokenType tkn_type;" << std::endl;
 #endif
@@ -801,14 +801,14 @@ int main(int argc, const char * argv[]) {
     }
     stm << L"        lexical_value() { }" << std::endl;
 #ifdef NEW_LEXER
-    stm << L"        lexical_value(span &&spn, const davelexer::TokenType _tkn_type, const std::wstring &_tkn_value)" << std::endl;
+    stm << L"        lexical_value(span &&spn, const dc::TokenType _tkn_type, const std::wstring &_tkn_value)" << std::endl;
 #else
     stm << L"        lexical_value(span &&spn, const TokenType _tkn_type, const std::wstring &_tkn_value)" << std::endl;
 #endif
     stm << L"        : desc(text(_tkn_type)), tkn_span(std::move(spn)), tkn_type(_tkn_type), tkn_value(_tkn_value)" << std::endl;
     stm << L"        {}" << std::endl;
 #ifdef NEW_LEXER
-    stm << L"        lexical_value(span &&spn, const davelexer::TokenType _tkn_type, std::wstring &&_tkn_value)" << std::endl;
+    stm << L"        lexical_value(span &&spn, const dc::TokenType _tkn_type, std::wstring &&_tkn_value)" << std::endl;
 #else
     stm << L"        lexical_value(span &&spn, const TokenType _tkn_type, std::wstring &&_tkn_value)" << std::endl;
 #endif
@@ -832,19 +832,19 @@ int main(int argc, const char * argv[]) {
     stm << L"        states.push_back(0);" << std::endl;
     stm << L"        bool read_token = true;" << std::endl;
 #ifdef NEW_LEXER
-    stm << L"        davelexer::lexer lexer(stm);" << std::endl;
+    stm << L"        dc::lexer lexer(stm);" << std::endl;
     stm << L"        long start_line = 0, start_column = 0, end_line = 0, end_column = 0;" << std::endl;
     stm << L"        std::wstring value;" << std::endl;
-    stm << L"        davelexer::TokenType token = davelexer::TokenType::Error;" << std::endl;
+    stm << L"        dc::TokenType token = dc::TokenType::Error;" << std::endl;
 #endif
     stm << L"        while(true) {" << std::endl;
     stm << L"            if (read_token) {" << std::endl;
     stm << L"                while(true) {" << std::endl;
 #ifdef NEW_LEXER
     stm << L"                    if (!lexer.try_read_next_token(start_line, start_column, end_line, end_column, value, token)) {" << std::endl;
-    stm << L"                        token = davelexer::TokenType::EOD;" << std::endl;
+    stm << L"                        token = dc::TokenType::EOD;" << std::endl;
     stm << L"                    }" << std::endl;
-    stm << L"                    if (token != davelexer::TokenType::Whitespace && token != davelexer::TokenType::Comment) break;" << std::endl;
+    stm << L"                    if (token != dc::TokenType::Whitespace && token != dc::TokenType::Comment) break;" << std::endl;
 #else
     stm << L"                    if (!read_next_token(s)) {" << std::endl;
     stm << L"                        s.token = TokenType::Eod;" << std::endl;
@@ -915,8 +915,8 @@ int main(int argc, const char * argv[]) {
             for(auto i = f.first; i != f.second; i++) {
                 if (i->second.Reduce == nullptr && i->second.IsConflictResolutionVictim == false && terminals.find(i->second.Token) != terminals.end()) {
 #ifdef NEW_LEXER
-                    stm << L"                        case davelexer::" << as_cpp_token(i->second.Token) << L":" << std::endl;
-                    stm << L"                            values.emplace_back(span(position(start_line, start_column), position(end_line, end_column)), davelexer::" << as_cpp_token(i->second.Token) << L", std::move(value));" << std::endl;
+                    stm << L"                        case dc::" << as_cpp_token(i->second.Token) << L":" << std::endl;
+                    stm << L"                            values.emplace_back(span(position(start_line, start_column), position(end_line, end_column)), dc::" << as_cpp_token(i->second.Token) << L", std::move(value));" << std::endl;
 #else
                     stm << L"                        case " << as_cpp_token(i->second.Token) << L":" << std::endl;
                     stm << L"                            values.emplace_back(span(std::move(s.begin), std::move(s.end)), " << as_cpp_token(i->second.Token) << L", std::move(s.value));" << std::endl;
@@ -928,7 +928,7 @@ int main(int argc, const char * argv[]) {
             }
             if (is_final_state) {
 #ifdef NEW_LEXER
-                stm << L"                        case davelexer::TokenType::EOD:" << std::endl;
+                stm << L"                        case dc::TokenType::EOD:" << std::endl;
 #else
                 stm << L"                        case TokenType::Eod:" << std::endl;
 #endif
@@ -975,14 +975,14 @@ int main(int argc, const char * argv[]) {
                 stm << L"                            // Error - We did not read an expected token, and we also cannot reduce" << std::endl;
                 stm << L"                            if(true) {" << std::endl;
 #ifdef NEW_LEXER
-                stm << L"                                std::vector<davelexer::TokenType> validTokens;" << std::endl;
+                stm << L"                                std::vector<dc::TokenType> validTokens;" << std::endl;
 #else
                 stm << L"                                std::vector<TokenType> validTokens;" << std::endl;
 #endif
                 for(auto i = f.first; i != f.second; i++) {
                     if (!i->second.IsConflictResolutionVictim && terminals.find(i->second.Token) != terminals.end()) {
 #ifdef NEW_LEXER
-                        stm << L"                                validTokens.push_back(davelexer::" << as_cpp_token(i->second.Token) << L");" << std::endl;
+                        stm << L"                                validTokens.push_back(dc::" << as_cpp_token(i->second.Token) << L");" << std::endl;
 #else
                         stm << L"                                validTokens.push_back(" << as_cpp_token(i->second.Token) << L");" << std::endl;
 #endif

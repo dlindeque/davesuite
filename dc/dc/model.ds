@@ -2,5 +2,151 @@
 
 namespace dc
 {
-	
-}
+	/// Represents the types of tokens in a ds file
+    enum TokenType
+    {
+        /// Import another file
+        Import,
+        Set,
+        Start,
+        Namespace,
+        Enum,
+        Pattern,
+        Automata,
+        Include,
+        Goto,
+        Return,
+        Equals,
+        String,
+        Identifier,
+        Number,
+        Dot,
+        Semicolon,
+        Comma,
+        Hat,
+        Hyphen,
+        OpenBrace,
+        CloseBrace,
+        OpenParenthesis,
+        CloseParenthesis,
+        OpenSquare,
+        CloseSquare,
+        OpenTriangle,
+        CloseTriangle,
+        ProducedBy,
+        Comment,
+        Whitespace,
+        ReStart,
+        ReEnd,
+        Char,
+        CharClass,
+        Asterisk,
+        Plus,
+        Question,
+        Pipe,
+        /// Indicates an error in lexical analysis
+        Error,
+        EOD,
+        Documentation,
+        Production,
+        Type,
+        Abstract,
+        Sealed,
+        Alias,
+        Colon,
+        Word,
+        DWord,
+        Int8,
+        Int16,
+        Int32,
+        Int64,
+        StringKeyword,
+        WString,
+        FloatKeyword,
+        DFloat
+    };
+};
+
+namespace dc2
+{
+
+    /// Represents a position within a source file/text.
+    sealed type position
+    {
+    	/// The line number (First line is 1)
+    	dword line,
+    	/// The column number (First column is 1)
+    	dword column
+    };
+
+    /// Represents a span of text with a source file/text.
+	sealed type span
+    {
+    	/// The begin position.
+    	position begin,
+    	/// The first character beyond the span
+    	position end
+    };
+
+    /// A value in a source file
+    sealed type spanvalue<T>
+    {
+    	/// The location of the value
+    	span spn,
+    	/// The value
+    	T value
+    };
+
+    /// A text value in a source file
+    alias spantext = spanvalue<wstring>;
+    /// A reference statement
+    alias symbolreference = spantext[];
+//
+////    // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Testing alias
+////    abstract sealed type pair<T1, T2>
+////    {
+////    	T1 first,
+////    	T2 second
+////    }
+////    abstract sealed type abc<T> { T value };
+////    alias dblabc<T> = pair<abc<T>>;
+////    alias Tkn = TokenType;
+////    // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+//
+//	/// All AST types
+    abstract type ast
+    {
+    	span spn,
+    	ast declaring_ast
+    };
+
+    /// The document ast type
+    abstract type document_ast : ast
+    {
+    	wstring test
+    };
+
+    type import_ast : document_ast
+    {
+    	wstring doc
+    };
+//
+//    /// Indicate the start item
+//    sealed type start_item_ast : document_ast
+//    {
+//    	///// The automata/production to start with
+//    	//symbolreference document
+//    };
+//
+//    /// Define an import file
+//    sealed type import_ast : document_ast
+//    {
+//    	///// The document to import
+//    	//spantext document
+//    };
+//
+//    sealed type mixin_ast : document_ast
+//    {
+//
+//    };
+};

@@ -2,8 +2,7 @@
 
 namespace davelexer
 {
-    [Visitor = true]
-    class Container abstract
+    abstract type Container
     {
     };
 

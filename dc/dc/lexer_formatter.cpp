@@ -72,7 +72,7 @@ namespace dc
         hstm << L"        inline auto states() const -> const std::vector<size_t>& { return _states; }" << std::endl;
         hstm << L"        inline auto states() -> std::vector<size_t>& { return _states; }" << std::endl;
         hstm << L"" << std::endl;
-        hstm << L"        auto try_read_next_token(long &start_line, long &start_column, long &end_line, long &end_column, std::wstring &value, " << to_cpp_enum(get_nsitem_symbol_reference(processor.automata_match_return_type())) << L" &token) -> bool;" << std::endl;
+        hstm << L"        auto try_read_next_token(long &start_line, long &start_column, long &end_line, long &end_column, std::wstring &value, " << to_cpp_symbol(get_nsitem_symbol_reference(processor.automata_match_return_type())) << L" &token) -> bool;" << std::endl;
         hstm << L"    };" << std::endl;
         hstm << L"}" << std::endl;
 
@@ -107,7 +107,7 @@ namespace dc
             // We've got no transitions out of the ToState - we can just return the action
             auto a2 = processor.dfa().actions.find(transition->ToState);
             assert(a2 != processor.dfa().actions.end());
-            cppstm << L"                        token = " << ns << L"::" << to_cpp_enum(a2->second.YieldAction.TokenName) << L';' << std::endl;
+            cppstm << L"                        token = " << ns << L"::" << to_cpp_symbol(a2->second.YieldAction.TokenName) << L';' << std::endl;
             if (a2->second.YieldAction.IsGoto) {
                 cppstm << L"                        _states.push_back(" << a2->second.YieldAction.GotoAutomata << L");" << std::endl;
             } 
@@ -145,7 +145,7 @@ namespace dc
         cppstm << L"#include <assert.h>" << std::endl;
         cppstm << std::endl;
         cppstm << L"namespace " << ns << L" {" << std::endl;
-        cppstm << L"    auto " << lexer_name << L"::try_read_next_token(long &start_line, long &start_column, long &end_line, long &end_column, std::wstring &value, " << to_cpp_enum(get_nsitem_symbol_reference(processor.automata_match_return_type())) << L" &token) -> bool" << std::endl;
+        cppstm << L"    auto " << lexer_name << L"::try_read_next_token(long &start_line, long &start_column, long &end_line, long &end_column, std::wstring &value, " << to_cpp_symbol(get_nsitem_symbol_reference(processor.automata_match_return_type())) << L" &token) -> bool" << std::endl;
         cppstm << L"    {" << std::endl;
         cppstm << L"        start_line = _line;" << std::endl;
         cppstm << L"        start_column = _column;" << std::endl;
@@ -172,7 +172,7 @@ namespace dc
                         // We've got no transitions out of the ToState - we can just return the action
                         auto a2 = processor.dfa().actions.find(t.ToState);
                         assert(a2 != processor.dfa().actions.end());
-                        cppstm << L"                    token = " << ns << L"::" << to_cpp_enum(a2->second.YieldAction.TokenName) << L';' << std::endl;
+                        cppstm << L"                    token = " << ns << L"::" << to_cpp_symbol(a2->second.YieldAction.TokenName) << L';' << std::endl;
                         if (a2->second.YieldAction.IsGoto) {
                             cppstm << L"                    _states.push_back(" << a2->second.YieldAction.GotoAutomata << L");" << std::endl;
                         } 
@@ -213,7 +213,7 @@ namespace dc
                         cppstm << L"                        // Yield" << std::endl;
                         cppstm << L"                        end_line = _line;" << std::endl;
                         cppstm << L"                        end_column = _column;" << std::endl;
-                        cppstm << L"                        token = " << ns << L"::" << to_cpp_enum(action->second.YieldAction.TokenName) << L';' << std::endl;
+                        cppstm << L"                        token = " << ns << L"::" << to_cpp_symbol(action->second.YieldAction.TokenName) << L';' << std::endl;
                         if (action->second.YieldAction.IsGoto) {
                             cppstm << L"                        _states.push_back(" << action->second.YieldAction.GotoAutomata << L");" << std::endl;
                         } 
@@ -228,7 +228,7 @@ namespace dc
                     cppstm << L"                    // Yield" << std::endl;
                     cppstm << L"                    end_line = _line;" << std::endl;
                     cppstm << L"                    end_column = _column;" << std::endl;
-                    cppstm << L"                    token = " << ns << L"::" << to_cpp_enum(action->second.YieldAction.TokenName) << L';' << std::endl;
+                    cppstm << L"                    token = " << ns << L"::" << to_cpp_symbol(action->second.YieldAction.TokenName) << L';' << std::endl;
                     if (action->second.YieldAction.IsGoto) {
                         cppstm << L"                    _states.push_back(" << action->second.YieldAction.GotoAutomata << L");" << std::endl;
                     } 

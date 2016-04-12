@@ -65,14 +65,18 @@
       <CommandLineArguments>
          <CommandLineArgument
             argument = "/output:cpp_lexer"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "/output:nfa_gv"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "/output:dfa_gv"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "/output:cpp_model"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
@@ -84,8 +88,12 @@
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "/Users/davidlindeque/scratch/test.ds"
+            argument = "/Users/davidlindeque/davesuite/dc/dc/model.ds"
             isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "/Users/davidlindeque/scratch/test.ds"
+            isEnabled = "NO">
          </CommandLineArgument>
       </CommandLineArguments>
       <AdditionalOptions>

@@ -1,73 +1,8 @@
 
-// This is a test
-
-//import "dl.ds";
+import "model.ds";
 
 namespace dc
 {
-    /// Represents the types of tokens in a ds file
-    enum TokenType
-    {
-        /// Import another file
-        Import,
-        Set,
-        Start,
-        Namespace,
-        Enum,
-        Pattern,
-        Automata,
-        Include,
-        Goto,
-        Return,
-        Equals,
-        String,
-        Identifier,
-        Number,
-        Dot,
-        Semicolon,
-        Comma,
-        Hat,
-        Hyphen,
-        OpenBrace,
-        CloseBrace,
-        OpenParenthesis,
-        CloseParenthesis,
-        OpenSquare,
-        CloseSquare,
-        OpenTriangle,
-        CloseTriangle,
-        ProducedBy,
-        Comment,
-        Whitespace,
-        ReStart,
-        ReEnd,
-        Char,
-        CharClass,
-        Asterisk,
-        Plus,
-        Question,
-        Pipe,
-        /// Indicates an error in lexical analysis
-        Error,
-        EOD,
-        Documentation,
-        Production,
-        Type,
-        Abstract,
-        Sealed,
-        Colon,
-        Word,
-        DWord,
-        Int8,
-        Int16,
-        Int32,
-        Int64,
-        StringKeyword,
-        WString,
-        FloatKeyword,
-        DFloat
-    };
-
     pattern identifier  = '[a-zA-Z_][a-zA-Z_0-9]*';
     pattern stringre    = '"(([^"\\]|\e)|(\\(.|\e)))*"';
     pattern hex         = '[a-fA-F0-9]';
@@ -146,6 +81,7 @@ namespace dc
         'pattern'                       -> keyword TokenType.Pattern;
         'automata'                      -> keyword TokenType.Automata;
         'include'                       -> keyword TokenType.Include;
+        'alias'                         -> keyword TokenType.Alias;
         'goto'                          -> keyword TokenType.Goto;
         'return'                        -> keyword TokenType.Return;
         'enum'                          -> keyword TokenType.Enum;

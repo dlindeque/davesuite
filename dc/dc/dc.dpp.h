@@ -10,7 +10,6 @@
 
 #include <vector>
 #include <algorithm>
-#include "dc.dl.h"
 #include "logger.h"
 #include "container.h"
 #include "log.h"
@@ -62,6 +61,57 @@ namespace dc {
         sr.push_back(spantext(span(), L"System"));
         sr.push_back(spantext(span(), std::move(name)));
         return std::move(sr);
+    }
+    
+    inline auto get_str(const std::wstring &str) -> std::wstring {
+        // str = "\"blablabla\r\n\"" (size = 13)
+        //        0 1234567890 1 2 /0
+        const wchar_t *s = str.c_str() + 1;
+        const wchar_t *e = str.c_str() + str.size() - 1;
+        std::wstring res;
+        int state = 0;
+        while(s != e) {
+            switch(state) {
+            case 0:
+                switch(*s) {
+                case L'\\':
+                    state = 1;
+                    break;
+                default:
+                    res += *s;
+                    break;
+                }
+                break;
+            case 1:
+                switch(*s) {
+                case L'n':
+                    res += L'\n';
+                    break;
+                case L'r':
+                    res += L'\r';
+                    break;
+                case L'v':
+                    res += L'\v';
+                    break;
+                case L'f':
+                    res += L'\f';
+                    break;
+                case L't':
+                    res += L'\t';
+                    break;
+                default:
+                    res += *s;
+                    break;
+                }
+                state = 0;
+                break;
+            default:
+                assert(false);
+                break;
+            }
+            s++;
+        }
+        return res;
     }
     
     auto parse(std::wistream &stm, const std::shared_ptr<container> &cntr, logger *logger, DocumentAstMutatingVisitor *processor, bool &ok) ->  bool;

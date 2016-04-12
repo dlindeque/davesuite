@@ -6,3 +6,4109 @@
 #include <assert.h>
 
 namespace davelexer {
+    auto lexer::try_read_next_token(long &start_line, long &start_column, long &end_line, long &end_column, std::wstring &value, davelexer::TokenType &token) -> bool
+    {
+        start_line = _line;
+        start_column = _column;
+        size_t s = _states.back();
+        value.clear();
+        while(true) {
+            if (_ch == std::char_traits<wchar_t>::eof()) {
+                end_line = _line;
+                end_column = _column;
+                return false;
+            }
+            switch(s) {
+            case 0:
+                switch(_ch) {
+                case 2147483647: // <eod>
+                    token = davelexer::TokenType::EOD;
+                    value += _ch;
+                    _column++;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                case 124: // |
+                    token = davelexer::TokenType::Error;
+                    value += _ch;
+                    _column++;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                case 96: // `
+                    token = davelexer::TokenType::Error;
+                    value += _ch;
+                    _column++;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                case 33: // !
+                    token = davelexer::TokenType::Error;
+                    value += _ch;
+                    _column++;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                case 101: // e
+                    s = 303;
+                    _column++;
+                    break;
+                case 95: // _
+                    s = 304;
+                    _column++;
+                    break;
+                case 113: // q
+                    s = 304;
+                    _column++;
+                    break;
+                case 111: // o
+                    s = 304;
+                    _column++;
+                    break;
+                case 59: // ;
+                    token = davelexer::TokenType::Semicolon;
+                    value += _ch;
+                    _column++;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                case 102: // f
+                    s = 304;
+                    _column++;
+                    break;
+                case 34: // "
+                    s = 306;
+                    _column++;
+                    break;
+                case 94: // ^
+                    token = davelexer::TokenType::Error;
+                    value += _ch;
+                    _column++;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                case 47: // /
+                    s = 307;
+                    _column++;
+                    break;
+                case 39: // '
+                    token = davelexer::TokenType::ReStart;
+                    _states.push_back(79);
+                    value += _ch;
+                    _column++;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                case 46: // .
+                    token = davelexer::TokenType::Dot;
+                    value += _ch;
+                    _column++;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                case 93: // ]
+                    token = davelexer::TokenType::CloseSquare;
+                    value += _ch;
+                    _column++;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                case 91: // [
+                    token = davelexer::TokenType::OpenSquare;
+                    value += _ch;
+                    _column++;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                case 44: // ,
+                    token = davelexer::TokenType::Comma;
+                    value += _ch;
+                    _column++;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                case 123: // {
+                    token = davelexer::TokenType::OpenBrace;
+                    value += _ch;
+                    _column++;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                case 61: // =
+                    token = davelexer::TokenType::Equals;
+                    value += _ch;
+                    _column++;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                case 92: // {backslash}
+                    token = davelexer::TokenType::Error;
+                    value += _ch;
+                    _column++;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                case 45: // -
+                    s = 315;
+                    _column++;
+                    break;
+                case 114: // r
+                    s = 316;
+                    _column++;
+                    break;
+                case 115: // s
+                    s = 317;
+                    _column++;
+                    break;
+                case 12: // {backslash}f
+                    s = 318;
+                    _column++;
+                    break;
+                case 60: // <
+                    token = davelexer::TokenType::Error;
+                    value += _ch;
+                    _column++;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                case 110: // n
+                    s = 319;
+                    _column++;
+                    break;
+                case 13: // {backslash}r
+                    s = 318;
+                    _column = 1;
+                    break;
+                case 11: // {backslash}v
+                    s = 318;
+                    _column++;
+                    break;
+                case 105: // i
+                    s = 320;
+                    _column++;
+                    break;
+                case 9: // {backslash}t
+                    s = 318;
+                    _column++;
+                    break;
+                case 103: // g
+                    s = 321;
+                    _column++;
+                    break;
+                case 112: // p
+                    s = 322;
+                    _column++;
+                    break;
+                case 32: //  
+                    s = 318;
+                    _column++;
+                    break;
+                case 125: // }
+                    token = davelexer::TokenType::CloseBrace;
+                    value += _ch;
+                    _column++;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                case 104: // h
+                    s = 304;
+                    _column++;
+                    break;
+                case 10: // {backslash}n
+                    s = 318;
+                    _line++;
+                    _column = 1;
+                    break;
+                case 97: // a
+                    s = 324;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 58) { // 0 - :
+                        token = davelexer::TokenType::Error;
+                        value += _ch;
+                        _column++;
+                        end_line = _line;
+                        end_column = _column;
+                        _ch = _stm.get();
+                        return true;
+                    } else if (_ch >= 0 && _ch <= 8) { // <start> - {backslash}b
+                        token = davelexer::TokenType::Error;
+                        value += _ch;
+                        _column++;
+                        end_line = _line;
+                        end_column = _column;
+                        _ch = _stm.get();
+                        return true;
+                    } else if (_ch >= 126 && _ch <= 2147483646) { // ~ - <end>
+                        token = davelexer::TokenType::Error;
+                        value += _ch;
+                        _column++;
+                        end_line = _line;
+                        end_column = _column;
+                        _ch = _stm.get();
+                        return true;
+                    } else if (_ch >= 116 && _ch <= 122) { // t - z
+                        s = 304;
+                        _column++;
+                    } else if (_ch >= 106 && _ch <= 109) { // j - m
+                        s = 304;
+                        _column++;
+                    } else if (_ch >= 98 && _ch <= 100) { // b - d
+                        s = 304;
+                        _column++;
+                    } else if (_ch >= 14 && _ch <= 31) { // {backslash}x14 - {backslash}x31
+                        token = davelexer::TokenType::Error;
+                        value += _ch;
+                        _column++;
+                        end_line = _line;
+                        end_column = _column;
+                        _ch = _stm.get();
+                        return true;
+                    } else if (_ch >= 35 && _ch <= 38) { // # - &
+                        token = davelexer::TokenType::Error;
+                        value += _ch;
+                        _column++;
+                        end_line = _line;
+                        end_column = _column;
+                        _ch = _stm.get();
+                        return true;
+                    } else if (_ch >= 62 && _ch <= 64) { // > - @
+                        token = davelexer::TokenType::Error;
+                        value += _ch;
+                        _column++;
+                        end_line = _line;
+                        end_column = _column;
+                        _ch = _stm.get();
+                        return true;
+                    } else if (_ch >= 40 && _ch <= 43) { // ( - +
+                        token = davelexer::TokenType::Error;
+                        value += _ch;
+                        _column++;
+                        end_line = _line;
+                        end_column = _column;
+                        _ch = _stm.get();
+                        return true;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 304;
+                        _column++;
+                    }
+                }
+                break;
+            case 1:
+                switch(_ch) {
+                case 10: // {backslash}n
+                    s = 15;
+                    _line++;
+                    _column = 1;
+                    break;
+                case 2147483647: // <eod>
+                    token = davelexer::TokenType::Error;
+                    value += _ch;
+                    _column++;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                case 42: // *
+                    s = 407;
+                    _column++;
+                    break;
+                case 13: // {backslash}r
+                    s = 15;
+                    _column = 1;
+                    break;
+                default:
+                    if (_ch >= 43 && _ch <= 2147483646) { // + - <end>
+                        s = 15;
+                        _column++;
+                    } else if (_ch >= 0 && _ch <= 9) { // <start> - {backslash}t
+                        s = 15;
+                        _column++;
+                    } else if (_ch >= 11 && _ch <= 12) { // {backslash}v - {backslash}f
+                        s = 15;
+                        _column++;
+                    } else if (_ch >= 14 && _ch <= 41) { // {backslash}x14 - )
+                        s = 15;
+                        _column++;
+                    }
+                }
+                break;
+            case 15:
+                switch(_ch) {
+                case 10: // {backslash}n
+                    s = 15;
+                    _line++;
+                    _column = 1;
+                    break;
+                case 13: // {backslash}r
+                    s = 15;
+                    _column = 1;
+                    break;
+                default:
+                    if (_ch >= 43 && _ch <= 2147483646) { // + - <end>
+                        s = 15;
+                        _column++;
+                    } else if (_ch >= 0 && _ch <= 9) { // <start> - {backslash}t
+                        s = 15;
+                        _column++;
+                    } else if (_ch >= 11 && _ch <= 12) { // {backslash}v - {backslash}f
+                        s = 15;
+                        _column++;
+                    } else if (_ch >= 14 && _ch <= 41) { // {backslash}x14 - )
+                        s = 15;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = davelexer::TokenType::Comment;
+                        return true;
+                    }
+                }
+                break;
+            case 19:
+                switch(_ch) {
+                case 96: // `
+                    token = davelexer::TokenType::Error;
+                    value += _ch;
+                    _column++;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                case 47: // /
+                    token = davelexer::TokenType::Error;
+                    value += _ch;
+                    _column++;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                case 45: // -
+                    token = davelexer::TokenType::Error;
+                    value += _ch;
+                    _column++;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                case 2147483647: // <eod>
+                    token = davelexer::TokenType::Error;
+                    value += _ch;
+                    _column++;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                case 44: // ,
+                    token = davelexer::TokenType::Comma;
+                    value += _ch;
+                    _column++;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                case 46: // .
+                    token = davelexer::TokenType::Dot;
+                    value += _ch;
+                    _column++;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                case 125: // }
+                    token = davelexer::TokenType::CloseBrace;
+                    _states.pop_back();
+                    value += _ch;
+                    _column++;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                case 10: // {backslash}n
+                    token = davelexer::TokenType::Error;
+                    value += _ch;
+                    _line++;
+                    _column = 1;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                case 95: // _
+                    s = 398;
+                    _column++;
+                    break;
+                case 48: // 0
+                    token = davelexer::TokenType::Number;
+                    value += _ch;
+                    _column++;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                case 13: // {backslash}r
+                    token = davelexer::TokenType::Error;
+                    value += _ch;
+                    _column = 1;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                default:
+                    if (_ch >= 126 && _ch <= 2147483646) { // ~ - <end>
+                        token = davelexer::TokenType::Error;
+                        value += _ch;
+                        _column++;
+                        end_line = _line;
+                        end_column = _column;
+                        _ch = _stm.get();
+                        return true;
+                    } else if (_ch >= 91 && _ch <= 94) { // [ - ^
+                        token = davelexer::TokenType::Error;
+                        value += _ch;
+                        _column++;
+                        end_line = _line;
+                        end_column = _column;
+                        _ch = _stm.get();
+                        return true;
+                    } else if (_ch >= 58 && _ch <= 64) { // : - @
+                        token = davelexer::TokenType::Error;
+                        value += _ch;
+                        _column++;
+                        end_line = _line;
+                        end_column = _column;
+                        _ch = _stm.get();
+                        return true;
+                    } else if (_ch >= 49 && _ch <= 57) { // 1 - 9
+                        s = 394;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 122) { // a - z
+                        s = 398;
+                        _column++;
+                    } else if (_ch >= 123 && _ch <= 124) { // { - |
+                        token = davelexer::TokenType::Error;
+                        value += _ch;
+                        _column++;
+                        end_line = _line;
+                        end_column = _column;
+                        _ch = _stm.get();
+                        return true;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 398;
+                        _column++;
+                    } else if (_ch >= 0 && _ch <= 9) { // <start> - {backslash}t
+                        token = davelexer::TokenType::Error;
+                        value += _ch;
+                        _column++;
+                        end_line = _line;
+                        end_column = _column;
+                        _ch = _stm.get();
+                        return true;
+                    } else if (_ch >= 11 && _ch <= 12) { // {backslash}v - {backslash}f
+                        token = davelexer::TokenType::Error;
+                        value += _ch;
+                        _column++;
+                        end_line = _line;
+                        end_column = _column;
+                        _ch = _stm.get();
+                        return true;
+                    } else if (_ch >= 14 && _ch <= 43) { // {backslash}x14 - +
+                        token = davelexer::TokenType::Error;
+                        value += _ch;
+                        _column++;
+                        end_line = _line;
+                        end_column = _column;
+                        _ch = _stm.get();
+                        return true;
+                    }
+                }
+                break;
+            case 24:
+                switch(_ch) {
+                case 95: // _
+                    s = 24;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 24;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 24;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 122) { // a - z
+                        s = 24;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = davelexer::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 34:
+                switch(_ch) {
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 34;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = davelexer::TokenType::Number;
+                        return true;
+                    }
+                }
+                break;
+            case 42:
+                switch(_ch) {
+                case 10: // {backslash}n
+                    token = davelexer::TokenType::Char;
+                    value += _ch;
+                    _line++;
+                    _column = 1;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                case 46: // .
+                    token = davelexer::TokenType::CharClass;
+                    value += _ch;
+                    _column++;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                case 92: // {backslash}
+                    s = 385;
+                    _column++;
+                    break;
+                case 2147483647: // <eod>
+                    token = davelexer::TokenType::Error;
+                    value += _ch;
+                    _column++;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                case 45: // -
+                    token = davelexer::TokenType::Hyphen;
+                    value += _ch;
+                    _column++;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                case 94: // ^
+                    token = davelexer::TokenType::Hat;
+                    value += _ch;
+                    _column++;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                case 93: // ]
+                    token = davelexer::TokenType::CloseSquare;
+                    _states.pop_back();
+                    value += _ch;
+                    _column++;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                case 13: // {backslash}r
+                    token = davelexer::TokenType::Char;
+                    value += _ch;
+                    _column = 1;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                default:
+                    if (_ch >= 95 && _ch <= 2147483646) { // _ - <end>
+                        token = davelexer::TokenType::Char;
+                        value += _ch;
+                        _column++;
+                        end_line = _line;
+                        end_column = _column;
+                        _ch = _stm.get();
+                        return true;
+                    } else if (_ch >= 47 && _ch <= 91) { // / - [
+                        token = davelexer::TokenType::Char;
+                        value += _ch;
+                        _column++;
+                        end_line = _line;
+                        end_column = _column;
+                        _ch = _stm.get();
+                        return true;
+                    } else if (_ch >= 0 && _ch <= 9) { // <start> - {backslash}t
+                        token = davelexer::TokenType::Char;
+                        value += _ch;
+                        _column++;
+                        end_line = _line;
+                        end_column = _column;
+                        _ch = _stm.get();
+                        return true;
+                    } else if (_ch >= 11 && _ch <= 12) { // {backslash}v - {backslash}f
+                        token = davelexer::TokenType::Char;
+                        value += _ch;
+                        _column++;
+                        end_line = _line;
+                        end_column = _column;
+                        _ch = _stm.get();
+                        return true;
+                    } else if (_ch >= 14 && _ch <= 44) { // {backslash}x14 - ,
+                        token = davelexer::TokenType::Char;
+                        value += _ch;
+                        _column++;
+                        end_line = _line;
+                        end_column = _column;
+                        _ch = _stm.get();
+                        return true;
+                    }
+                }
+                break;
+            case 79:
+                switch(_ch) {
+                case 2147483647: // <eod>
+                    token = davelexer::TokenType::Error;
+                    value += _ch;
+                    _column++;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                case 46: // .
+                    token = davelexer::TokenType::CharClass;
+                    value += _ch;
+                    _column++;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                case 92: // {backslash}
+                    s = 373;
+                    _column++;
+                    break;
+                case 43: // +
+                    token = davelexer::TokenType::Plus;
+                    value += _ch;
+                    _column++;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                case 10: // {backslash}n
+                    token = davelexer::TokenType::Char;
+                    value += _ch;
+                    _line++;
+                    _column = 1;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                case 42: // *
+                    token = davelexer::TokenType::Asterisk;
+                    value += _ch;
+                    _column++;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                case 123: // {
+                    token = davelexer::TokenType::OpenBrace;
+                    _states.push_back(19);
+                    value += _ch;
+                    _column++;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                case 124: // |
+                    token = davelexer::TokenType::Pipe;
+                    value += _ch;
+                    _column++;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                case 91: // [
+                    token = davelexer::TokenType::OpenSquare;
+                    _states.push_back(42);
+                    value += _ch;
+                    _column++;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                case 40: // (
+                    token = davelexer::TokenType::OpenParenthesis;
+                    value += _ch;
+                    _column++;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                case 63: // ?
+                    token = davelexer::TokenType::Question;
+                    value += _ch;
+                    _column++;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                case 41: // )
+                    token = davelexer::TokenType::CloseParenthesis;
+                    value += _ch;
+                    _column++;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                case 39: // '
+                    token = davelexer::TokenType::ReEnd;
+                    _states.pop_back();
+                    value += _ch;
+                    _column++;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                case 13: // {backslash}r
+                    token = davelexer::TokenType::Char;
+                    value += _ch;
+                    _column = 1;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                default:
+                    if (_ch >= 125 && _ch <= 2147483646) { // } - <end>
+                        token = davelexer::TokenType::Char;
+                        value += _ch;
+                        _column++;
+                        end_line = _line;
+                        end_column = _column;
+                        _ch = _stm.get();
+                        return true;
+                    } else if (_ch >= 93 && _ch <= 122) { // ] - z
+                        token = davelexer::TokenType::Char;
+                        value += _ch;
+                        _column++;
+                        end_line = _line;
+                        end_column = _column;
+                        _ch = _stm.get();
+                        return true;
+                    } else if (_ch >= 44 && _ch <= 45) { // , - -
+                        token = davelexer::TokenType::Char;
+                        value += _ch;
+                        _column++;
+                        end_line = _line;
+                        end_column = _column;
+                        _ch = _stm.get();
+                        return true;
+                    } else if (_ch >= 47 && _ch <= 62) { // / - >
+                        token = davelexer::TokenType::Char;
+                        value += _ch;
+                        _column++;
+                        end_line = _line;
+                        end_column = _column;
+                        _ch = _stm.get();
+                        return true;
+                    } else if (_ch >= 64 && _ch <= 90) { // @ - Z
+                        token = davelexer::TokenType::Char;
+                        value += _ch;
+                        _column++;
+                        end_line = _line;
+                        end_column = _column;
+                        _ch = _stm.get();
+                        return true;
+                    } else if (_ch >= 0 && _ch <= 9) { // <start> - {backslash}t
+                        token = davelexer::TokenType::Char;
+                        value += _ch;
+                        _column++;
+                        end_line = _line;
+                        end_column = _column;
+                        _ch = _stm.get();
+                        return true;
+                    } else if (_ch >= 11 && _ch <= 12) { // {backslash}v - {backslash}f
+                        token = davelexer::TokenType::Char;
+                        value += _ch;
+                        _column++;
+                        end_line = _line;
+                        end_column = _column;
+                        _ch = _stm.get();
+                        return true;
+                    } else if (_ch >= 14 && _ch <= 38) { // {backslash}x14 - &
+                        token = davelexer::TokenType::Char;
+                        value += _ch;
+                        _column++;
+                        end_line = _line;
+                        end_column = _column;
+                        _ch = _stm.get();
+                        return true;
+                    }
+                }
+                break;
+            case 130:
+                switch(_ch) {
+                case 12: // {backslash}f
+                    s = 130;
+                    _column++;
+                    break;
+                case 11: // {backslash}v
+                    s = 130;
+                    _column++;
+                    break;
+                case 13: // {backslash}r
+                    s = 130;
+                    _column = 1;
+                    break;
+                case 32: //  
+                    s = 130;
+                    _column++;
+                    break;
+                case 10: // {backslash}n
+                    s = 130;
+                    _line++;
+                    _column = 1;
+                    break;
+                case 9: // {backslash}t
+                    s = 130;
+                    _column++;
+                    break;
+                default:
+                    // Yield
+                    end_line = _line;
+                    end_column = _column;
+                    token = davelexer::TokenType::Whitespace;
+                    return true;
+                }
+                break;
+            case 235:
+                switch(_ch) {
+                case 10: // {backslash}n
+                    token = davelexer::TokenType::Comment;
+                    value += _ch;
+                    _line++;
+                    _column = 1;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                case 13: // {backslash}r
+                    s = 238;
+                    _column = 1;
+                    break;
+                case 2147483647: // <eod>
+                    token = davelexer::TokenType::Comment;
+                    value += _ch;
+                    _column++;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                default:
+                    if (_ch >= 0 && _ch <= 9) { // <start> - {backslash}t
+                        s = 238;
+                        _column++;
+                    } else if (_ch >= 11 && _ch <= 12) { // {backslash}v - {backslash}f
+                        s = 238;
+                        _column++;
+                    } else if (_ch >= 14 && _ch <= 2147483646) { // {backslash}x14 - <end>
+                        s = 238;
+                        _column++;
+                    }
+                }
+                break;
+            case 238:
+                switch(_ch) {
+                case 10: // {backslash}n
+                    token = davelexer::TokenType::Comment;
+                    value += _ch;
+                    _line++;
+                    _column = 1;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                case 13: // {backslash}r
+                    s = 238;
+                    _column = 1;
+                    break;
+                case 2147483647: // <eod>
+                    token = davelexer::TokenType::Comment;
+                    value += _ch;
+                    _column++;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                default:
+                    if (_ch >= 0 && _ch <= 9) { // <start> - {backslash}t
+                        s = 238;
+                        _column++;
+                    } else if (_ch >= 11 && _ch <= 12) { // {backslash}v - {backslash}f
+                        s = 238;
+                        _column++;
+                    } else if (_ch >= 14 && _ch <= 2147483646) { // {backslash}x14 - <end>
+                        s = 238;
+                        _column++;
+                    }
+                }
+                break;
+            case 246:
+                switch(_ch) {
+                case 10: // {backslash}n
+                    token = davelexer::TokenType::Comment;
+                    value += _ch;
+                    _line++;
+                    _column = 1;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                case 13: // {backslash}r
+                    s = 250;
+                    _column = 1;
+                    break;
+                case 2147483647: // <eod>
+                    token = davelexer::TokenType::Comment;
+                    value += _ch;
+                    _column++;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                default:
+                    if (_ch >= 0 && _ch <= 9) { // <start> - {backslash}t
+                        s = 250;
+                        _column++;
+                    } else if (_ch >= 11 && _ch <= 12) { // {backslash}v - {backslash}f
+                        s = 250;
+                        _column++;
+                    } else if (_ch >= 14 && _ch <= 2147483646) { // {backslash}x14 - <end>
+                        s = 250;
+                        _column++;
+                    }
+                }
+                break;
+            case 250:
+                switch(_ch) {
+                case 10: // {backslash}n
+                    token = davelexer::TokenType::Comment;
+                    value += _ch;
+                    _line++;
+                    _column = 1;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                case 13: // {backslash}r
+                    s = 250;
+                    _column = 1;
+                    break;
+                case 2147483647: // <eod>
+                    token = davelexer::TokenType::Comment;
+                    value += _ch;
+                    _column++;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                default:
+                    if (_ch >= 0 && _ch <= 9) { // <start> - {backslash}t
+                        s = 250;
+                        _column++;
+                    } else if (_ch >= 11 && _ch <= 12) { // {backslash}v - {backslash}f
+                        s = 250;
+                        _column++;
+                    } else if (_ch >= 14 && _ch <= 2147483646) { // {backslash}x14 - <end>
+                        s = 250;
+                        _column++;
+                    }
+                }
+                break;
+            case 267:
+                switch(_ch) {
+                case 10: // {backslash}n
+                    token = davelexer::TokenType::Documentation;
+                    value += _ch;
+                    _line++;
+                    _column = 1;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                case 13: // {backslash}r
+                    s = 271;
+                    _column = 1;
+                    break;
+                case 2147483647: // <eod>
+                    token = davelexer::TokenType::Documentation;
+                    value += _ch;
+                    _column++;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                default:
+                    if (_ch >= 0 && _ch <= 9) { // <start> - {backslash}t
+                        s = 271;
+                        _column++;
+                    } else if (_ch >= 11 && _ch <= 12) { // {backslash}v - {backslash}f
+                        s = 271;
+                        _column++;
+                    } else if (_ch >= 14 && _ch <= 2147483646) { // {backslash}x14 - <end>
+                        s = 271;
+                        _column++;
+                    }
+                }
+                break;
+            case 271:
+                switch(_ch) {
+                case 10: // {backslash}n
+                    token = davelexer::TokenType::Documentation;
+                    value += _ch;
+                    _line++;
+                    _column = 1;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                case 13: // {backslash}r
+                    s = 271;
+                    _column = 1;
+                    break;
+                case 2147483647: // <eod>
+                    token = davelexer::TokenType::Documentation;
+                    value += _ch;
+                    _column++;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                default:
+                    if (_ch >= 0 && _ch <= 9) { // <start> - {backslash}t
+                        s = 271;
+                        _column++;
+                    } else if (_ch >= 11 && _ch <= 12) { // {backslash}v - {backslash}f
+                        s = 271;
+                        _column++;
+                    } else if (_ch >= 14 && _ch <= 2147483646) { // {backslash}x14 - <end>
+                        s = 271;
+                        _column++;
+                    }
+                }
+                break;
+            case 286:
+                switch(_ch) {
+                case 34: // "
+                    token = davelexer::TokenType::String;
+                    value += _ch;
+                    _column++;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                case 2147483647: // <eod>
+                    s = 288;
+                    _column++;
+                    break;
+                case 92: // {backslash}
+                    s = 289;
+                    _column++;
+                    break;
+                case 10: // {backslash}n
+                    s = 286;
+                    _line++;
+                    _column = 1;
+                    break;
+                case 13: // {backslash}r
+                    s = 286;
+                    _column = 1;
+                    break;
+                default:
+                    if (_ch >= 93 && _ch <= 2147483646) { // ] - <end>
+                        s = 286;
+                        _column++;
+                    } else if (_ch >= 35 && _ch <= 91) { // # - [
+                        s = 286;
+                        _column++;
+                    } else if (_ch >= 0 && _ch <= 9) { // <start> - {backslash}t
+                        s = 286;
+                        _column++;
+                    } else if (_ch >= 11 && _ch <= 12) { // {backslash}v - {backslash}f
+                        s = 286;
+                        _column++;
+                    } else if (_ch >= 14 && _ch <= 33) { // {backslash}x14 - !
+                        s = 286;
+                        _column++;
+                    }
+                }
+                break;
+            case 288:
+                switch(_ch) {
+                case 34: // "
+                    token = davelexer::TokenType::String;
+                    value += _ch;
+                    _column++;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                case 2147483647: // <eod>
+                    s = 288;
+                    _column++;
+                    break;
+                case 92: // {backslash}
+                    s = 289;
+                    _column++;
+                    break;
+                case 10: // {backslash}n
+                    s = 286;
+                    _line++;
+                    _column = 1;
+                    break;
+                case 13: // {backslash}r
+                    s = 286;
+                    _column = 1;
+                    break;
+                default:
+                    if (_ch >= 93 && _ch <= 2147483646) { // ] - <end>
+                        s = 286;
+                        _column++;
+                    } else if (_ch >= 35 && _ch <= 91) { // # - [
+                        s = 286;
+                        _column++;
+                    } else if (_ch >= 0 && _ch <= 9) { // <start> - {backslash}t
+                        s = 286;
+                        _column++;
+                    } else if (_ch >= 11 && _ch <= 12) { // {backslash}v - {backslash}f
+                        s = 286;
+                        _column++;
+                    } else if (_ch >= 14 && _ch <= 33) { // {backslash}x14 - !
+                        s = 286;
+                        _column++;
+                    }
+                }
+                break;
+            case 289:
+                switch(_ch) {
+                case 10: // {backslash}n
+                    s = 291;
+                    _line++;
+                    _column = 1;
+                    break;
+                case 2147483647: // <eod>
+                    s = 293;
+                    _column++;
+                    break;
+                case 13: // {backslash}r
+                    s = 291;
+                    _column = 1;
+                    break;
+                default:
+                    if (_ch >= 0 && _ch <= 9) { // <start> - {backslash}t
+                        s = 291;
+                        _column++;
+                    } else if (_ch >= 11 && _ch <= 12) { // {backslash}v - {backslash}f
+                        s = 291;
+                        _column++;
+                    } else if (_ch >= 14 && _ch <= 2147483646) { // {backslash}x14 - <end>
+                        s = 291;
+                        _column++;
+                    }
+                }
+                break;
+            case 291:
+                switch(_ch) {
+                case 34: // "
+                    token = davelexer::TokenType::String;
+                    value += _ch;
+                    _column++;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                case 2147483647: // <eod>
+                    s = 288;
+                    _column++;
+                    break;
+                case 92: // {backslash}
+                    s = 289;
+                    _column++;
+                    break;
+                case 10: // {backslash}n
+                    s = 286;
+                    _line++;
+                    _column = 1;
+                    break;
+                case 13: // {backslash}r
+                    s = 286;
+                    _column = 1;
+                    break;
+                default:
+                    if (_ch >= 93 && _ch <= 2147483646) { // ] - <end>
+                        s = 286;
+                        _column++;
+                    } else if (_ch >= 35 && _ch <= 91) { // # - [
+                        s = 286;
+                        _column++;
+                    } else if (_ch >= 0 && _ch <= 9) { // <start> - {backslash}t
+                        s = 286;
+                        _column++;
+                    } else if (_ch >= 11 && _ch <= 12) { // {backslash}v - {backslash}f
+                        s = 286;
+                        _column++;
+                    } else if (_ch >= 14 && _ch <= 33) { // {backslash}x14 - !
+                        s = 286;
+                        _column++;
+                    }
+                }
+                break;
+            case 293:
+                switch(_ch) {
+                case 34: // "
+                    token = davelexer::TokenType::String;
+                    value += _ch;
+                    _column++;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                case 2147483647: // <eod>
+                    s = 288;
+                    _column++;
+                    break;
+                case 92: // {backslash}
+                    s = 289;
+                    _column++;
+                    break;
+                case 10: // {backslash}n
+                    s = 286;
+                    _line++;
+                    _column = 1;
+                    break;
+                case 13: // {backslash}r
+                    s = 286;
+                    _column = 1;
+                    break;
+                default:
+                    if (_ch >= 93 && _ch <= 2147483646) { // ] - <end>
+                        s = 286;
+                        _column++;
+                    } else if (_ch >= 35 && _ch <= 91) { // # - [
+                        s = 286;
+                        _column++;
+                    } else if (_ch >= 0 && _ch <= 9) { // <start> - {backslash}t
+                        s = 286;
+                        _column++;
+                    } else if (_ch >= 11 && _ch <= 12) { // {backslash}v - {backslash}f
+                        s = 286;
+                        _column++;
+                    } else if (_ch >= 14 && _ch <= 33) { // {backslash}x14 - !
+                        s = 286;
+                        _column++;
+                    }
+                }
+                break;
+            case 297:
+                switch(_ch) {
+                case 95: // _
+                    s = 297;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 122) { // a - z
+                        s = 297;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = davelexer::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 303:
+                switch(_ch) {
+                case 95: // _
+                    s = 297;
+                    _column++;
+                    break;
+                case 110: // n
+                    s = 409;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 111 && _ch <= 122) { // o - z
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 109) { // a - m
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 297;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = davelexer::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 304:
+                switch(_ch) {
+                case 95: // _
+                    s = 297;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 122) { // a - z
+                        s = 297;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = davelexer::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 306:
+                switch(_ch) {
+                case 34: // "
+                    token = davelexer::TokenType::String;
+                    value += _ch;
+                    _column++;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                case 2147483647: // <eod>
+                    s = 288;
+                    _column++;
+                    break;
+                case 92: // {backslash}
+                    s = 289;
+                    _column++;
+                    break;
+                case 10: // {backslash}n
+                    s = 286;
+                    _line++;
+                    _column = 1;
+                    break;
+                case 13: // {backslash}r
+                    s = 286;
+                    _column = 1;
+                    break;
+                default:
+                    if (_ch >= 93 && _ch <= 2147483646) { // ] - <end>
+                        s = 286;
+                        _column++;
+                    } else if (_ch >= 35 && _ch <= 91) { // # - [
+                        s = 286;
+                        _column++;
+                    } else if (_ch >= 0 && _ch <= 9) { // <start> - {backslash}t
+                        s = 286;
+                        _column++;
+                    } else if (_ch >= 11 && _ch <= 12) { // {backslash}v - {backslash}f
+                        s = 286;
+                        _column++;
+                    } else if (_ch >= 14 && _ch <= 33) { // {backslash}x14 - !
+                        s = 286;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = davelexer::TokenType::Error;
+                        return true;
+                    }
+                }
+                break;
+            case 307:
+                switch(_ch) {
+                case 42: // *
+                    token = davelexer::TokenType::Comment;
+                    _states.push_back(1);
+                    value += _ch;
+                    _column++;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                case 47: // /
+                    s = 405;
+                    _column++;
+                    break;
+                default:
+                    // Yield
+                    end_line = _line;
+                    end_column = _column;
+                    token = davelexer::TokenType::Error;
+                    return true;
+                }
+                break;
+            case 315:
+                switch(_ch) {
+                case 62: // >
+                    token = davelexer::TokenType::ProducedBy;
+                    value += _ch;
+                    _column++;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                default:
+                    // Yield
+                    end_line = _line;
+                    end_column = _column;
+                    token = davelexer::TokenType::Error;
+                    return true;
+                }
+                break;
+            case 316:
+                switch(_ch) {
+                case 95: // _
+                    s = 297;
+                    _column++;
+                    break;
+                case 101: // e
+                    s = 366;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 102 && _ch <= 122) { // f - z
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 100) { // a - d
+                        s = 297;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = davelexer::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 317:
+                switch(_ch) {
+                case 95: // _
+                    s = 297;
+                    _column++;
+                    break;
+                case 101: // e
+                    s = 360;
+                    _column++;
+                    break;
+                case 116: // t
+                    s = 361;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 117 && _ch <= 122) { // u - z
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 102 && _ch <= 115) { // f - s
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 100) { // a - d
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 297;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = davelexer::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 318:
+                switch(_ch) {
+                case 12: // {backslash}f
+                    s = 130;
+                    _column++;
+                    break;
+                case 11: // {backslash}v
+                    s = 130;
+                    _column++;
+                    break;
+                case 13: // {backslash}r
+                    s = 130;
+                    _column = 1;
+                    break;
+                case 32: //  
+                    s = 130;
+                    _column++;
+                    break;
+                case 10: // {backslash}n
+                    s = 130;
+                    _line++;
+                    _column = 1;
+                    break;
+                case 9: // {backslash}t
+                    s = 130;
+                    _column++;
+                    break;
+                default:
+                    // Yield
+                    end_line = _line;
+                    end_column = _column;
+                    token = davelexer::TokenType::Whitespace;
+                    return true;
+                }
+                break;
+            case 319:
+                switch(_ch) {
+                case 95: // _
+                    s = 297;
+                    _column++;
+                    break;
+                case 97: // a
+                    s = 352;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 98 && _ch <= 122) { // b - z
+                        s = 297;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = davelexer::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 320:
+                switch(_ch) {
+                case 95: // _
+                    s = 297;
+                    _column++;
+                    break;
+                case 109: // m
+                    s = 341;
+                    _column++;
+                    break;
+                case 110: // n
+                    s = 342;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 111 && _ch <= 122) { // o - z
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 108) { // a - l
+                        s = 297;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = davelexer::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 321:
+                switch(_ch) {
+                case 95: // _
+                    s = 297;
+                    _column++;
+                    break;
+                case 111: // o
+                    s = 338;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 112 && _ch <= 122) { // p - z
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 110) { // a - n
+                        s = 297;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = davelexer::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 322:
+                switch(_ch) {
+                case 95: // _
+                    s = 297;
+                    _column++;
+                    break;
+                case 97: // a
+                    s = 332;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 98 && _ch <= 122) { // b - z
+                        s = 297;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = davelexer::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 324:
+                switch(_ch) {
+                case 117: // u
+                    s = 325;
+                    _column++;
+                    break;
+                case 95: // _
+                    s = 297;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 118 && _ch <= 122) { // v - z
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 116) { // a - t
+                        s = 297;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = davelexer::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 325:
+                switch(_ch) {
+                case 95: // _
+                    s = 297;
+                    _column++;
+                    break;
+                case 116: // t
+                    s = 326;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 115) { // a - s
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 117 && _ch <= 122) { // u - z
+                        s = 297;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = davelexer::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 326:
+                switch(_ch) {
+                case 95: // _
+                    s = 297;
+                    _column++;
+                    break;
+                case 111: // o
+                    s = 327;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 112 && _ch <= 122) { // p - z
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 110) { // a - n
+                        s = 297;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = davelexer::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 327:
+                switch(_ch) {
+                case 109: // m
+                    s = 328;
+                    _column++;
+                    break;
+                case 95: // _
+                    s = 297;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 110 && _ch <= 122) { // n - z
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 108) { // a - l
+                        s = 297;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = davelexer::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 328:
+                switch(_ch) {
+                case 95: // _
+                    s = 297;
+                    _column++;
+                    break;
+                case 97: // a
+                    s = 329;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 98 && _ch <= 122) { // b - z
+                        s = 297;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = davelexer::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 329:
+                switch(_ch) {
+                case 95: // _
+                    s = 297;
+                    _column++;
+                    break;
+                case 116: // t
+                    s = 330;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 115) { // a - s
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 117 && _ch <= 122) { // u - z
+                        s = 297;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = davelexer::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 330:
+                switch(_ch) {
+                case 95: // _
+                    s = 297;
+                    _column++;
+                    break;
+                case 97: // a
+                    s = 331;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 98 && _ch <= 122) { // b - z
+                        s = 297;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = davelexer::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 331:
+                switch(_ch) {
+                case 95: // _
+                    s = 297;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 122) { // a - z
+                        s = 297;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = davelexer::TokenType::Automata;
+                        return true;
+                    }
+                }
+                break;
+            case 332:
+                switch(_ch) {
+                case 95: // _
+                    s = 297;
+                    _column++;
+                    break;
+                case 116: // t
+                    s = 333;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 115) { // a - s
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 117 && _ch <= 122) { // u - z
+                        s = 297;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = davelexer::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 333:
+                switch(_ch) {
+                case 95: // _
+                    s = 297;
+                    _column++;
+                    break;
+                case 116: // t
+                    s = 334;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 115) { // a - s
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 117 && _ch <= 122) { // u - z
+                        s = 297;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = davelexer::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 334:
+                switch(_ch) {
+                case 95: // _
+                    s = 297;
+                    _column++;
+                    break;
+                case 101: // e
+                    s = 335;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 102 && _ch <= 122) { // f - z
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 100) { // a - d
+                        s = 297;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = davelexer::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 335:
+                switch(_ch) {
+                case 95: // _
+                    s = 297;
+                    _column++;
+                    break;
+                case 114: // r
+                    s = 336;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 115 && _ch <= 122) { // s - z
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 113) { // a - q
+                        s = 297;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = davelexer::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 336:
+                switch(_ch) {
+                case 95: // _
+                    s = 297;
+                    _column++;
+                    break;
+                case 110: // n
+                    s = 337;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 111 && _ch <= 122) { // o - z
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 109) { // a - m
+                        s = 297;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = davelexer::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 337:
+                switch(_ch) {
+                case 95: // _
+                    s = 297;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 122) { // a - z
+                        s = 297;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = davelexer::TokenType::Pattern;
+                        return true;
+                    }
+                }
+                break;
+            case 338:
+                switch(_ch) {
+                case 95: // _
+                    s = 297;
+                    _column++;
+                    break;
+                case 116: // t
+                    s = 339;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 115) { // a - s
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 117 && _ch <= 122) { // u - z
+                        s = 297;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = davelexer::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 339:
+                switch(_ch) {
+                case 95: // _
+                    s = 297;
+                    _column++;
+                    break;
+                case 111: // o
+                    s = 340;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 112 && _ch <= 122) { // p - z
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 110) { // a - n
+                        s = 297;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = davelexer::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 340:
+                switch(_ch) {
+                case 95: // _
+                    s = 297;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 122) { // a - z
+                        s = 297;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = davelexer::TokenType::Goto;
+                        return true;
+                    }
+                }
+                break;
+            case 341:
+                switch(_ch) {
+                case 95: // _
+                    s = 297;
+                    _column++;
+                    break;
+                case 112: // p
+                    s = 348;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 113 && _ch <= 122) { // q - z
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 111) { // a - o
+                        s = 297;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = davelexer::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 342:
+                switch(_ch) {
+                case 99: // c
+                    s = 343;
+                    _column++;
+                    break;
+                case 95: // _
+                    s = 297;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 100 && _ch <= 122) { // d - z
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 98) { // a - b
+                        s = 297;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = davelexer::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 343:
+                switch(_ch) {
+                case 95: // _
+                    s = 297;
+                    _column++;
+                    break;
+                case 108: // l
+                    s = 344;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 107) { // a - k
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 109 && _ch <= 122) { // m - z
+                        s = 297;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = davelexer::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 344:
+                switch(_ch) {
+                case 117: // u
+                    s = 345;
+                    _column++;
+                    break;
+                case 95: // _
+                    s = 297;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 118 && _ch <= 122) { // v - z
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 116) { // a - t
+                        s = 297;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = davelexer::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 345:
+                switch(_ch) {
+                case 95: // _
+                    s = 297;
+                    _column++;
+                    break;
+                case 100: // d
+                    s = 346;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 101 && _ch <= 122) { // e - z
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 99) { // a - c
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 297;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = davelexer::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 346:
+                switch(_ch) {
+                case 95: // _
+                    s = 297;
+                    _column++;
+                    break;
+                case 101: // e
+                    s = 347;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 102 && _ch <= 122) { // f - z
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 100) { // a - d
+                        s = 297;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = davelexer::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 347:
+                switch(_ch) {
+                case 95: // _
+                    s = 297;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 122) { // a - z
+                        s = 297;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = davelexer::TokenType::Include;
+                        return true;
+                    }
+                }
+                break;
+            case 348:
+                switch(_ch) {
+                case 95: // _
+                    s = 297;
+                    _column++;
+                    break;
+                case 111: // o
+                    s = 349;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 112 && _ch <= 122) { // p - z
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 110) { // a - n
+                        s = 297;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = davelexer::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 349:
+                switch(_ch) {
+                case 114: // r
+                    s = 350;
+                    _column++;
+                    break;
+                case 95: // _
+                    s = 297;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 115 && _ch <= 122) { // s - z
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 113) { // a - q
+                        s = 297;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = davelexer::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 350:
+                switch(_ch) {
+                case 95: // _
+                    s = 297;
+                    _column++;
+                    break;
+                case 116: // t
+                    s = 351;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 115) { // a - s
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 117 && _ch <= 122) { // u - z
+                        s = 297;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = davelexer::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 351:
+                switch(_ch) {
+                case 95: // _
+                    s = 297;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 122) { // a - z
+                        s = 297;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = davelexer::TokenType::Import;
+                        return true;
+                    }
+                }
+                break;
+            case 352:
+                switch(_ch) {
+                case 109: // m
+                    s = 353;
+                    _column++;
+                    break;
+                case 95: // _
+                    s = 297;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 110 && _ch <= 122) { // n - z
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 108) { // a - l
+                        s = 297;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = davelexer::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 353:
+                switch(_ch) {
+                case 95: // _
+                    s = 297;
+                    _column++;
+                    break;
+                case 101: // e
+                    s = 354;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 102 && _ch <= 122) { // f - z
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 100) { // a - d
+                        s = 297;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = davelexer::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 354:
+                switch(_ch) {
+                case 95: // _
+                    s = 297;
+                    _column++;
+                    break;
+                case 115: // s
+                    s = 355;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 116 && _ch <= 122) { // t - z
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 114) { // a - r
+                        s = 297;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = davelexer::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 355:
+                switch(_ch) {
+                case 95: // _
+                    s = 297;
+                    _column++;
+                    break;
+                case 112: // p
+                    s = 356;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 113 && _ch <= 122) { // q - z
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 111) { // a - o
+                        s = 297;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = davelexer::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 356:
+                switch(_ch) {
+                case 95: // _
+                    s = 297;
+                    _column++;
+                    break;
+                case 97: // a
+                    s = 357;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 98 && _ch <= 122) { // b - z
+                        s = 297;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = davelexer::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 357:
+                switch(_ch) {
+                case 95: // _
+                    s = 297;
+                    _column++;
+                    break;
+                case 99: // c
+                    s = 358;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 100 && _ch <= 122) { // d - z
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 98) { // a - b
+                        s = 297;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = davelexer::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 358:
+                switch(_ch) {
+                case 95: // _
+                    s = 297;
+                    _column++;
+                    break;
+                case 101: // e
+                    s = 359;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 102 && _ch <= 122) { // f - z
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 100) { // a - d
+                        s = 297;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = davelexer::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 359:
+                switch(_ch) {
+                case 95: // _
+                    s = 297;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 122) { // a - z
+                        s = 297;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = davelexer::TokenType::Namespace;
+                        return true;
+                    }
+                }
+                break;
+            case 360:
+                switch(_ch) {
+                case 95: // _
+                    s = 297;
+                    _column++;
+                    break;
+                case 116: // t
+                    s = 365;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 115) { // a - s
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 117 && _ch <= 122) { // u - z
+                        s = 297;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = davelexer::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 361:
+                switch(_ch) {
+                case 95: // _
+                    s = 297;
+                    _column++;
+                    break;
+                case 97: // a
+                    s = 362;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 98 && _ch <= 122) { // b - z
+                        s = 297;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = davelexer::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 362:
+                switch(_ch) {
+                case 95: // _
+                    s = 297;
+                    _column++;
+                    break;
+                case 114: // r
+                    s = 363;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 115 && _ch <= 122) { // s - z
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 113) { // a - q
+                        s = 297;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = davelexer::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 363:
+                switch(_ch) {
+                case 95: // _
+                    s = 297;
+                    _column++;
+                    break;
+                case 116: // t
+                    s = 364;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 115) { // a - s
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 117 && _ch <= 122) { // u - z
+                        s = 297;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = davelexer::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 364:
+                switch(_ch) {
+                case 95: // _
+                    s = 297;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 122) { // a - z
+                        s = 297;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = davelexer::TokenType::Start;
+                        return true;
+                    }
+                }
+                break;
+            case 365:
+                switch(_ch) {
+                case 95: // _
+                    s = 297;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 122) { // a - z
+                        s = 297;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = davelexer::TokenType::Set;
+                        return true;
+                    }
+                }
+                break;
+            case 366:
+                switch(_ch) {
+                case 95: // _
+                    s = 297;
+                    _column++;
+                    break;
+                case 116: // t
+                    s = 367;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 115) { // a - s
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 117 && _ch <= 122) { // u - z
+                        s = 297;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = davelexer::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 367:
+                switch(_ch) {
+                case 117: // u
+                    s = 368;
+                    _column++;
+                    break;
+                case 95: // _
+                    s = 297;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 118 && _ch <= 122) { // v - z
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 116) { // a - t
+                        s = 297;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = davelexer::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 368:
+                switch(_ch) {
+                case 114: // r
+                    s = 369;
+                    _column++;
+                    break;
+                case 95: // _
+                    s = 297;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 115 && _ch <= 122) { // s - z
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 113) { // a - q
+                        s = 297;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = davelexer::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 369:
+                switch(_ch) {
+                case 95: // _
+                    s = 297;
+                    _column++;
+                    break;
+                case 110: // n
+                    s = 370;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 111 && _ch <= 122) { // o - z
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 109) { // a - m
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 297;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = davelexer::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 370:
+                switch(_ch) {
+                case 95: // _
+                    s = 297;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 122) { // a - z
+                        s = 297;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = davelexer::TokenType::Return;
+                        return true;
+                    }
+                }
+                break;
+            case 373:
+                switch(_ch) {
+                case 10: // {backslash}n
+                    token = davelexer::TokenType::Char;
+                    value += _ch;
+                    _line++;
+                    _column = 1;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                case 101: // e
+                    token = davelexer::TokenType::CharClass;
+                    value += _ch;
+                    _column++;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                case 120: // x
+                    s = 401;
+                    _column++;
+                    break;
+                case 97: // a
+                    token = davelexer::TokenType::CharClass;
+                    value += _ch;
+                    _column++;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                case 100: // d
+                    token = davelexer::TokenType::CharClass;
+                    value += _ch;
+                    _column++;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                case 65: // A
+                    token = davelexer::TokenType::CharClass;
+                    value += _ch;
+                    _column++;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                case 115: // s
+                    token = davelexer::TokenType::CharClass;
+                    value += _ch;
+                    _column++;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                case 13: // {backslash}r
+                    token = davelexer::TokenType::Char;
+                    value += _ch;
+                    _column = 1;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                default:
+                    if (_ch >= 66 && _ch <= 96) { // B - `
+                        token = davelexer::TokenType::Char;
+                        value += _ch;
+                        _column++;
+                        end_line = _line;
+                        end_column = _column;
+                        _ch = _stm.get();
+                        return true;
+                    } else if (_ch >= 116 && _ch <= 119) { // t - w
+                        token = davelexer::TokenType::Char;
+                        value += _ch;
+                        _column++;
+                        end_line = _line;
+                        end_column = _column;
+                        _ch = _stm.get();
+                        return true;
+                    } else if (_ch >= 102 && _ch <= 114) { // f - r
+                        token = davelexer::TokenType::Char;
+                        value += _ch;
+                        _column++;
+                        end_line = _line;
+                        end_column = _column;
+                        _ch = _stm.get();
+                        return true;
+                    } else if (_ch >= 121 && _ch <= 2147483646) { // y - <end>
+                        token = davelexer::TokenType::Char;
+                        value += _ch;
+                        _column++;
+                        end_line = _line;
+                        end_column = _column;
+                        _ch = _stm.get();
+                        return true;
+                    } else if (_ch >= 98 && _ch <= 99) { // b - c
+                        token = davelexer::TokenType::Char;
+                        value += _ch;
+                        _column++;
+                        end_line = _line;
+                        end_column = _column;
+                        _ch = _stm.get();
+                        return true;
+                    } else if (_ch >= 0 && _ch <= 9) { // <start> - {backslash}t
+                        token = davelexer::TokenType::Char;
+                        value += _ch;
+                        _column++;
+                        end_line = _line;
+                        end_column = _column;
+                        _ch = _stm.get();
+                        return true;
+                    } else if (_ch >= 11 && _ch <= 12) { // {backslash}v - {backslash}f
+                        token = davelexer::TokenType::Char;
+                        value += _ch;
+                        _column++;
+                        end_line = _line;
+                        end_column = _column;
+                        _ch = _stm.get();
+                        return true;
+                    } else if (_ch >= 14 && _ch <= 64) { // {backslash}x14 - @
+                        token = davelexer::TokenType::Char;
+                        value += _ch;
+                        _column++;
+                        end_line = _line;
+                        end_column = _column;
+                        _ch = _stm.get();
+                        return true;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = davelexer::TokenType::Error;
+                        return true;
+                    }
+                }
+                break;
+            case 385:
+                switch(_ch) {
+                case 10: // {backslash}n
+                    token = davelexer::TokenType::Char;
+                    value += _ch;
+                    _line++;
+                    _column = 1;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                case 101: // e
+                    token = davelexer::TokenType::CharClass;
+                    value += _ch;
+                    _column++;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                case 120: // x
+                    s = 390;
+                    _column++;
+                    break;
+                case 97: // a
+                    token = davelexer::TokenType::CharClass;
+                    value += _ch;
+                    _column++;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                case 100: // d
+                    token = davelexer::TokenType::CharClass;
+                    value += _ch;
+                    _column++;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                case 65: // A
+                    token = davelexer::TokenType::CharClass;
+                    value += _ch;
+                    _column++;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                case 115: // s
+                    token = davelexer::TokenType::CharClass;
+                    value += _ch;
+                    _column++;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                case 13: // {backslash}r
+                    token = davelexer::TokenType::Char;
+                    value += _ch;
+                    _column = 1;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                default:
+                    if (_ch >= 66 && _ch <= 96) { // B - `
+                        token = davelexer::TokenType::Char;
+                        value += _ch;
+                        _column++;
+                        end_line = _line;
+                        end_column = _column;
+                        _ch = _stm.get();
+                        return true;
+                    } else if (_ch >= 116 && _ch <= 119) { // t - w
+                        token = davelexer::TokenType::Char;
+                        value += _ch;
+                        _column++;
+                        end_line = _line;
+                        end_column = _column;
+                        _ch = _stm.get();
+                        return true;
+                    } else if (_ch >= 102 && _ch <= 114) { // f - r
+                        token = davelexer::TokenType::Char;
+                        value += _ch;
+                        _column++;
+                        end_line = _line;
+                        end_column = _column;
+                        _ch = _stm.get();
+                        return true;
+                    } else if (_ch >= 121 && _ch <= 2147483646) { // y - <end>
+                        token = davelexer::TokenType::Char;
+                        value += _ch;
+                        _column++;
+                        end_line = _line;
+                        end_column = _column;
+                        _ch = _stm.get();
+                        return true;
+                    } else if (_ch >= 98 && _ch <= 99) { // b - c
+                        token = davelexer::TokenType::Char;
+                        value += _ch;
+                        _column++;
+                        end_line = _line;
+                        end_column = _column;
+                        _ch = _stm.get();
+                        return true;
+                    } else if (_ch >= 0 && _ch <= 9) { // <start> - {backslash}t
+                        token = davelexer::TokenType::Char;
+                        value += _ch;
+                        _column++;
+                        end_line = _line;
+                        end_column = _column;
+                        _ch = _stm.get();
+                        return true;
+                    } else if (_ch >= 11 && _ch <= 12) { // {backslash}v - {backslash}f
+                        token = davelexer::TokenType::Char;
+                        value += _ch;
+                        _column++;
+                        end_line = _line;
+                        end_column = _column;
+                        _ch = _stm.get();
+                        return true;
+                    } else if (_ch >= 14 && _ch <= 64) { // {backslash}x14 - @
+                        token = davelexer::TokenType::Char;
+                        value += _ch;
+                        _column++;
+                        end_line = _line;
+                        end_column = _column;
+                        _ch = _stm.get();
+                        return true;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = davelexer::TokenType::Error;
+                        return true;
+                    }
+                }
+                break;
+            case 390:
+                switch(_ch) {
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 391;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 70) { // A - F
+                        s = 391;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 102) { // a - f
+                        s = 391;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = davelexer::TokenType::Error;
+                        return true;
+                    }
+                }
+                break;
+            case 391:
+                switch(_ch) {
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 392;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 70) { // A - F
+                        s = 392;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 102) { // a - f
+                        s = 392;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = davelexer::TokenType::Error;
+                        return true;
+                    }
+                }
+                break;
+            case 392:
+                switch(_ch) {
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 393;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 70) { // A - F
+                        s = 393;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 102) { // a - f
+                        s = 393;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = davelexer::TokenType::Error;
+                        return true;
+                    }
+                }
+                break;
+            case 393:
+                switch(_ch) {
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        token = davelexer::TokenType::Char;
+                        value += _ch;
+                        _column++;
+                        end_line = _line;
+                        end_column = _column;
+                        _ch = _stm.get();
+                        return true;
+                    } else if (_ch >= 65 && _ch <= 70) { // A - F
+                        token = davelexer::TokenType::Char;
+                        value += _ch;
+                        _column++;
+                        end_line = _line;
+                        end_column = _column;
+                        _ch = _stm.get();
+                        return true;
+                    } else if (_ch >= 97 && _ch <= 102) { // a - f
+                        token = davelexer::TokenType::Char;
+                        value += _ch;
+                        _column++;
+                        end_line = _line;
+                        end_column = _column;
+                        _ch = _stm.get();
+                        return true;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = davelexer::TokenType::Error;
+                        return true;
+                    }
+                }
+                break;
+            case 394:
+                switch(_ch) {
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 34;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = davelexer::TokenType::Number;
+                        return true;
+                    }
+                }
+                break;
+            case 398:
+                switch(_ch) {
+                case 95: // _
+                    s = 24;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 24;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 24;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 122) { // a - z
+                        s = 24;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = davelexer::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 401:
+                switch(_ch) {
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 402;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 70) { // A - F
+                        s = 402;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 102) { // a - f
+                        s = 402;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = davelexer::TokenType::Error;
+                        return true;
+                    }
+                }
+                break;
+            case 402:
+                switch(_ch) {
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 70) { // A - F
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 102) { // a - f
+                        s = 403;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = davelexer::TokenType::Error;
+                        return true;
+                    }
+                }
+                break;
+            case 403:
+                switch(_ch) {
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 404;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 70) { // A - F
+                        s = 404;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 102) { // a - f
+                        s = 404;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = davelexer::TokenType::Error;
+                        return true;
+                    }
+                }
+                break;
+            case 404:
+                switch(_ch) {
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        token = davelexer::TokenType::Char;
+                        value += _ch;
+                        _column++;
+                        end_line = _line;
+                        end_column = _column;
+                        _ch = _stm.get();
+                        return true;
+                    } else if (_ch >= 65 && _ch <= 70) { // A - F
+                        token = davelexer::TokenType::Char;
+                        value += _ch;
+                        _column++;
+                        end_line = _line;
+                        end_column = _column;
+                        _ch = _stm.get();
+                        return true;
+                    } else if (_ch >= 97 && _ch <= 102) { // a - f
+                        token = davelexer::TokenType::Char;
+                        value += _ch;
+                        _column++;
+                        end_line = _line;
+                        end_column = _column;
+                        _ch = _stm.get();
+                        return true;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = davelexer::TokenType::Error;
+                        return true;
+                    }
+                }
+                break;
+            case 405:
+                switch(_ch) {
+                case 13: // {backslash}r
+                    s = 235;
+                    _column = 1;
+                    break;
+                case 2147483647: // <eod>
+                    token = davelexer::TokenType::Comment;
+                    value += _ch;
+                    _column++;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                case 10: // {backslash}n
+                    token = davelexer::TokenType::Comment;
+                    value += _ch;
+                    _line++;
+                    _column = 1;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                case 47: // /
+                    s = 406;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 2147483646) { // 0 - <end>
+                        s = 235;
+                        _column++;
+                    } else if (_ch >= 0 && _ch <= 9) { // <start> - {backslash}t
+                        s = 235;
+                        _column++;
+                    } else if (_ch >= 11 && _ch <= 12) { // {backslash}v - {backslash}f
+                        s = 235;
+                        _column++;
+                    } else if (_ch >= 14 && _ch <= 46) { // {backslash}x14 - .
+                        s = 235;
+                        _column++;
+                    }
+                }
+                break;
+            case 406:
+                switch(_ch) {
+                case 13: // {backslash}r
+                    s = 267;
+                    _column = 1;
+                    break;
+                case 2147483647: // <eod>
+                    token = davelexer::TokenType::Documentation;
+                    value += _ch;
+                    _column++;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                case 47: // /
+                    s = 246;
+                    _column++;
+                    break;
+                case 10: // {backslash}n
+                    token = davelexer::TokenType::Documentation;
+                    value += _ch;
+                    _line++;
+                    _column = 1;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                default:
+                    if (_ch >= 48 && _ch <= 2147483646) { // 0 - <end>
+                        s = 267;
+                        _column++;
+                    } else if (_ch >= 0 && _ch <= 9) { // <start> - {backslash}t
+                        s = 267;
+                        _column++;
+                    } else if (_ch >= 11 && _ch <= 12) { // {backslash}v - {backslash}f
+                        s = 267;
+                        _column++;
+                    } else if (_ch >= 14 && _ch <= 46) { // {backslash}x14 - .
+                        s = 267;
+                        _column++;
+                    }
+                }
+                break;
+            case 407:
+                switch(_ch) {
+                case 2147483647: // <eod>
+                    token = davelexer::TokenType::Error;
+                    value += _ch;
+                    _column++;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                case 10: // {backslash}n
+                    token = davelexer::TokenType::Comment;
+                    value += _ch;
+                    _line++;
+                    _column = 1;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                case 47: // /
+                    token = davelexer::TokenType::Comment;
+                    _states.pop_back();
+                    value += _ch;
+                    _column++;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                case 42: // *
+                    s = 408;
+                    _column++;
+                    break;
+                case 13: // {backslash}r
+                    token = davelexer::TokenType::Comment;
+                    value += _ch;
+                    _column = 1;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                default:
+                    if (_ch >= 48 && _ch <= 2147483646) { // 0 - <end>
+                        token = davelexer::TokenType::Comment;
+                        value += _ch;
+                        _column++;
+                        end_line = _line;
+                        end_column = _column;
+                        _ch = _stm.get();
+                        return true;
+                    } else if (_ch >= 43 && _ch <= 46) { // + - .
+                        token = davelexer::TokenType::Comment;
+                        value += _ch;
+                        _column++;
+                        end_line = _line;
+                        end_column = _column;
+                        _ch = _stm.get();
+                        return true;
+                    } else if (_ch >= 0 && _ch <= 9) { // <start> - {backslash}t
+                        token = davelexer::TokenType::Comment;
+                        value += _ch;
+                        _column++;
+                        end_line = _line;
+                        end_column = _column;
+                        _ch = _stm.get();
+                        return true;
+                    } else if (_ch >= 11 && _ch <= 12) { // {backslash}v - {backslash}f
+                        token = davelexer::TokenType::Comment;
+                        value += _ch;
+                        _column++;
+                        end_line = _line;
+                        end_column = _column;
+                        _ch = _stm.get();
+                        return true;
+                    } else if (_ch >= 14 && _ch <= 41) { // {backslash}x14 - )
+                        token = davelexer::TokenType::Comment;
+                        value += _ch;
+                        _column++;
+                        end_line = _line;
+                        end_column = _column;
+                        _ch = _stm.get();
+                        return true;
+                    }
+                }
+                break;
+            case 408:
+                switch(_ch) {
+                case 47: // /
+                    token = davelexer::TokenType::Comment;
+                    _states.pop_back();
+                    value += _ch;
+                    _column++;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                case 10: // {backslash}n
+                    token = davelexer::TokenType::Comment;
+                    value += _ch;
+                    _line++;
+                    _column = 1;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                case 2147483647: // <eod>
+                    token = davelexer::TokenType::Error;
+                    value += _ch;
+                    _column++;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                case 42: // *
+                    s = 408;
+                    _column++;
+                    break;
+                case 13: // {backslash}r
+                    token = davelexer::TokenType::Comment;
+                    value += _ch;
+                    _column = 1;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                default:
+                    if (_ch >= 48 && _ch <= 2147483646) { // 0 - <end>
+                        token = davelexer::TokenType::Comment;
+                        value += _ch;
+                        _column++;
+                        end_line = _line;
+                        end_column = _column;
+                        _ch = _stm.get();
+                        return true;
+                    } else if (_ch >= 43 && _ch <= 46) { // + - .
+                        token = davelexer::TokenType::Comment;
+                        value += _ch;
+                        _column++;
+                        end_line = _line;
+                        end_column = _column;
+                        _ch = _stm.get();
+                        return true;
+                    } else if (_ch >= 0 && _ch <= 9) { // <start> - {backslash}t
+                        token = davelexer::TokenType::Comment;
+                        value += _ch;
+                        _column++;
+                        end_line = _line;
+                        end_column = _column;
+                        _ch = _stm.get();
+                        return true;
+                    } else if (_ch >= 11 && _ch <= 12) { // {backslash}v - {backslash}f
+                        token = davelexer::TokenType::Comment;
+                        value += _ch;
+                        _column++;
+                        end_line = _line;
+                        end_column = _column;
+                        _ch = _stm.get();
+                        return true;
+                    } else if (_ch >= 14 && _ch <= 41) { // {backslash}x14 - )
+                        token = davelexer::TokenType::Comment;
+                        value += _ch;
+                        _column++;
+                        end_line = _line;
+                        end_column = _column;
+                        _ch = _stm.get();
+                        return true;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = davelexer::TokenType::Comment;
+                        return true;
+                    }
+                }
+                break;
+            case 409:
+                switch(_ch) {
+                case 117: // u
+                    s = 410;
+                    _column++;
+                    break;
+                case 95: // _
+                    s = 297;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 118 && _ch <= 122) { // v - z
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 116) { // a - t
+                        s = 297;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = davelexer::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 410:
+                switch(_ch) {
+                case 95: // _
+                    s = 297;
+                    _column++;
+                    break;
+                case 109: // m
+                    s = 411;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 110 && _ch <= 122) { // n - z
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 108) { // a - l
+                        s = 297;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = davelexer::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 411:
+                switch(_ch) {
+                case 95: // _
+                    s = 297;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 297;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 122) { // a - z
+                        s = 297;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = davelexer::TokenType::Enum;
+                        return true;
+                    }
+                }
+                break;
+            }
+            value += _ch;
+            _ch = _stm.get();
+        }
+    }
+}

@@ -10,15 +10,16 @@
 
 #include <vector>
 #include <sstream>
-#include "dc.dl.h"
 #include "logger.h"
 #include "container.h"
 #include "span.h"
 #include "lexer.ds.model.h"
+#include "dc.ds.h"
+#include "helpers.h"
 
 namespace dc {
 
-    inline auto text(davelexer::TokenType tkn) -> std::wstring
+    inline auto text(TokenType tkn) -> std::wstring
     {
         std::wstringstream stm;
         stm << tkn;
@@ -178,7 +179,7 @@ namespace dc {
                 }
                 logger->write(severity::error, 0x12, cntr, span(begin, end), stm.str());
             }
-            static inline auto UnexpectedToken(logger *logger, const std::shared_ptr<container> &cntr, const long &start_line, const long &start_column, const long &end_line, const long &end_column, const davelexer::TokenType &given_tkn, const std::wstring &given_value, const std::vector<davelexer::TokenType> &valid_tkns) -> void {
+            static inline auto UnexpectedToken(logger *logger, const std::shared_ptr<container> &cntr, const long &start_line, const long &start_column, const long &end_line, const long &end_column, const TokenType &given_tkn, const std::wstring &given_value, const std::vector<TokenType> &valid_tkns) -> void {
                 std::wstringstream stm;
                 stm << L"Unexpected token '" << text(given_tkn) << L"' encountered. Expected any of ";
                 bool first = true;
@@ -319,6 +320,21 @@ namespace dc {
                 std::wstringstream msg;
                 msg << L"The type/enum name '" << name << L"' was previously defined. See " << std::wstring(other_cntr->filename().begin(), other_cntr->filename().end()) << L' ' << other_spn.begin.line << L':' << other_spn.begin.column;
                 logger->write(severity::error, 0x502, cntr, spn, msg.str());
+            }
+            static inline auto TypeParentCannotBeEnum(logger *logger, const std::shared_ptr<container> &cntr, const span &spn, const std::shared_ptr<TypeReferenceAst> &parent) -> void {
+                std::wstringstream msg;
+                msg << L"Cannot extend an enum type " << parent;
+                logger->write(severity::error, 0x503, cntr, spn, msg.str());
+            }
+            static inline auto TypeParentCannotBeArgument(logger *logger, const std::shared_ptr<container> &cntr, const span &spn, const std::shared_ptr<TypeReferenceAst> &parent) -> void {
+                std::wstringstream msg;
+                msg << L"Cannot extend a type argument " << parent;
+                logger->write(severity::error, 0x504, cntr, spn, msg.str());
+            }
+            static inline auto TypeParentSealed(logger *logger, const std::shared_ptr<container> &cntr, const span &spn, const std::shared_ptr<TypeReferenceAst> &parent) -> void {
+                std::wstringstream msg;
+                msg << L"Cannot extend a sealed type " << parent;
+                logger->write(severity::error, 0x505, cntr, spn, msg.str());
             }
         };
     };

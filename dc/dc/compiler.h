@@ -5,6 +5,7 @@
 #include "container.h"
 #include "log.h"
 #include "dc.dpp.h"
+#include "cpp_helpers.h"
 
 namespace dc
 {
@@ -54,25 +55,38 @@ namespace dc
             v.push_back(spantext(span(), std::move(text)));
             return std::move(v);
         }
-        inline auto add_primitive_system_type(std::wstring &&name, std::wstring &&documentation) -> void {
-            symbolreference sysmtemns;
-            sysmtemns.push_back(spantext(span(), L"System"));
-            add_symbol(sysmtemns, std::shared_ptr<TypeAst>(new TypeAst(span(), get_spantext(std::move(documentation)), spantext(span(), std::move(name)), std::vector<std::shared_ptr<TypeArgumentAst>>(), true, true, nullptr, std::vector<std::shared_ptr<TypePropertyAst>>())));
+        inline auto add_primitive_system_type(std::shared_ptr<NamespaceAst> &ns, std::wstring &&name, std::wstring &&documentation) -> void {
+            std::shared_ptr<TypeAst> type(new TypeAst(span(), get_spantext(std::move(documentation)), spantext(span(), std::move(name)), std::vector<std::shared_ptr<TypeArgumentAst>>(), true, true, nullptr, std::vector<std::shared_ptr<TypePropertyAst>>()));
+            add_symbol(ns->Name, type);
+            ns->Items.push_back(type);
+            type->DeclaringAst = ns;
+        }
+        inline auto add_primitive_system_type_1(std::shared_ptr<NamespaceAst> &ns, std::wstring &&name, std::wstring &&documentation, std::wstring &&arg) -> void {
+            std::vector<std::shared_ptr<TypeArgumentAst>> args;
+            args.emplace_back(new TypeArgumentAst(span(), spantext(span(), std::move(arg))));
+            std::shared_ptr<TypeAst> type(new TypeAst(span(), get_spantext(std::move(documentation)), spantext(span(), std::move(name)), std::move(args), true, true, nullptr, std::vector<std::shared_ptr<TypePropertyAst>>()));
+            add_symbol(ns->Name, type);
+            ns->Items.push_back(type);
+            type->DeclaringAst = ns;
         }
     public:
         systemcontainer()
         {
             // Add the system artefacts
-            add_primitive_system_type(L"Word", L"An unsigned integral type the size of the system word");
-            add_primitive_system_type(L"DWord", L"An unsigned integral double the size of the system word");
-            add_primitive_system_type(L"Int8", L"A signed integral type a to b");
-            add_primitive_system_type(L"Int16", L"A signed integral type a to b");
-            add_primitive_system_type(L"Int32", L"A signed integral type a to b");
-            add_primitive_system_type(L"Int64", L"A signed integral type a to b");
-            add_primitive_system_type(L"String", L"A string of ascii text");
-            add_primitive_system_type(L"WString", L"A string of wide-character text");
-            add_primitive_system_type(L"Float", L"A standard floating point number");
-            add_primitive_system_type(L"DFloat", L"A double sized floating point number");
+            symbolreference systemns;
+            systemns.emplace_back(span(), L"System");
+            std::shared_ptr<NamespaceAst> systemNamespaceAst(new NamespaceAst(span(), std::move(systemns), std::vector<std::shared_ptr<NamespaceItemAst>>()));
+            add_primitive_system_type(systemNamespaceAst, L"Word", L"An unsigned integral type the size of the system word");
+            add_primitive_system_type(systemNamespaceAst, L"DoubleWord", L"An unsigned integral double the size of the system word");
+            add_primitive_system_type(systemNamespaceAst, L"Int8", L"A signed integral type a to b");
+            add_primitive_system_type(systemNamespaceAst, L"Int16", L"A signed integral type a to b");
+            add_primitive_system_type(systemNamespaceAst, L"Int32", L"A signed integral type a to b");
+            add_primitive_system_type(systemNamespaceAst, L"Int64", L"A signed integral type a to b");
+            add_primitive_system_type(systemNamespaceAst, L"String", L"A string of ascii text");
+            add_primitive_system_type(systemNamespaceAst, L"WString", L"A string of wide-character text");
+            add_primitive_system_type(systemNamespaceAst, L"Float", L"A standard floating point number");
+            add_primitive_system_type(systemNamespaceAst, L"DFloat", L"A double sized floating point number");
+            add_primitive_system_type_1(systemNamespaceAst, L"Collection", L"A collection of types", L"T");
         }
 
         virtual auto name() const->std::string { return "System"; }
@@ -97,7 +111,7 @@ namespace dc
         else {
             for(auto &sd : search_directories) {
                 std::string mf(sd);
-                mf.append(sd);
+                mf.append(fn);
                 if (file_exists(mf)) {
                     matches.push_back(std::move(mf));
                 }
@@ -226,31 +240,11 @@ namespace dc
             auto &name_cntr = _cntr;
             auto &logger = _logger;
             container::find<std::shared_ptr<TypeAst>>(_cntr, name, _search_namespaces,
-            [&found, &logger, &name, &arg_count, &prev_cntr, &prev_spn, &name_cntr, &found_type, &name_spn](const std::shared_ptr<container> &cntr, const std::shared_ptr<TypeAst> &p, const symbolreference &name, size_t index)
-            {
-                if (index == name.size() - 1 && p->Arguments.size() == arg_count) {
-                    if (found) {
-                        log::error::SymbolFoundMoreThanOnce(logger, L"type/enum", name_cntr, name_spn, name, prev_cntr, prev_spn, cntr, p->Spn);
-                        return false;
-                    }
-                    // Set the found status
-                    found = true;
-                    prev_cntr = cntr;
-                    prev_spn = p->Spn;
-
-                    // Note the find
-                    found_type = p;
-                }
-                // Search further (to find duplicate names)
-                return true;
-            });
-            if (arg_count == 0) {
-                container::find<std::shared_ptr<EnumAst>>(_cntr, name, _search_namespaces,
-                [&found, &logger, &name, &arg_count, &prev_cntr, &prev_spn, &name_cntr, &found_type, &name_spn](const std::shared_ptr<container> &cntr, const std::shared_ptr<EnumAst> &p, const symbolreference &name, size_t index)
+                [&found, &logger, &name, &arg_count, &prev_cntr, &prev_spn, &name_cntr, &found_type, &name_spn](const std::shared_ptr<container> &cntr, const std::shared_ptr<TypeAst> &p, const symbolreference &name, size_t index)
                 {
-                    if (index == name.size() - 1) {
+                    if (index == name.size() - 1 && p->Arguments.size() == arg_count) {
                         if (found) {
-                            log::error::SymbolFoundMoreThanOnce(logger, L"type/enum", name_cntr, name_spn, name, prev_cntr, prev_spn, cntr, p->Spn);
+                            log::error::SymbolFoundMoreThanOnce(logger, L"type/enum/alias", name_cntr, name_spn, name, prev_cntr, prev_spn, cntr, p->Spn);
                             return false;
                         }
                         // Set the found status
@@ -264,10 +258,49 @@ namespace dc
                     // Search further (to find duplicate names)
                     return true;
                 });
+            if (arg_count == 0) {
+                container::find<std::shared_ptr<EnumAst>>(_cntr, name, _search_namespaces,
+                    [&found, &logger, &name, &arg_count, &prev_cntr, &prev_spn, &name_cntr, &found_type, &name_spn](const std::shared_ptr<container> &cntr, const std::shared_ptr<EnumAst> &p, const symbolreference &name, size_t index)
+                    {
+                        if (index == name.size() - 1) {
+                            if (found) {
+                                log::error::SymbolFoundMoreThanOnce(logger, L"type/enum/alias", name_cntr, name_spn, name, prev_cntr, prev_spn, cntr, p->Spn);
+                                return false;
+                            }
+                            // Set the found status
+                            found = true;
+                            prev_cntr = cntr;
+                            prev_spn = p->Spn;
+
+                            // Note the find
+                            found_type = p;
+                        }
+                        // Search further (to find duplicate names)
+                        return true;
+                    });
             }
+            container::find<std::shared_ptr<TypeAliasAst>>(_cntr, name, _search_namespaces,
+              [&found, &logger, &name, &arg_count, &prev_cntr, &prev_spn, &name_cntr, &found_type, &name_spn](const std::shared_ptr<container> &cntr, const std::shared_ptr<TypeAliasAst> &p, const symbolreference &name, size_t index)
+              {
+                  if (index == name.size() - 1 && p->Arguments.size() == arg_count) {
+                      if (found) {
+                          log::error::SymbolFoundMoreThanOnce(logger, L"type/enum/alias", name_cntr, name_spn, name, prev_cntr, prev_spn, cntr, p->Spn);
+                          return false;
+                      }
+                      // Set the found status
+                      found = true;
+                      prev_cntr = cntr;
+                      prev_spn = p->Spn;
+                      
+                      // Note the find
+                      found_type = p;
+                  }
+                  // Search further (to find duplicate names)
+                  return true;
+              });
 
             if (must_find_type && !found) {
-                log::error::SymbolNotFound(_logger, L"type/enum", name_cntr, name_spn, name);
+                log::error::SymbolNotFound(_logger, L"type/enum/alias", name_cntr, name_spn, name);
                 _ok = false;
                 return std::pair<std::shared_ptr<container>, std::shared_ptr<TypeDefinitionAst>>();
             } else {
@@ -275,12 +308,24 @@ namespace dc
             }
         }
 
-        inline auto try_lookup_and_bind_type(TypeReferenceAst *tr) -> bool
+        inline auto try_lookup_and_bind_type(const std::unordered_map<std::wstring, std::shared_ptr<TypeArgumentAst>> &arguments, TypeReferenceAst *tr) -> bool
         {
+            if (tr->Arguments.empty() && tr->Name.size() == 1) {
+                auto f = arguments.find(tr->Name[0].value());
+                if (f != arguments.end()) {
+                    // It's referencing an argument.
+                    tr->BoundArgument = f->second;
+                    return true;
+                }
+            }
             auto type = find_type(tr->Name, tr->Arguments.size(), true);
             if (type.second == nullptr) return false;
-            tr->Bound = std::move(type.second);
-            return true;
+            tr->BoundType = std::move(type.second);
+            bool ok = true;
+            for(auto &a : tr->Arguments) {
+                ok &= try_lookup_and_bind_type(arguments, a.get());
+            }
+            return ok;
         }
     public:
         NamespaceItemAstProcessor(const std::shared_ptr<container> &cntr, std::shared_ptr<NamespaceAst> &declaringAst, const symbolreference &ns, bool &ok, logger *logger, symbolreference &start_symbol, nfa &nfa, std::vector<match_expression> &match_expressions)
@@ -425,9 +470,9 @@ namespace dc
 
             // Validate
             // a. Type argument names must be unique
-            std::set<std::wstring> args;
+            std::unordered_map<std::wstring, std::shared_ptr<TypeArgumentAst>> args;
             for(auto &a : ast->Arguments) {
-                if (!args.emplace(a->Name.value()).second) {
+                if (!args.emplace(a->Name.value(), a).second) {
                     log::error::TypeArgumentsMustBeUnique(_logger, _cntr, a->Name.spn(), a->Name.value());
                     _ok = false;
                 }
@@ -436,16 +481,69 @@ namespace dc
             _cntr->add_symbol(_namespace, ast);
             // Bind all types
             if (ast->Parent != nullptr) {
-                try_lookup_and_bind_type(ast->Parent.get());
+                try_lookup_and_bind_type(args, ast->Parent.get());
             }
             for(auto &p : ast->Properties) {
-                try_lookup_and_bind_type(p->Type.get());
+                try_lookup_and_bind_type(args, p->Type.get());
             }
             // Validate
+            std::shared_ptr<TypeAst> parent;
+            if (ast->Parent != nullptr) {
+                if (ast->Parent->BoundType != nullptr) {
+                    auto alias = std::dynamic_pointer_cast<TypeAliasAst>(ast->Parent->BoundType);
+                    if (alias != nullptr) {
+                        while(alias != nullptr) {
+                            alias = std::dynamic_pointer_cast<TypeAliasAst>(alias->Value);
+                        }
+                        parent = std::dynamic_pointer_cast<TypeAst>(alias->Value);
+                    } else {
+                        parent = std::dynamic_pointer_cast<TypeAst>(ast->Parent->BoundType);
+                    }
+                    if (parent == nullptr) {
+                        log::error::TypeParentCannotBeEnum(_logger, _cntr, ast->Parent->Spn, ast->Parent);
+                        _ok = false;
+                    }
+                }
+                else if (ast->Parent->BoundArgument != nullptr) {
+                    log::error::TypeParentCannotBeArgument(_logger, _cntr, ast->Parent->Spn, ast->Parent);
+                    _ok = false;
+                }
+            }
             // a. Property names must be unique, even up the hierarchy
             // b. Parent hierarchy may not be recursive (Cannot allow structural recursion - infinately sized types)
             // c. Variance usage must be valid
             // d. Parent may not be sealed
+            if (parent != nullptr) {
+                if (parent->IsSealed) {
+                    log::error::TypeParentSealed(_logger, _cntr, ast->Parent->Spn, ast->Parent);
+                    _ok = false;
+                }
+            }
+        }
+        virtual auto visit(std::shared_ptr<TypeAliasAst> &ast) -> void {
+            ast->DeclaringAst = _declaringAst;
+            // Check unique - make sure the type doesn't already exist
+            symbolreference this_ref(_namespace);
+            this_ref.push_back(ast->Name);
+            auto t = find_type(this_ref, ast->Arguments.size(), false);
+            if (t.second != nullptr) {
+                log::error::TypeNameAlreadyDefined(_logger, _cntr, ast->Name.spn(), ast->Name.value(), t.first, t.second->Spn);
+                _ok = false;
+                return;
+            }
+            // Validate
+            // a. Type argument names must be unique
+            std::unordered_map<std::wstring, std::shared_ptr<TypeArgumentAst>> args;
+            for(auto &a : ast->Arguments) {
+                if (!args.emplace(a->Name.value(), a).second) {
+                    log::error::TypeArgumentsMustBeUnique(_logger, _cntr, a->Name.spn(), a->Name.value());
+                    _ok = false;
+                }
+            }
+            // Add to the symbol table
+            _cntr->add_symbol(_namespace, ast);
+            // Bind all types
+            try_lookup_and_bind_type(args, ast->Value.get());
         }
         virtual auto visit(std::shared_ptr<UsingNamespaceAst> &ast) -> void {
             ast->DeclaringAst = _declaringAst;
@@ -456,7 +554,7 @@ namespace dc
     class DocumentAstProcessor : public DocumentAstMutatingVisitor {
     private:
         bool &_ok;
-        const std::vector<std::string> &_search_directories;
+        std::vector<std::string> _search_directories;
         std::vector<std::string> _seen_imports;
         logger *_logger;
         
@@ -512,6 +610,10 @@ namespace dc
             }
 
             // Process the referenced file
+            auto fd = extract_file_directory(full_path);
+            if (!fd.empty()) {
+                _search_directories.push_back(fd);
+            }
             _cntr_stack.push_back(cntr);
             _seen_imports.push_back(full_path);
             _ok &= parse(stm, cntr, _logger, this, _ok);
@@ -519,6 +621,9 @@ namespace dc
             _cntr_stack.pop_back();
             if (!_cntr_stack.empty()) {
                 _cntr_stack.back()->add_reference(cntr);
+            }
+            if (!fd.empty()) {
+                _search_directories.pop_back();
             }
 
             return cntr;

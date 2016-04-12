@@ -70,19 +70,19 @@ namespace dc {
                     _ch = _stm.get();
                     return true;
                 case 101: // e
-                    s = 403;
+                    s = 409;
                     _column++;
                     break;
                 case 95: // _
-                    s = 404;
+                    s = 410;
                     _column++;
                     break;
                 case 113: // q
-                    s = 404;
+                    s = 410;
                     _column++;
                     break;
                 case 111: // o
-                    s = 404;
+                    s = 410;
                     _column++;
                     break;
                 case 59: // ;
@@ -94,11 +94,11 @@ namespace dc {
                     _ch = _stm.get();
                     return true;
                 case 34: // "
-                    s = 406;
+                    s = 412;
                     _column++;
                     break;
                 case 47: // /
-                    s = 407;
+                    s = 413;
                     _column++;
                     break;
                 case 39: // '
@@ -135,7 +135,7 @@ namespace dc {
                     _ch = _stm.get();
                     return true;
                 case 45: // -
-                    s = 412;
+                    s = 418;
                     _column++;
                     break;
                 case 61: // =
@@ -155,19 +155,19 @@ namespace dc {
                     _ch = _stm.get();
                     return true;
                 case 100: // d
-                    s = 415;
+                    s = 421;
                     _column++;
                     break;
                 case 119: // w
-                    s = 416;
+                    s = 422;
                     _column++;
                     break;
                 case 116: // t
-                    s = 417;
+                    s = 423;
                     _column++;
                     break;
                 case 114: // r
-                    s = 418;
+                    s = 424;
                     _column++;
                     break;
                 case 93: // ]
@@ -187,11 +187,11 @@ namespace dc {
                     _ch = _stm.get();
                     return true;
                 case 115: // s
-                    s = 421;
+                    s = 427;
                     _column++;
                     break;
                 case 12: // {backslash}f
-                    s = 422;
+                    s = 428;
                     _column++;
                     break;
                 case 60: // <
@@ -203,11 +203,11 @@ namespace dc {
                     _ch = _stm.get();
                     return true;
                 case 110: // n
-                    s = 424;
+                    s = 430;
                     _column++;
                     break;
                 case 13: // {backslash}r
-                    s = 422;
+                    s = 428;
                     _column = 1;
                     break;
                 case 58: // :
@@ -219,27 +219,27 @@ namespace dc {
                     _ch = _stm.get();
                     return true;
                 case 11: // {backslash}v
-                    s = 422;
-                    _column++;
-                    break;
-                case 105: // i
-                    s = 426;
-                    _column++;
-                    break;
-                case 9: // {backslash}t
-                    s = 422;
-                    _column++;
-                    break;
-                case 103: // g
-                    s = 427;
-                    _column++;
-                    break;
-                case 112: // p
                     s = 428;
                     _column++;
                     break;
+                case 105: // i
+                    s = 432;
+                    _column++;
+                    break;
+                case 9: // {backslash}t
+                    s = 428;
+                    _column++;
+                    break;
+                case 103: // g
+                    s = 433;
+                    _column++;
+                    break;
+                case 112: // p
+                    s = 434;
+                    _column++;
+                    break;
                 case 32: //  
-                    s = 422;
+                    s = 428;
                     _column++;
                     break;
                 case 125: // }
@@ -251,20 +251,20 @@ namespace dc {
                     _ch = _stm.get();
                     return true;
                 case 102: // f
-                    s = 430;
+                    s = 436;
                     _column++;
                     break;
                 case 104: // h
-                    s = 404;
+                    s = 410;
                     _column++;
                     break;
                 case 10: // {backslash}n
-                    s = 422;
+                    s = 428;
                     _line++;
                     _column = 1;
                     break;
                 case 97: // a
-                    s = 431;
+                    s = 437;
                     _column++;
                     break;
                 default:
@@ -293,16 +293,16 @@ namespace dc {
                         _ch = _stm.get();
                         return true;
                     } else if (_ch >= 120 && _ch <= 122) { // x - z
-                        s = 404;
+                        s = 410;
                         _column++;
                     } else if (_ch >= 106 && _ch <= 109) { // j - m
-                        s = 404;
+                        s = 410;
                         _column++;
                     } else if (_ch >= 98 && _ch <= 99) { // b - c
-                        s = 404;
+                        s = 410;
                         _column++;
                     } else if (_ch >= 117 && _ch <= 118) { // u - v
-                        s = 404;
+                        s = 410;
                         _column++;
                     } else if (_ch >= 14 && _ch <= 31) { // {backslash}x14 - {backslash}x31
                         token = dc::TokenType::Error;
@@ -337,7 +337,7 @@ namespace dc {
                         _ch = _stm.get();
                         return true;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 404;
+                        s = 410;
                         _column++;
                     }
                 }
@@ -358,7 +358,7 @@ namespace dc {
                     _ch = _stm.get();
                     return true;
                 case 42: // *
-                    s = 571;
+                    s = 581;
                     _column++;
                     break;
                 case 13: // {backslash}r
@@ -484,7 +484,7 @@ namespace dc {
                     _ch = _stm.get();
                     return true;
                 case 95: // _
-                    s = 562;
+                    s = 572;
                     _column++;
                     break;
                 case 48: // 0
@@ -529,10 +529,10 @@ namespace dc {
                         _ch = _stm.get();
                         return true;
                     } else if (_ch >= 49 && _ch <= 57) { // 1 - 9
-                        s = 558;
+                        s = 568;
                         _column++;
                     } else if (_ch >= 97 && _ch <= 122) { // a - z
-                        s = 562;
+                        s = 572;
                         _column++;
                     } else if (_ch >= 123 && _ch <= 124) { // { - |
                         token = dc::TokenType::Error;
@@ -543,7 +543,7 @@ namespace dc {
                         _ch = _stm.get();
                         return true;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 562;
+                        s = 572;
                         _column++;
                     } else if (_ch >= 0 && _ch <= 9) { // <start> - {backslash}t
                         token = dc::TokenType::Error;
@@ -634,7 +634,7 @@ namespace dc {
                     _ch = _stm.get();
                     return true;
                 case 92: // {backslash}
-                    s = 549;
+                    s = 559;
                     _column++;
                     break;
                 case 2147483647: // <eod>
@@ -741,7 +741,7 @@ namespace dc {
                     _ch = _stm.get();
                     return true;
                 case 92: // {backslash}
-                    s = 537;
+                    s = 547;
                     _column++;
                     break;
                 case 43: // +
@@ -939,7 +939,7 @@ namespace dc {
                     return true;
                 }
                 break;
-            case 335:
+            case 341:
                 switch(_ch) {
                 case 10: // {backslash}n
                     token = dc::TokenType::Comment;
@@ -951,7 +951,7 @@ namespace dc {
                     _ch = _stm.get();
                     return true;
                 case 13: // {backslash}r
-                    s = 338;
+                    s = 344;
                     _column = 1;
                     break;
                 case 2147483647: // <eod>
@@ -964,18 +964,18 @@ namespace dc {
                     return true;
                 default:
                     if (_ch >= 0 && _ch <= 9) { // <start> - {backslash}t
-                        s = 338;
+                        s = 344;
                         _column++;
                     } else if (_ch >= 11 && _ch <= 12) { // {backslash}v - {backslash}f
-                        s = 338;
+                        s = 344;
                         _column++;
                     } else if (_ch >= 14 && _ch <= 2147483646) { // {backslash}x14 - <end>
-                        s = 338;
+                        s = 344;
                         _column++;
                     }
                 }
                 break;
-            case 338:
+            case 344:
                 switch(_ch) {
                 case 10: // {backslash}n
                     token = dc::TokenType::Comment;
@@ -987,7 +987,7 @@ namespace dc {
                     _ch = _stm.get();
                     return true;
                 case 13: // {backslash}r
-                    s = 338;
+                    s = 344;
                     _column = 1;
                     break;
                 case 2147483647: // <eod>
@@ -1000,18 +1000,18 @@ namespace dc {
                     return true;
                 default:
                     if (_ch >= 0 && _ch <= 9) { // <start> - {backslash}t
-                        s = 338;
+                        s = 344;
                         _column++;
                     } else if (_ch >= 11 && _ch <= 12) { // {backslash}v - {backslash}f
-                        s = 338;
+                        s = 344;
                         _column++;
                     } else if (_ch >= 14 && _ch <= 2147483646) { // {backslash}x14 - <end>
-                        s = 338;
+                        s = 344;
                         _column++;
                     }
                 }
                 break;
-            case 346:
+            case 352:
                 switch(_ch) {
                 case 10: // {backslash}n
                     token = dc::TokenType::Comment;
@@ -1023,7 +1023,7 @@ namespace dc {
                     _ch = _stm.get();
                     return true;
                 case 13: // {backslash}r
-                    s = 350;
+                    s = 356;
                     _column = 1;
                     break;
                 case 2147483647: // <eod>
@@ -1036,18 +1036,18 @@ namespace dc {
                     return true;
                 default:
                     if (_ch >= 0 && _ch <= 9) { // <start> - {backslash}t
-                        s = 350;
+                        s = 356;
                         _column++;
                     } else if (_ch >= 11 && _ch <= 12) { // {backslash}v - {backslash}f
-                        s = 350;
+                        s = 356;
                         _column++;
                     } else if (_ch >= 14 && _ch <= 2147483646) { // {backslash}x14 - <end>
-                        s = 350;
+                        s = 356;
                         _column++;
                     }
                 }
                 break;
-            case 350:
+            case 356:
                 switch(_ch) {
                 case 10: // {backslash}n
                     token = dc::TokenType::Comment;
@@ -1059,7 +1059,7 @@ namespace dc {
                     _ch = _stm.get();
                     return true;
                 case 13: // {backslash}r
-                    s = 350;
+                    s = 356;
                     _column = 1;
                     break;
                 case 2147483647: // <eod>
@@ -1072,18 +1072,18 @@ namespace dc {
                     return true;
                 default:
                     if (_ch >= 0 && _ch <= 9) { // <start> - {backslash}t
-                        s = 350;
+                        s = 356;
                         _column++;
                     } else if (_ch >= 11 && _ch <= 12) { // {backslash}v - {backslash}f
-                        s = 350;
+                        s = 356;
                         _column++;
                     } else if (_ch >= 14 && _ch <= 2147483646) { // {backslash}x14 - <end>
-                        s = 350;
+                        s = 356;
                         _column++;
                     }
                 }
                 break;
-            case 367:
+            case 373:
                 switch(_ch) {
                 case 10: // {backslash}n
                     token = dc::TokenType::Documentation;
@@ -1095,43 +1095,7 @@ namespace dc {
                     _ch = _stm.get();
                     return true;
                 case 13: // {backslash}r
-                    s = 371;
-                    _column = 1;
-                    break;
-                case 2147483647: // <eod>
-                    token = dc::TokenType::Documentation;
-                    value += _ch;
-                    _column++;
-                    end_line = _line;
-                    end_column = _column;
-                    _ch = _stm.get();
-                    return true;
-                default:
-                    if (_ch >= 0 && _ch <= 9) { // <start> - {backslash}t
-                        s = 371;
-                        _column++;
-                    } else if (_ch >= 11 && _ch <= 12) { // {backslash}v - {backslash}f
-                        s = 371;
-                        _column++;
-                    } else if (_ch >= 14 && _ch <= 2147483646) { // {backslash}x14 - <end>
-                        s = 371;
-                        _column++;
-                    }
-                }
-                break;
-            case 371:
-                switch(_ch) {
-                case 10: // {backslash}n
-                    token = dc::TokenType::Documentation;
-                    value += _ch;
-                    _line++;
-                    _column = 1;
-                    end_line = _line;
-                    end_column = _column;
-                    _ch = _stm.get();
-                    return true;
-                case 13: // {backslash}r
-                    s = 371;
+                    s = 377;
                     _column = 1;
                     break;
                 case 2147483647: // <eod>
@@ -1144,18 +1108,54 @@ namespace dc {
                     return true;
                 default:
                     if (_ch >= 0 && _ch <= 9) { // <start> - {backslash}t
-                        s = 371;
+                        s = 377;
                         _column++;
                     } else if (_ch >= 11 && _ch <= 12) { // {backslash}v - {backslash}f
-                        s = 371;
+                        s = 377;
                         _column++;
                     } else if (_ch >= 14 && _ch <= 2147483646) { // {backslash}x14 - <end>
-                        s = 371;
+                        s = 377;
                         _column++;
                     }
                 }
                 break;
-            case 386:
+            case 377:
+                switch(_ch) {
+                case 10: // {backslash}n
+                    token = dc::TokenType::Documentation;
+                    value += _ch;
+                    _line++;
+                    _column = 1;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                case 13: // {backslash}r
+                    s = 377;
+                    _column = 1;
+                    break;
+                case 2147483647: // <eod>
+                    token = dc::TokenType::Documentation;
+                    value += _ch;
+                    _column++;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                default:
+                    if (_ch >= 0 && _ch <= 9) { // <start> - {backslash}t
+                        s = 377;
+                        _column++;
+                    } else if (_ch >= 11 && _ch <= 12) { // {backslash}v - {backslash}f
+                        s = 377;
+                        _column++;
+                    } else if (_ch >= 14 && _ch <= 2147483646) { // {backslash}x14 - <end>
+                        s = 377;
+                        _column++;
+                    }
+                }
+                break;
+            case 392:
                 switch(_ch) {
                 case 34: // "
                     token = dc::TokenType::String;
@@ -1166,42 +1166,42 @@ namespace dc {
                     _ch = _stm.get();
                     return true;
                 case 2147483647: // <eod>
-                    s = 388;
+                    s = 394;
                     _column++;
                     break;
                 case 92: // {backslash}
-                    s = 389;
+                    s = 395;
                     _column++;
                     break;
                 case 10: // {backslash}n
-                    s = 386;
+                    s = 392;
                     _line++;
                     _column = 1;
                     break;
                 case 13: // {backslash}r
-                    s = 386;
+                    s = 392;
                     _column = 1;
                     break;
                 default:
                     if (_ch >= 93 && _ch <= 2147483646) { // ] - <end>
-                        s = 386;
+                        s = 392;
                         _column++;
                     } else if (_ch >= 35 && _ch <= 91) { // # - [
-                        s = 386;
+                        s = 392;
                         _column++;
                     } else if (_ch >= 0 && _ch <= 9) { // <start> - {backslash}t
-                        s = 386;
+                        s = 392;
                         _column++;
                     } else if (_ch >= 11 && _ch <= 12) { // {backslash}v - {backslash}f
-                        s = 386;
+                        s = 392;
                         _column++;
                     } else if (_ch >= 14 && _ch <= 33) { // {backslash}x14 - !
-                        s = 386;
+                        s = 392;
                         _column++;
                     }
                 }
                 break;
-            case 388:
+            case 394:
                 switch(_ch) {
                 case 34: // "
                     token = dc::TokenType::String;
@@ -1212,247 +1212,116 @@ namespace dc {
                     _ch = _stm.get();
                     return true;
                 case 2147483647: // <eod>
-                    s = 388;
+                    s = 394;
                     _column++;
                     break;
                 case 92: // {backslash}
-                    s = 389;
+                    s = 395;
                     _column++;
                     break;
                 case 10: // {backslash}n
-                    s = 386;
+                    s = 392;
                     _line++;
                     _column = 1;
                     break;
                 case 13: // {backslash}r
-                    s = 386;
+                    s = 392;
                     _column = 1;
                     break;
                 default:
                     if (_ch >= 93 && _ch <= 2147483646) { // ] - <end>
-                        s = 386;
+                        s = 392;
                         _column++;
                     } else if (_ch >= 35 && _ch <= 91) { // # - [
-                        s = 386;
+                        s = 392;
                         _column++;
                     } else if (_ch >= 0 && _ch <= 9) { // <start> - {backslash}t
-                        s = 386;
+                        s = 392;
                         _column++;
                     } else if (_ch >= 11 && _ch <= 12) { // {backslash}v - {backslash}f
-                        s = 386;
+                        s = 392;
                         _column++;
                     } else if (_ch >= 14 && _ch <= 33) { // {backslash}x14 - !
-                        s = 386;
+                        s = 392;
                         _column++;
                     }
                 }
                 break;
-            case 389:
+            case 395:
                 switch(_ch) {
                 case 10: // {backslash}n
-                    s = 391;
+                    s = 397;
                     _line++;
                     _column = 1;
                     break;
                 case 2147483647: // <eod>
-                    s = 393;
+                    s = 399;
                     _column++;
                     break;
                 case 13: // {backslash}r
-                    s = 391;
+                    s = 397;
                     _column = 1;
                     break;
                 default:
                     if (_ch >= 0 && _ch <= 9) { // <start> - {backslash}t
-                        s = 391;
+                        s = 397;
                         _column++;
                     } else if (_ch >= 11 && _ch <= 12) { // {backslash}v - {backslash}f
-                        s = 391;
+                        s = 397;
                         _column++;
                     } else if (_ch >= 14 && _ch <= 2147483646) { // {backslash}x14 - <end>
-                        s = 391;
-                        _column++;
-                    }
-                }
-                break;
-            case 391:
-                switch(_ch) {
-                case 34: // "
-                    token = dc::TokenType::String;
-                    value += _ch;
-                    _column++;
-                    end_line = _line;
-                    end_column = _column;
-                    _ch = _stm.get();
-                    return true;
-                case 2147483647: // <eod>
-                    s = 388;
-                    _column++;
-                    break;
-                case 92: // {backslash}
-                    s = 389;
-                    _column++;
-                    break;
-                case 10: // {backslash}n
-                    s = 386;
-                    _line++;
-                    _column = 1;
-                    break;
-                case 13: // {backslash}r
-                    s = 386;
-                    _column = 1;
-                    break;
-                default:
-                    if (_ch >= 93 && _ch <= 2147483646) { // ] - <end>
-                        s = 386;
-                        _column++;
-                    } else if (_ch >= 35 && _ch <= 91) { // # - [
-                        s = 386;
-                        _column++;
-                    } else if (_ch >= 0 && _ch <= 9) { // <start> - {backslash}t
-                        s = 386;
-                        _column++;
-                    } else if (_ch >= 11 && _ch <= 12) { // {backslash}v - {backslash}f
-                        s = 386;
-                        _column++;
-                    } else if (_ch >= 14 && _ch <= 33) { // {backslash}x14 - !
-                        s = 386;
-                        _column++;
-                    }
-                }
-                break;
-            case 393:
-                switch(_ch) {
-                case 34: // "
-                    token = dc::TokenType::String;
-                    value += _ch;
-                    _column++;
-                    end_line = _line;
-                    end_column = _column;
-                    _ch = _stm.get();
-                    return true;
-                case 2147483647: // <eod>
-                    s = 388;
-                    _column++;
-                    break;
-                case 92: // {backslash}
-                    s = 389;
-                    _column++;
-                    break;
-                case 10: // {backslash}n
-                    s = 386;
-                    _line++;
-                    _column = 1;
-                    break;
-                case 13: // {backslash}r
-                    s = 386;
-                    _column = 1;
-                    break;
-                default:
-                    if (_ch >= 93 && _ch <= 2147483646) { // ] - <end>
-                        s = 386;
-                        _column++;
-                    } else if (_ch >= 35 && _ch <= 91) { // # - [
-                        s = 386;
-                        _column++;
-                    } else if (_ch >= 0 && _ch <= 9) { // <start> - {backslash}t
-                        s = 386;
-                        _column++;
-                    } else if (_ch >= 11 && _ch <= 12) { // {backslash}v - {backslash}f
-                        s = 386;
-                        _column++;
-                    } else if (_ch >= 14 && _ch <= 33) { // {backslash}x14 - !
-                        s = 386;
+                        s = 397;
                         _column++;
                     }
                 }
                 break;
             case 397:
                 switch(_ch) {
-                case 95: // _
-                    s = 397;
+                case 34: // "
+                    token = dc::TokenType::String;
+                    value += _ch;
+                    _column++;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                case 2147483647: // <eod>
+                    s = 394;
                     _column++;
                     break;
+                case 92: // {backslash}
+                    s = 395;
+                    _column++;
+                    break;
+                case 10: // {backslash}n
+                    s = 392;
+                    _line++;
+                    _column = 1;
+                    break;
+                case 13: // {backslash}r
+                    s = 392;
+                    _column = 1;
+                    break;
                 default:
-                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
+                    if (_ch >= 93 && _ch <= 2147483646) { // ] - <end>
+                        s = 392;
                         _column++;
-                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
+                    } else if (_ch >= 35 && _ch <= 91) { // # - [
+                        s = 392;
                         _column++;
-                    } else if (_ch >= 97 && _ch <= 122) { // a - z
-                        s = 397;
+                    } else if (_ch >= 0 && _ch <= 9) { // <start> - {backslash}t
+                        s = 392;
                         _column++;
-                    }
-                    else {
-                        // Yield
-                        end_line = _line;
-                        end_column = _column;
-                        token = dc::TokenType::Identifier;
-                        return true;
+                    } else if (_ch >= 11 && _ch <= 12) { // {backslash}v - {backslash}f
+                        s = 392;
+                        _column++;
+                    } else if (_ch >= 14 && _ch <= 33) { // {backslash}x14 - !
+                        s = 392;
+                        _column++;
                     }
                 }
                 break;
-            case 403:
-                switch(_ch) {
-                case 95: // _
-                    s = 397;
-                    _column++;
-                    break;
-                case 110: // n
-                    s = 573;
-                    _column++;
-                    break;
-                default:
-                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
-                        _column++;
-                    } else if (_ch >= 111 && _ch <= 122) { // o - z
-                        s = 397;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 109) { // a - m
-                        s = 397;
-                        _column++;
-                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
-                        _column++;
-                    }
-                    else {
-                        // Yield
-                        end_line = _line;
-                        end_column = _column;
-                        token = dc::TokenType::Identifier;
-                        return true;
-                    }
-                }
-                break;
-            case 404:
-                switch(_ch) {
-                case 95: // _
-                    s = 397;
-                    _column++;
-                    break;
-                default:
-                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
-                        _column++;
-                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 122) { // a - z
-                        s = 397;
-                        _column++;
-                    }
-                    else {
-                        // Yield
-                        end_line = _line;
-                        end_column = _column;
-                        token = dc::TokenType::Identifier;
-                        return true;
-                    }
-                }
-                break;
-            case 406:
+            case 399:
                 switch(_ch) {
                 case 34: // "
                     token = dc::TokenType::String;
@@ -1463,37 +1332,168 @@ namespace dc {
                     _ch = _stm.get();
                     return true;
                 case 2147483647: // <eod>
-                    s = 388;
+                    s = 394;
                     _column++;
                     break;
                 case 92: // {backslash}
-                    s = 389;
+                    s = 395;
                     _column++;
                     break;
                 case 10: // {backslash}n
-                    s = 386;
+                    s = 392;
                     _line++;
                     _column = 1;
                     break;
                 case 13: // {backslash}r
-                    s = 386;
+                    s = 392;
                     _column = 1;
                     break;
                 default:
                     if (_ch >= 93 && _ch <= 2147483646) { // ] - <end>
-                        s = 386;
+                        s = 392;
                         _column++;
                     } else if (_ch >= 35 && _ch <= 91) { // # - [
-                        s = 386;
+                        s = 392;
                         _column++;
                     } else if (_ch >= 0 && _ch <= 9) { // <start> - {backslash}t
-                        s = 386;
+                        s = 392;
                         _column++;
                     } else if (_ch >= 11 && _ch <= 12) { // {backslash}v - {backslash}f
-                        s = 386;
+                        s = 392;
                         _column++;
                     } else if (_ch >= 14 && _ch <= 33) { // {backslash}x14 - !
-                        s = 386;
+                        s = 392;
+                        _column++;
+                    }
+                }
+                break;
+            case 403:
+                switch(_ch) {
+                case 95: // _
+                    s = 403;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 122) { // a - z
+                        s = 403;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 409:
+                switch(_ch) {
+                case 95: // _
+                    s = 403;
+                    _column++;
+                    break;
+                case 110: // n
+                    s = 583;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 111 && _ch <= 122) { // o - z
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 109) { // a - m
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 403;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 410:
+                switch(_ch) {
+                case 95: // _
+                    s = 403;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 122) { // a - z
+                        s = 403;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 412:
+                switch(_ch) {
+                case 34: // "
+                    token = dc::TokenType::String;
+                    value += _ch;
+                    _column++;
+                    end_line = _line;
+                    end_column = _column;
+                    _ch = _stm.get();
+                    return true;
+                case 2147483647: // <eod>
+                    s = 394;
+                    _column++;
+                    break;
+                case 92: // {backslash}
+                    s = 395;
+                    _column++;
+                    break;
+                case 10: // {backslash}n
+                    s = 392;
+                    _line++;
+                    _column = 1;
+                    break;
+                case 13: // {backslash}r
+                    s = 392;
+                    _column = 1;
+                    break;
+                default:
+                    if (_ch >= 93 && _ch <= 2147483646) { // ] - <end>
+                        s = 392;
+                        _column++;
+                    } else if (_ch >= 35 && _ch <= 91) { // # - [
+                        s = 392;
+                        _column++;
+                    } else if (_ch >= 0 && _ch <= 9) { // <start> - {backslash}t
+                        s = 392;
+                        _column++;
+                    } else if (_ch >= 11 && _ch <= 12) { // {backslash}v - {backslash}f
+                        s = 392;
+                        _column++;
+                    } else if (_ch >= 14 && _ch <= 33) { // {backslash}x14 - !
+                        s = 392;
                         _column++;
                     }
                     else {
@@ -1505,7 +1505,7 @@ namespace dc {
                     }
                 }
                 break;
-            case 407:
+            case 413:
                 switch(_ch) {
                 case 42: // *
                     token = dc::TokenType::Comment;
@@ -1517,7 +1517,7 @@ namespace dc {
                     _ch = _stm.get();
                     return true;
                 case 47: // /
-                    s = 569;
+                    s = 579;
                     _column++;
                     break;
                 default:
@@ -1528,7 +1528,7 @@ namespace dc {
                     return true;
                 }
                 break;
-            case 412:
+            case 418:
                 switch(_ch) {
                 case 62: // >
                     token = dc::TokenType::ProducedBy;
@@ -1546,182 +1546,35 @@ namespace dc {
                     return true;
                 }
                 break;
-            case 415:
+            case 421:
                 switch(_ch) {
                 case 95: // _
-                    s = 397;
+                    s = 403;
                     _column++;
                     break;
                 case 119: // w
-                    s = 526;
+                    s = 536;
                     _column++;
                     break;
                 case 102: // f
-                    s = 527;
+                    s = 537;
                     _column++;
                     break;
                 default:
                     if (_ch >= 97 && _ch <= 101) { // a - e
-                        s = 397;
+                        s = 403;
                         _column++;
                     } else if (_ch >= 120 && _ch <= 122) { // x - z
-                        s = 397;
+                        s = 403;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
+                        s = 403;
                         _column++;
                     } else if (_ch >= 103 && _ch <= 118) { // g - v
-                        s = 397;
+                        s = 403;
                         _column++;
                     } else if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
-                        _column++;
-                    }
-                    else {
-                        // Yield
-                        end_line = _line;
-                        end_column = _column;
-                        token = dc::TokenType::Identifier;
-                        return true;
-                    }
-                }
-                break;
-            case 416:
-                switch(_ch) {
-                case 95: // _
-                    s = 397;
-                    _column++;
-                    break;
-                case 111: // o
-                    s = 517;
-                    _column++;
-                    break;
-                case 115: // s
-                    s = 518;
-                    _column++;
-                    break;
-                default:
-                    if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
-                        _column++;
-                    } else if (_ch >= 116 && _ch <= 122) { // t - z
-                        s = 397;
-                        _column++;
-                    } else if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
-                        _column++;
-                    } else if (_ch >= 112 && _ch <= 114) { // p - r
-                        s = 397;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 110) { // a - n
-                        s = 397;
-                        _column++;
-                    }
-                    else {
-                        // Yield
-                        end_line = _line;
-                        end_column = _column;
-                        token = dc::TokenType::Identifier;
-                        return true;
-                    }
-                }
-                break;
-            case 417:
-                switch(_ch) {
-                case 95: // _
-                    s = 397;
-                    _column++;
-                    break;
-                case 122: // z
-                    s = 397;
-                    _column++;
-                    break;
-                case 121: // y
-                    s = 514;
-                    _column++;
-                    break;
-                default:
-                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
-                        _column++;
-                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 120) { // a - x
-                        s = 397;
-                        _column++;
-                    }
-                    else {
-                        // Yield
-                        end_line = _line;
-                        end_column = _column;
-                        token = dc::TokenType::Identifier;
-                        return true;
-                    }
-                }
-                break;
-            case 418:
-                switch(_ch) {
-                case 95: // _
-                    s = 397;
-                    _column++;
-                    break;
-                case 101: // e
-                    s = 509;
-                    _column++;
-                    break;
-                default:
-                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
-                        _column++;
-                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
-                        _column++;
-                    } else if (_ch >= 102 && _ch <= 122) { // f - z
-                        s = 397;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 100) { // a - d
-                        s = 397;
-                        _column++;
-                    }
-                    else {
-                        // Yield
-                        end_line = _line;
-                        end_column = _column;
-                        token = dc::TokenType::Identifier;
-                        return true;
-                    }
-                }
-                break;
-            case 421:
-                switch(_ch) {
-                case 95: // _
-                    s = 397;
-                    _column++;
-                    break;
-                case 101: // e
-                    s = 495;
-                    _column++;
-                    break;
-                case 116: // t
-                    s = 496;
-                    _column++;
-                    break;
-                default:
-                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
-                        _column++;
-                    } else if (_ch >= 117 && _ch <= 122) { // u - z
-                        s = 397;
-                        _column++;
-                    } else if (_ch >= 102 && _ch <= 115) { // f - s
-                        s = 397;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 100) { // a - d
-                        s = 397;
-                        _column++;
-                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
+                        s = 403;
                         _column++;
                     }
                     else {
@@ -1734,6 +1587,153 @@ namespace dc {
                 }
                 break;
             case 422:
+                switch(_ch) {
+                case 95: // _
+                    s = 403;
+                    _column++;
+                    break;
+                case 111: // o
+                    s = 527;
+                    _column++;
+                    break;
+                case 115: // s
+                    s = 528;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 116 && _ch <= 122) { // t - z
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 112 && _ch <= 114) { // p - r
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 110) { // a - n
+                        s = 403;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 423:
+                switch(_ch) {
+                case 95: // _
+                    s = 403;
+                    _column++;
+                    break;
+                case 122: // z
+                    s = 403;
+                    _column++;
+                    break;
+                case 121: // y
+                    s = 524;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 120) { // a - x
+                        s = 403;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 424:
+                switch(_ch) {
+                case 95: // _
+                    s = 403;
+                    _column++;
+                    break;
+                case 101: // e
+                    s = 519;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 102 && _ch <= 122) { // f - z
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 100) { // a - d
+                        s = 403;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 427:
+                switch(_ch) {
+                case 95: // _
+                    s = 403;
+                    _column++;
+                    break;
+                case 101: // e
+                    s = 505;
+                    _column++;
+                    break;
+                case 116: // t
+                    s = 506;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 117 && _ch <= 122) { // u - z
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 102 && _ch <= 115) { // f - s
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 100) { // a - d
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 403;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 428:
                 switch(_ch) {
                 case 12: // {backslash}f
                     s = 130;
@@ -1768,206 +1768,25 @@ namespace dc {
                     return true;
                 }
                 break;
-            case 424:
-                switch(_ch) {
-                case 95: // _
-                    s = 397;
-                    _column++;
-                    break;
-                case 97: // a
-                    s = 487;
-                    _column++;
-                    break;
-                default:
-                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
-                        _column++;
-                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
-                        _column++;
-                    } else if (_ch >= 98 && _ch <= 122) { // b - z
-                        s = 397;
-                        _column++;
-                    }
-                    else {
-                        // Yield
-                        end_line = _line;
-                        end_column = _column;
-                        token = dc::TokenType::Identifier;
-                        return true;
-                    }
-                }
-                break;
-            case 426:
-                switch(_ch) {
-                case 95: // _
-                    s = 397;
-                    _column++;
-                    break;
-                case 109: // m
-                    s = 468;
-                    _column++;
-                    break;
-                case 110: // n
-                    s = 469;
-                    _column++;
-                    break;
-                default:
-                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
-                        _column++;
-                    } else if (_ch >= 111 && _ch <= 122) { // o - z
-                        s = 397;
-                        _column++;
-                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 108) { // a - l
-                        s = 397;
-                        _column++;
-                    }
-                    else {
-                        // Yield
-                        end_line = _line;
-                        end_column = _column;
-                        token = dc::TokenType::Identifier;
-                        return true;
-                    }
-                }
-                break;
-            case 427:
-                switch(_ch) {
-                case 95: // _
-                    s = 397;
-                    _column++;
-                    break;
-                case 111: // o
-                    s = 465;
-                    _column++;
-                    break;
-                default:
-                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
-                        _column++;
-                    } else if (_ch >= 112 && _ch <= 122) { // p - z
-                        s = 397;
-                        _column++;
-                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 110) { // a - n
-                        s = 397;
-                        _column++;
-                    }
-                    else {
-                        // Yield
-                        end_line = _line;
-                        end_column = _column;
-                        token = dc::TokenType::Identifier;
-                        return true;
-                    }
-                }
-                break;
-            case 428:
-                switch(_ch) {
-                case 95: // _
-                    s = 397;
-                    _column++;
-                    break;
-                case 97: // a
-                    s = 450;
-                    _column++;
-                    break;
-                case 114: // r
-                    s = 451;
-                    _column++;
-                    break;
-                default:
-                    if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
-                        _column++;
-                    } else if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
-                        _column++;
-                    } else if (_ch >= 115 && _ch <= 122) { // s - z
-                        s = 397;
-                        _column++;
-                    } else if (_ch >= 98 && _ch <= 113) { // b - q
-                        s = 397;
-                        _column++;
-                    }
-                    else {
-                        // Yield
-                        end_line = _line;
-                        end_column = _column;
-                        token = dc::TokenType::Identifier;
-                        return true;
-                    }
-                }
-                break;
             case 430:
                 switch(_ch) {
                 case 95: // _
-                    s = 397;
-                    _column++;
-                    break;
-                case 108: // l
-                    s = 446;
-                    _column++;
-                    break;
-                default:
-                    if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
-                        _column++;
-                    } else if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 107) { // a - k
-                        s = 397;
-                        _column++;
-                    } else if (_ch >= 109 && _ch <= 122) { // m - z
-                        s = 397;
-                        _column++;
-                    }
-                    else {
-                        // Yield
-                        end_line = _line;
-                        end_column = _column;
-                        token = dc::TokenType::Identifier;
-                        return true;
-                    }
-                }
-                break;
-            case 431:
-                switch(_ch) {
-                case 98: // b
-                    s = 432;
+                    s = 403;
                     _column++;
                     break;
                 case 97: // a
-                    s = 397;
-                    _column++;
-                    break;
-                case 95: // _
-                    s = 397;
-                    _column++;
-                    break;
-                case 117: // u
-                    s = 433;
+                    s = 497;
                     _column++;
                     break;
                 default:
-                    if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 118 && _ch <= 122) { // v - z
-                        s = 397;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
-                        _column++;
-                    } else if (_ch >= 99 && _ch <= 116) { // c - t
-                        s = 397;
+                    } else if (_ch >= 98 && _ch <= 122) { // b - z
+                        s = 403;
                         _column++;
                     }
                     else {
@@ -1982,25 +1801,29 @@ namespace dc {
             case 432:
                 switch(_ch) {
                 case 95: // _
-                    s = 397;
+                    s = 403;
                     _column++;
                     break;
-                case 115: // s
-                    s = 440;
+                case 109: // m
+                    s = 478;
+                    _column++;
+                    break;
+                case 110: // n
+                    s = 479;
                     _column++;
                     break;
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 116 && _ch <= 122) { // t - z
-                        s = 397;
+                    } else if (_ch >= 111 && _ch <= 122) { // o - z
+                        s = 403;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 97 && _ch <= 114) { // a - r
-                        s = 397;
+                    } else if (_ch >= 97 && _ch <= 108) { // a - l
+                        s = 403;
                         _column++;
                     }
                     else {
@@ -2015,25 +1838,25 @@ namespace dc {
             case 433:
                 switch(_ch) {
                 case 95: // _
-                    s = 397;
+                    s = 403;
                     _column++;
                     break;
-                case 116: // t
-                    s = 434;
+                case 111: // o
+                    s = 475;
                     _column++;
                     break;
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 97 && _ch <= 115) { // a - s
-                        s = 397;
+                    } else if (_ch >= 112 && _ch <= 122) { // p - z
+                        s = 403;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 117 && _ch <= 122) { // u - z
-                        s = 397;
+                    } else if (_ch >= 97 && _ch <= 110) { // a - n
+                        s = 403;
                         _column++;
                     }
                     else {
@@ -2048,58 +1871,29 @@ namespace dc {
             case 434:
                 switch(_ch) {
                 case 95: // _
-                    s = 397;
+                    s = 403;
                     _column++;
                     break;
-                case 111: // o
-                    s = 435;
+                case 97: // a
+                    s = 460;
                     _column++;
                     break;
-                default:
-                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
-                        _column++;
-                    } else if (_ch >= 112 && _ch <= 122) { // p - z
-                        s = 397;
-                        _column++;
-                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 110) { // a - n
-                        s = 397;
-                        _column++;
-                    }
-                    else {
-                        // Yield
-                        end_line = _line;
-                        end_column = _column;
-                        token = dc::TokenType::Identifier;
-                        return true;
-                    }
-                }
-                break;
-            case 435:
-                switch(_ch) {
-                case 109: // m
-                    s = 436;
-                    _column++;
-                    break;
-                case 95: // _
-                    s = 397;
+                case 114: // r
+                    s = 461;
                     _column++;
                     break;
                 default:
-                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
+                    if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
+                    } else if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 110 && _ch <= 122) { // n - z
-                        s = 397;
+                    } else if (_ch >= 115 && _ch <= 122) { // s - z
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 97 && _ch <= 108) { // a - l
-                        s = 397;
+                    } else if (_ch >= 98 && _ch <= 113) { // b - q
+                        s = 403;
                         _column++;
                     }
                     else {
@@ -2114,22 +1908,25 @@ namespace dc {
             case 436:
                 switch(_ch) {
                 case 95: // _
-                    s = 397;
+                    s = 403;
                     _column++;
                     break;
-                case 97: // a
-                    s = 437;
+                case 108: // l
+                    s = 456;
                     _column++;
                     break;
                 default:
-                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
+                    if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
+                    } else if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 98 && _ch <= 122) { // b - z
-                        s = 397;
+                    } else if (_ch >= 97 && _ch <= 107) { // a - k
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 109 && _ch <= 122) { // m - z
+                        s = 403;
                         _column++;
                     }
                     else {
@@ -2143,26 +1940,41 @@ namespace dc {
                 break;
             case 437:
                 switch(_ch) {
-                case 95: // _
-                    s = 397;
+                case 108: // l
+                    s = 438;
                     _column++;
                     break;
-                case 116: // t
-                    s = 438;
+                case 97: // a
+                    s = 403;
+                    _column++;
+                    break;
+                case 95: // _
+                    s = 403;
+                    _column++;
+                    break;
+                case 117: // u
+                    s = 439;
+                    _column++;
+                    break;
+                case 98: // b
+                    s = 440;
                     _column++;
                     break;
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 115) { // a - s
-                        s = 397;
+                        s = 403;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 117 && _ch <= 122) { // u - z
-                        s = 397;
+                    } else if (_ch >= 109 && _ch <= 116) { // m - t
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 99 && _ch <= 107) { // c - k
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 118 && _ch <= 122) { // v - z
+                        s = 403;
                         _column++;
                     }
                     else {
@@ -2177,22 +1989,25 @@ namespace dc {
             case 438:
                 switch(_ch) {
                 case 95: // _
-                    s = 397;
+                    s = 403;
                     _column++;
                     break;
-                case 97: // a
-                    s = 439;
+                case 105: // i
+                    s = 453;
                     _column++;
                     break;
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 106 && _ch <= 122) { // j - z
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 104) { // a - h
+                        s = 403;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
-                        _column++;
-                    } else if (_ch >= 98 && _ch <= 122) { // b - z
-                        s = 397;
+                        s = 403;
                         _column++;
                     }
                     else {
@@ -2207,25 +2022,32 @@ namespace dc {
             case 439:
                 switch(_ch) {
                 case 95: // _
-                    s = 397;
+                    s = 403;
+                    _column++;
+                    break;
+                case 116: // t
+                    s = 447;
                     _column++;
                     break;
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 115) { // a - s
+                        s = 403;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 97 && _ch <= 122) { // a - z
-                        s = 397;
+                    } else if (_ch >= 117 && _ch <= 122) { // u - z
+                        s = 403;
                         _column++;
                     }
                     else {
                         // Yield
                         end_line = _line;
                         end_column = _column;
-                        token = dc::TokenType::Automata;
+                        token = dc::TokenType::Identifier;
                         return true;
                     }
                 }
@@ -2233,25 +2055,25 @@ namespace dc {
             case 440:
                 switch(_ch) {
                 case 95: // _
-                    s = 397;
+                    s = 403;
                     _column++;
                     break;
-                case 116: // t
+                case 115: // s
                     s = 441;
                     _column++;
                     break;
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 97 && _ch <= 115) { // a - s
-                        s = 397;
+                    } else if (_ch >= 116 && _ch <= 122) { // t - z
+                        s = 403;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 117 && _ch <= 122) { // u - z
-                        s = 397;
+                    } else if (_ch >= 97 && _ch <= 114) { // a - r
+                        s = 403;
                         _column++;
                     }
                     else {
@@ -2265,26 +2087,26 @@ namespace dc {
                 break;
             case 441:
                 switch(_ch) {
-                case 114: // r
-                    s = 442;
+                case 95: // _
+                    s = 403;
                     _column++;
                     break;
-                case 95: // _
-                    s = 397;
+                case 116: // t
+                    s = 442;
                     _column++;
                     break;
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 115 && _ch <= 122) { // s - z
-                        s = 397;
+                    } else if (_ch >= 97 && _ch <= 115) { // a - s
+                        s = 403;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 97 && _ch <= 113) { // a - q
-                        s = 397;
+                    } else if (_ch >= 117 && _ch <= 122) { // u - z
+                        s = 403;
                         _column++;
                     }
                     else {
@@ -2298,23 +2120,26 @@ namespace dc {
                 break;
             case 442:
                 switch(_ch) {
-                case 95: // _
-                    s = 397;
+                case 114: // r
+                    s = 443;
                     _column++;
                     break;
-                case 97: // a
-                    s = 443;
+                case 95: // _
+                    s = 403;
                     _column++;
                     break;
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 115 && _ch <= 122) { // s - z
+                        s = 403;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 98 && _ch <= 122) { // b - z
-                        s = 397;
+                    } else if (_ch >= 97 && _ch <= 113) { // a - q
+                        s = 403;
                         _column++;
                     }
                     else {
@@ -2328,26 +2153,23 @@ namespace dc {
                 break;
             case 443:
                 switch(_ch) {
-                case 99: // c
-                    s = 444;
+                case 95: // _
+                    s = 403;
                     _column++;
                     break;
-                case 95: // _
-                    s = 397;
+                case 97: // a
+                    s = 444;
                     _column++;
                     break;
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
-                        _column++;
-                    } else if (_ch >= 100 && _ch <= 122) { // d - z
-                        s = 397;
+                        s = 403;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 97 && _ch <= 98) { // a - b
-                        s = 397;
+                    } else if (_ch >= 98 && _ch <= 122) { // b - z
+                        s = 403;
                         _column++;
                     }
                     else {
@@ -2361,26 +2183,26 @@ namespace dc {
                 break;
             case 444:
                 switch(_ch) {
-                case 95: // _
-                    s = 397;
+                case 99: // c
+                    s = 445;
                     _column++;
                     break;
-                case 116: // t
-                    s = 445;
+                case 95: // _
+                    s = 403;
                     _column++;
                     break;
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 97 && _ch <= 115) { // a - s
-                        s = 397;
+                    } else if (_ch >= 100 && _ch <= 122) { // d - z
+                        s = 403;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 117 && _ch <= 122) { // u - z
-                        s = 397;
+                    } else if (_ch >= 97 && _ch <= 98) { // a - b
+                        s = 403;
                         _column++;
                     }
                     else {
@@ -2395,51 +2217,25 @@ namespace dc {
             case 445:
                 switch(_ch) {
                 case 95: // _
-                    s = 397;
+                    s = 403;
+                    _column++;
+                    break;
+                case 116: // t
+                    s = 446;
                     _column++;
                     break;
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 115) { // a - s
+                        s = 403;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 97 && _ch <= 122) { // a - z
-                        s = 397;
-                        _column++;
-                    }
-                    else {
-                        // Yield
-                        end_line = _line;
-                        end_column = _column;
-                        token = dc::TokenType::Abstract;
-                        return true;
-                    }
-                }
-                break;
-            case 446:
-                switch(_ch) {
-                case 95: // _
-                    s = 397;
-                    _column++;
-                    break;
-                case 111: // o
-                    s = 447;
-                    _column++;
-                    break;
-                default:
-                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
-                        _column++;
-                    } else if (_ch >= 112 && _ch <= 122) { // p - z
-                        s = 397;
-                        _column++;
-                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 110) { // a - n
-                        s = 397;
+                    } else if (_ch >= 117 && _ch <= 122) { // u - z
+                        s = 403;
                         _column++;
                     }
                     else {
@@ -2451,25 +2247,54 @@ namespace dc {
                     }
                 }
                 break;
+            case 446:
+                switch(_ch) {
+                case 95: // _
+                    s = 403;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 122) { // a - z
+                        s = 403;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Abstract;
+                        return true;
+                    }
+                }
+                break;
             case 447:
                 switch(_ch) {
                 case 95: // _
-                    s = 397;
+                    s = 403;
                     _column++;
                     break;
-                case 97: // a
+                case 111: // o
                     s = 448;
                     _column++;
                     break;
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 112 && _ch <= 122) { // p - z
+                        s = 403;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 98 && _ch <= 122) { // b - z
-                        s = 397;
+                    } else if (_ch >= 97 && _ch <= 110) { // a - n
+                        s = 403;
                         _column++;
                     }
                     else {
@@ -2483,26 +2308,26 @@ namespace dc {
                 break;
             case 448:
                 switch(_ch) {
-                case 95: // _
-                    s = 397;
+                case 109: // m
+                    s = 449;
                     _column++;
                     break;
-                case 116: // t
-                    s = 449;
+                case 95: // _
+                    s = 403;
                     _column++;
                     break;
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 115) { // a - s
-                        s = 397;
+                        s = 403;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 117 && _ch <= 122) { // u - z
-                        s = 397;
+                    } else if (_ch >= 110 && _ch <= 122) { // n - z
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 108) { // a - l
+                        s = 403;
                         _column++;
                     }
                     else {
@@ -2517,25 +2342,29 @@ namespace dc {
             case 449:
                 switch(_ch) {
                 case 95: // _
-                    s = 397;
+                    s = 403;
+                    _column++;
+                    break;
+                case 97: // a
+                    s = 450;
                     _column++;
                     break;
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
+                        s = 403;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 97 && _ch <= 122) { // a - z
-                        s = 397;
+                    } else if (_ch >= 98 && _ch <= 122) { // b - z
+                        s = 403;
                         _column++;
                     }
                     else {
                         // Yield
                         end_line = _line;
                         end_column = _column;
-                        token = dc::TokenType::FloatKeyword;
+                        token = dc::TokenType::Identifier;
                         return true;
                     }
                 }
@@ -2543,25 +2372,25 @@ namespace dc {
             case 450:
                 switch(_ch) {
                 case 95: // _
-                    s = 397;
+                    s = 403;
                     _column++;
                     break;
                 case 116: // t
-                    s = 460;
+                    s = 451;
                     _column++;
                     break;
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
+                        s = 403;
                         _column++;
                     } else if (_ch >= 97 && _ch <= 115) { // a - s
-                        s = 397;
+                        s = 403;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
+                        s = 403;
                         _column++;
                     } else if (_ch >= 117 && _ch <= 122) { // u - z
-                        s = 397;
+                        s = 403;
                         _column++;
                     }
                     else {
@@ -2576,25 +2405,22 @@ namespace dc {
             case 451:
                 switch(_ch) {
                 case 95: // _
-                    s = 397;
+                    s = 403;
                     _column++;
                     break;
-                case 111: // o
+                case 97: // a
                     s = 452;
                     _column++;
                     break;
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
-                        _column++;
-                    } else if (_ch >= 112 && _ch <= 122) { // p - z
-                        s = 397;
+                        s = 403;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 97 && _ch <= 110) { // a - n
-                        s = 397;
+                    } else if (_ch >= 98 && _ch <= 122) { // b - z
+                        s = 403;
                         _column++;
                     }
                     else {
@@ -2609,58 +2435,48 @@ namespace dc {
             case 452:
                 switch(_ch) {
                 case 95: // _
-                    s = 397;
-                    _column++;
-                    break;
-                case 100: // d
-                    s = 453;
+                    s = 403;
                     _column++;
                     break;
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
-                        _column++;
-                    } else if (_ch >= 101 && _ch <= 122) { // e - z
-                        s = 397;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 99) { // a - c
-                        s = 397;
+                        s = 403;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 122) { // a - z
+                        s = 403;
                         _column++;
                     }
                     else {
                         // Yield
                         end_line = _line;
                         end_column = _column;
-                        token = dc::TokenType::Identifier;
+                        token = dc::TokenType::Automata;
                         return true;
                     }
                 }
                 break;
             case 453:
                 switch(_ch) {
-                case 117: // u
-                    s = 454;
+                case 95: // _
+                    s = 403;
                     _column++;
                     break;
-                case 95: // _
-                    s = 397;
+                case 97: // a
+                    s = 454;
                     _column++;
                     break;
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
+                        s = 403;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 118 && _ch <= 122) { // v - z
-                        s = 397;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 116) { // a - t
-                        s = 397;
+                    } else if (_ch >= 98 && _ch <= 122) { // b - z
+                        s = 403;
                         _column++;
                     }
                     else {
@@ -2675,25 +2491,25 @@ namespace dc {
             case 454:
                 switch(_ch) {
                 case 95: // _
-                    s = 397;
+                    s = 403;
                     _column++;
                     break;
-                case 99: // c
+                case 115: // s
                     s = 455;
                     _column++;
                     break;
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 100 && _ch <= 122) { // d - z
-                        s = 397;
+                    } else if (_ch >= 116 && _ch <= 122) { // t - z
+                        s = 403;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 97 && _ch <= 98) { // a - b
-                        s = 397;
+                    } else if (_ch >= 97 && _ch <= 114) { // a - r
+                        s = 403;
                         _column++;
                     }
                     else {
@@ -2708,32 +2524,25 @@ namespace dc {
             case 455:
                 switch(_ch) {
                 case 95: // _
-                    s = 397;
-                    _column++;
-                    break;
-                case 116: // t
-                    s = 456;
+                    s = 403;
                     _column++;
                     break;
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 115) { // a - s
-                        s = 397;
+                        s = 403;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 117 && _ch <= 122) { // u - z
-                        s = 397;
+                    } else if (_ch >= 97 && _ch <= 122) { // a - z
+                        s = 403;
                         _column++;
                     }
                     else {
                         // Yield
                         end_line = _line;
                         end_column = _column;
-                        token = dc::TokenType::Identifier;
+                        token = dc::TokenType::Alias;
                         return true;
                     }
                 }
@@ -2741,25 +2550,25 @@ namespace dc {
             case 456:
                 switch(_ch) {
                 case 95: // _
-                    s = 397;
+                    s = 403;
                     _column++;
                     break;
-                case 105: // i
+                case 111: // o
                     s = 457;
                     _column++;
                     break;
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 106 && _ch <= 122) { // j - z
-                        s = 397;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 104) { // a - h
-                        s = 397;
+                    } else if (_ch >= 112 && _ch <= 122) { // p - z
+                        s = 403;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 110) { // a - n
+                        s = 403;
                         _column++;
                     }
                     else {
@@ -2774,25 +2583,22 @@ namespace dc {
             case 457:
                 switch(_ch) {
                 case 95: // _
-                    s = 397;
+                    s = 403;
                     _column++;
                     break;
-                case 111: // o
+                case 97: // a
                     s = 458;
                     _column++;
                     break;
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
-                        _column++;
-                    } else if (_ch >= 112 && _ch <= 122) { // p - z
-                        s = 397;
+                        s = 403;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 97 && _ch <= 110) { // a - n
-                        s = 397;
+                    } else if (_ch >= 98 && _ch <= 122) { // b - z
+                        s = 403;
                         _column++;
                     }
                     else {
@@ -2807,25 +2613,25 @@ namespace dc {
             case 458:
                 switch(_ch) {
                 case 95: // _
-                    s = 397;
+                    s = 403;
                     _column++;
                     break;
-                case 110: // n
+                case 116: // t
                     s = 459;
                     _column++;
                     break;
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 111 && _ch <= 122) { // o - z
-                        s = 397;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 109) { // a - m
-                        s = 397;
+                    } else if (_ch >= 97 && _ch <= 115) { // a - s
+                        s = 403;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 117 && _ch <= 122) { // u - z
+                        s = 403;
                         _column++;
                     }
                     else {
@@ -2840,25 +2646,25 @@ namespace dc {
             case 459:
                 switch(_ch) {
                 case 95: // _
-                    s = 397;
+                    s = 403;
                     _column++;
                     break;
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
+                        s = 403;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
+                        s = 403;
                         _column++;
                     } else if (_ch >= 97 && _ch <= 122) { // a - z
-                        s = 397;
+                        s = 403;
                         _column++;
                     }
                     else {
                         // Yield
                         end_line = _line;
                         end_column = _column;
-                        token = dc::TokenType::Production;
+                        token = dc::TokenType::FloatKeyword;
                         return true;
                     }
                 }
@@ -2866,25 +2672,25 @@ namespace dc {
             case 460:
                 switch(_ch) {
                 case 95: // _
-                    s = 397;
+                    s = 403;
                     _column++;
                     break;
                 case 116: // t
-                    s = 461;
+                    s = 470;
                     _column++;
                     break;
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
+                        s = 403;
                         _column++;
                     } else if (_ch >= 97 && _ch <= 115) { // a - s
-                        s = 397;
+                        s = 403;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
+                        s = 403;
                         _column++;
                     } else if (_ch >= 117 && _ch <= 122) { // u - z
-                        s = 397;
+                        s = 403;
                         _column++;
                     }
                     else {
@@ -2899,25 +2705,25 @@ namespace dc {
             case 461:
                 switch(_ch) {
                 case 95: // _
-                    s = 397;
+                    s = 403;
                     _column++;
                     break;
-                case 101: // e
+                case 111: // o
                     s = 462;
                     _column++;
                     break;
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 112 && _ch <= 122) { // p - z
+                        s = 403;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 102 && _ch <= 122) { // f - z
-                        s = 397;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 100) { // a - d
-                        s = 397;
+                    } else if (_ch >= 97 && _ch <= 110) { // a - n
+                        s = 403;
                         _column++;
                     }
                     else {
@@ -2932,25 +2738,25 @@ namespace dc {
             case 462:
                 switch(_ch) {
                 case 95: // _
-                    s = 397;
+                    s = 403;
                     _column++;
                     break;
-                case 114: // r
+                case 100: // d
                     s = 463;
                     _column++;
                     break;
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 115 && _ch <= 122) { // s - z
-                        s = 397;
+                    } else if (_ch >= 101 && _ch <= 122) { // e - z
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 99) { // a - c
+                        s = 403;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 113) { // a - q
-                        s = 397;
+                        s = 403;
                         _column++;
                     }
                     else {
@@ -2964,26 +2770,26 @@ namespace dc {
                 break;
             case 463:
                 switch(_ch) {
-                case 95: // _
-                    s = 397;
+                case 117: // u
+                    s = 464;
                     _column++;
                     break;
-                case 110: // n
-                    s = 464;
+                case 95: // _
+                    s = 403;
                     _column++;
                     break;
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
-                        _column++;
-                    } else if (_ch >= 111 && _ch <= 122) { // o - z
-                        s = 397;
+                        s = 403;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 97 && _ch <= 109) { // a - m
-                        s = 397;
+                    } else if (_ch >= 118 && _ch <= 122) { // v - z
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 116) { // a - t
+                        s = 403;
                         _column++;
                     }
                     else {
@@ -2998,25 +2804,32 @@ namespace dc {
             case 464:
                 switch(_ch) {
                 case 95: // _
-                    s = 397;
+                    s = 403;
+                    _column++;
+                    break;
+                case 99: // c
+                    s = 465;
                     _column++;
                     break;
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 100 && _ch <= 122) { // d - z
+                        s = 403;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 97 && _ch <= 122) { // a - z
-                        s = 397;
+                    } else if (_ch >= 97 && _ch <= 98) { // a - b
+                        s = 403;
                         _column++;
                     }
                     else {
                         // Yield
                         end_line = _line;
                         end_column = _column;
-                        token = dc::TokenType::Pattern;
+                        token = dc::TokenType::Identifier;
                         return true;
                     }
                 }
@@ -3024,7 +2837,7 @@ namespace dc {
             case 465:
                 switch(_ch) {
                 case 95: // _
-                    s = 397;
+                    s = 403;
                     _column++;
                     break;
                 case 116: // t
@@ -3033,16 +2846,16 @@ namespace dc {
                     break;
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
+                        s = 403;
                         _column++;
                     } else if (_ch >= 97 && _ch <= 115) { // a - s
-                        s = 397;
+                        s = 403;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
+                        s = 403;
                         _column++;
                     } else if (_ch >= 117 && _ch <= 122) { // u - z
-                        s = 397;
+                        s = 403;
                         _column++;
                     }
                     else {
@@ -3057,25 +2870,25 @@ namespace dc {
             case 466:
                 switch(_ch) {
                 case 95: // _
-                    s = 397;
+                    s = 403;
                     _column++;
                     break;
-                case 111: // o
+                case 105: // i
                     s = 467;
                     _column++;
                     break;
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 112 && _ch <= 122) { // p - z
-                        s = 397;
+                    } else if (_ch >= 106 && _ch <= 122) { // j - z
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 104) { // a - h
+                        s = 403;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 110) { // a - n
-                        s = 397;
+                        s = 403;
                         _column++;
                     }
                     else {
@@ -3090,25 +2903,32 @@ namespace dc {
             case 467:
                 switch(_ch) {
                 case 95: // _
-                    s = 397;
+                    s = 403;
+                    _column++;
+                    break;
+                case 111: // o
+                    s = 468;
                     _column++;
                     break;
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 112 && _ch <= 122) { // p - z
+                        s = 403;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 97 && _ch <= 122) { // a - z
-                        s = 397;
+                    } else if (_ch >= 97 && _ch <= 110) { // a - n
+                        s = 403;
                         _column++;
                     }
                     else {
                         // Yield
                         end_line = _line;
                         end_column = _column;
-                        token = dc::TokenType::Goto;
+                        token = dc::TokenType::Identifier;
                         return true;
                     }
                 }
@@ -3116,25 +2936,25 @@ namespace dc {
             case 468:
                 switch(_ch) {
                 case 95: // _
-                    s = 397;
+                    s = 403;
                     _column++;
                     break;
-                case 112: // p
-                    s = 483;
+                case 110: // n
+                    s = 469;
                     _column++;
                     break;
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 111 && _ch <= 122) { // o - z
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 109) { // a - m
+                        s = 403;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
-                        _column++;
-                    } else if (_ch >= 113 && _ch <= 122) { // q - z
-                        s = 397;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 111) { // a - o
-                        s = 397;
+                        s = 403;
                         _column++;
                     }
                     else {
@@ -3149,90 +2969,51 @@ namespace dc {
             case 469:
                 switch(_ch) {
                 case 95: // _
-                    s = 397;
-                    _column++;
-                    break;
-                case 116: // t
-                    s = 470;
-                    _column++;
-                    break;
-                case 99: // c
-                    s = 471;
+                    s = 403;
                     _column++;
                     break;
                 default:
-                    if (_ch >= 97 && _ch <= 98) { // a - b
-                        s = 397;
-                        _column++;
-                    } else if (_ch >= 117 && _ch <= 122) { // u - z
-                        s = 397;
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 403;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
-                        _column++;
-                    } else if (_ch >= 100 && _ch <= 115) { // d - s
-                        s = 397;
+                    } else if (_ch >= 97 && _ch <= 122) { // a - z
+                        s = 403;
                         _column++;
                     }
                     else {
                         // Yield
                         end_line = _line;
                         end_column = _column;
-                        token = dc::TokenType::Identifier;
+                        token = dc::TokenType::Production;
                         return true;
                     }
                 }
                 break;
             case 470:
                 switch(_ch) {
-                case 57: // 9
-                    s = 397;
-                    _column++;
-                    break;
-                case 55: // 7
-                    s = 397;
-                    _column++;
-                    break;
-                case 48: // 0
-                    s = 397;
-                    _column++;
-                    break;
-                case 50: // 2
-                    s = 397;
-                    _column++;
-                    break;
                 case 95: // _
-                    s = 397;
+                    s = 403;
                     _column++;
                     break;
-                case 49: // 1
-                    s = 476;
-                    _column++;
-                    break;
-                case 51: // 3
-                    s = 477;
-                    _column++;
-                    break;
-                case 56: // 8
-                    s = 478;
-                    _column++;
-                    break;
-                case 54: // 6
-                    s = 479;
+                case 116: // t
+                    s = 471;
                     _column++;
                     break;
                 default:
-                    if (_ch >= 52 && _ch <= 53) { // 4 - 5
-                        s = 397;
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 115) { // a - s
+                        s = 403;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 97 && _ch <= 122) { // a - z
-                        s = 397;
+                    } else if (_ch >= 117 && _ch <= 122) { // u - z
+                        s = 403;
                         _column++;
                     }
                     else {
@@ -3247,25 +3028,25 @@ namespace dc {
             case 471:
                 switch(_ch) {
                 case 95: // _
-                    s = 397;
+                    s = 403;
                     _column++;
                     break;
-                case 108: // l
+                case 101: // e
                     s = 472;
                     _column++;
                     break;
                 default:
-                    if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 97 && _ch <= 107) { // a - k
-                        s = 397;
+                    } else if (_ch >= 102 && _ch <= 122) { // f - z
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 109 && _ch <= 122) { // m - z
-                        s = 397;
+                    } else if (_ch >= 97 && _ch <= 100) { // a - d
+                        s = 403;
                         _column++;
                     }
                     else {
@@ -3279,26 +3060,26 @@ namespace dc {
                 break;
             case 472:
                 switch(_ch) {
-                case 117: // u
-                    s = 473;
+                case 95: // _
+                    s = 403;
                     _column++;
                     break;
-                case 95: // _
-                    s = 397;
+                case 114: // r
+                    s = 473;
                     _column++;
                     break;
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 115 && _ch <= 122) { // s - z
+                        s = 403;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 118 && _ch <= 122) { // v - z
-                        s = 397;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 116) { // a - t
-                        s = 397;
+                    } else if (_ch >= 97 && _ch <= 113) { // a - q
+                        s = 403;
                         _column++;
                     }
                     else {
@@ -3313,25 +3094,25 @@ namespace dc {
             case 473:
                 switch(_ch) {
                 case 95: // _
-                    s = 397;
+                    s = 403;
                     _column++;
                     break;
-                case 100: // d
+                case 110: // n
                     s = 474;
                     _column++;
                     break;
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 101 && _ch <= 122) { // e - z
-                        s = 397;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 99) { // a - c
-                        s = 397;
+                    } else if (_ch >= 111 && _ch <= 122) { // o - z
+                        s = 403;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 109) { // a - m
+                        s = 403;
                         _column++;
                     }
                     else {
@@ -3346,25 +3127,51 @@ namespace dc {
             case 474:
                 switch(_ch) {
                 case 95: // _
-                    s = 397;
-                    _column++;
-                    break;
-                case 101: // e
-                    s = 475;
+                    s = 403;
                     _column++;
                     break;
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
+                        s = 403;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 102 && _ch <= 122) { // f - z
-                        s = 397;
+                    } else if (_ch >= 97 && _ch <= 122) { // a - z
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 97 && _ch <= 100) { // a - d
-                        s = 397;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Pattern;
+                        return true;
+                    }
+                }
+                break;
+            case 475:
+                switch(_ch) {
+                case 95: // _
+                    s = 403;
+                    _column++;
+                    break;
+                case 116: // t
+                    s = 476;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 115) { // a - s
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 117 && _ch <= 122) { // u - z
+                        s = 403;
                         _column++;
                     }
                     else {
@@ -3376,54 +3183,28 @@ namespace dc {
                     }
                 }
                 break;
-            case 475:
+            case 476:
                 switch(_ch) {
                 case 95: // _
-                    s = 397;
+                    s = 403;
+                    _column++;
+                    break;
+                case 111: // o
+                    s = 477;
                     _column++;
                     break;
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 112 && _ch <= 122) { // p - z
+                        s = 403;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 97 && _ch <= 122) { // a - z
-                        s = 397;
-                        _column++;
-                    }
-                    else {
-                        // Yield
-                        end_line = _line;
-                        end_column = _column;
-                        token = dc::TokenType::Include;
-                        return true;
-                    }
-                }
-                break;
-            case 476:
-                switch(_ch) {
-                case 54: // 6
-                    s = 482;
-                    _column++;
-                    break;
-                case 95: // _
-                    s = 397;
-                    _column++;
-                    break;
-                default:
-                    if (_ch >= 55 && _ch <= 57) { // 7 - 9
-                        s = 397;
-                        _column++;
-                    } else if (_ch >= 48 && _ch <= 53) { // 0 - 5
-                        s = 397;
-                        _column++;
-                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 122) { // a - z
-                        s = 397;
+                    } else if (_ch >= 97 && _ch <= 110) { // a - n
+                        s = 403;
                         _column++;
                     }
                     else {
@@ -3437,26 +3218,52 @@ namespace dc {
                 break;
             case 477:
                 switch(_ch) {
-                case 50: // 2
-                    s = 481;
-                    _column++;
-                    break;
                 case 95: // _
-                    s = 397;
+                    s = 403;
                     _column++;
                     break;
                 default:
-                    if (_ch >= 51 && _ch <= 57) { // 3 - 9
-                        s = 397;
-                        _column++;
-                    } else if (_ch >= 48 && _ch <= 49) { // 0 - 1
-                        s = 397;
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 403;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
+                        s = 403;
                         _column++;
                     } else if (_ch >= 97 && _ch <= 122) { // a - z
-                        s = 397;
+                        s = 403;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Goto;
+                        return true;
+                    }
+                }
+                break;
+            case 478:
+                switch(_ch) {
+                case 95: // _
+                    s = 403;
+                    _column++;
+                    break;
+                case 112: // p
+                    s = 493;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 113 && _ch <= 122) { // q - z
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 111) { // a - o
+                        s = 403;
                         _column++;
                     }
                     else {
@@ -3468,54 +3275,35 @@ namespace dc {
                     }
                 }
                 break;
-            case 478:
-                switch(_ch) {
-                case 95: // _
-                    s = 397;
-                    _column++;
-                    break;
-                default:
-                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
-                        _column++;
-                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 122) { // a - z
-                        s = 397;
-                        _column++;
-                    }
-                    else {
-                        // Yield
-                        end_line = _line;
-                        end_column = _column;
-                        token = dc::TokenType::Int8;
-                        return true;
-                    }
-                }
-                break;
             case 479:
                 switch(_ch) {
                 case 95: // _
-                    s = 397;
+                    s = 403;
                     _column++;
                     break;
-                case 52: // 4
+                case 116: // t
                     s = 480;
                     _column++;
                     break;
+                case 99: // c
+                    s = 481;
+                    _column++;
+                    break;
                 default:
-                    if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
+                    if (_ch >= 97 && _ch <= 98) { // a - b
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 53 && _ch <= 57) { // 5 - 9
-                        s = 397;
+                    } else if (_ch >= 117 && _ch <= 122) { // u - z
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 48 && _ch <= 51) { // 0 - 3
-                        s = 397;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 97 && _ch <= 122) { // a - z
-                        s = 397;
+                    } else if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 100 && _ch <= 115) { // d - s
+                        s = 403;
                         _column++;
                     }
                     else {
@@ -3529,26 +3317,58 @@ namespace dc {
                 break;
             case 480:
                 switch(_ch) {
+                case 57: // 9
+                    s = 403;
+                    _column++;
+                    break;
+                case 55: // 7
+                    s = 403;
+                    _column++;
+                    break;
+                case 48: // 0
+                    s = 403;
+                    _column++;
+                    break;
+                case 50: // 2
+                    s = 403;
+                    _column++;
+                    break;
                 case 95: // _
-                    s = 397;
+                    s = 403;
+                    _column++;
+                    break;
+                case 49: // 1
+                    s = 486;
+                    _column++;
+                    break;
+                case 51: // 3
+                    s = 487;
+                    _column++;
+                    break;
+                case 56: // 8
+                    s = 488;
+                    _column++;
+                    break;
+                case 54: // 6
+                    s = 489;
                     _column++;
                     break;
                 default:
-                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
+                    if (_ch >= 52 && _ch <= 53) { // 4 - 5
+                        s = 403;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
+                        s = 403;
                         _column++;
                     } else if (_ch >= 97 && _ch <= 122) { // a - z
-                        s = 397;
+                        s = 403;
                         _column++;
                     }
                     else {
                         // Yield
                         end_line = _line;
                         end_column = _column;
-                        token = dc::TokenType::Int64;
+                        token = dc::TokenType::Identifier;
                         return true;
                     }
                 }
@@ -3556,51 +3376,65 @@ namespace dc {
             case 481:
                 switch(_ch) {
                 case 95: // _
-                    s = 397;
+                    s = 403;
+                    _column++;
+                    break;
+                case 108: // l
+                    s = 482;
                     _column++;
                     break;
                 default:
-                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
+                    if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
+                    } else if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 97 && _ch <= 122) { // a - z
-                        s = 397;
+                    } else if (_ch >= 97 && _ch <= 107) { // a - k
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 109 && _ch <= 122) { // m - z
+                        s = 403;
                         _column++;
                     }
                     else {
                         // Yield
                         end_line = _line;
                         end_column = _column;
-                        token = dc::TokenType::Int32;
+                        token = dc::TokenType::Identifier;
                         return true;
                     }
                 }
                 break;
             case 482:
                 switch(_ch) {
+                case 117: // u
+                    s = 483;
+                    _column++;
+                    break;
                 case 95: // _
-                    s = 397;
+                    s = 403;
                     _column++;
                     break;
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
+                        s = 403;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 97 && _ch <= 122) { // a - z
-                        s = 397;
+                    } else if (_ch >= 118 && _ch <= 122) { // v - z
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 116) { // a - t
+                        s = 403;
                         _column++;
                     }
                     else {
                         // Yield
                         end_line = _line;
                         end_column = _column;
-                        token = dc::TokenType::Int16;
+                        token = dc::TokenType::Identifier;
                         return true;
                     }
                 }
@@ -3608,25 +3442,25 @@ namespace dc {
             case 483:
                 switch(_ch) {
                 case 95: // _
-                    s = 397;
+                    s = 403;
                     _column++;
                     break;
-                case 111: // o
+                case 100: // d
                     s = 484;
                     _column++;
                     break;
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 112 && _ch <= 122) { // p - z
-                        s = 397;
+                    } else if (_ch >= 101 && _ch <= 122) { // e - z
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 99) { // a - c
+                        s = 403;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 110) { // a - n
-                        s = 397;
+                        s = 403;
                         _column++;
                     }
                     else {
@@ -3640,26 +3474,26 @@ namespace dc {
                 break;
             case 484:
                 switch(_ch) {
-                case 114: // r
-                    s = 485;
+                case 95: // _
+                    s = 403;
                     _column++;
                     break;
-                case 95: // _
-                    s = 397;
+                case 101: // e
+                    s = 485;
                     _column++;
                     break;
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
-                        _column++;
-                    } else if (_ch >= 115 && _ch <= 122) { // s - z
-                        s = 397;
+                        s = 403;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 97 && _ch <= 113) { // a - q
-                        s = 397;
+                    } else if (_ch >= 102 && _ch <= 122) { // f - z
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 100) { // a - d
+                        s = 403;
                         _column++;
                     }
                     else {
@@ -3674,25 +3508,51 @@ namespace dc {
             case 485:
                 switch(_ch) {
                 case 95: // _
-                    s = 397;
-                    _column++;
-                    break;
-                case 116: // t
-                    s = 486;
+                    s = 403;
                     _column++;
                     break;
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 115) { // a - s
-                        s = 397;
+                        s = 403;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 117 && _ch <= 122) { // u - z
-                        s = 397;
+                    } else if (_ch >= 97 && _ch <= 122) { // a - z
+                        s = 403;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Include;
+                        return true;
+                    }
+                }
+                break;
+            case 486:
+                switch(_ch) {
+                case 54: // 6
+                    s = 492;
+                    _column++;
+                    break;
+                case 95: // _
+                    s = 403;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 55 && _ch <= 57) { // 7 - 9
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 48 && _ch <= 53) { // 0 - 5
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 122) { // a - z
+                        s = 403;
                         _column++;
                     }
                     else {
@@ -3704,54 +3564,28 @@ namespace dc {
                     }
                 }
                 break;
-            case 486:
-                switch(_ch) {
-                case 95: // _
-                    s = 397;
-                    _column++;
-                    break;
-                default:
-                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
-                        _column++;
-                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 122) { // a - z
-                        s = 397;
-                        _column++;
-                    }
-                    else {
-                        // Yield
-                        end_line = _line;
-                        end_column = _column;
-                        token = dc::TokenType::Import;
-                        return true;
-                    }
-                }
-                break;
             case 487:
                 switch(_ch) {
-                case 109: // m
-                    s = 488;
+                case 50: // 2
+                    s = 491;
                     _column++;
                     break;
                 case 95: // _
-                    s = 397;
+                    s = 403;
                     _column++;
                     break;
                 default:
-                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
+                    if (_ch >= 51 && _ch <= 57) { // 3 - 9
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 48 && _ch <= 49) { // 0 - 1
+                        s = 403;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 110 && _ch <= 122) { // n - z
-                        s = 397;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 108) { // a - l
-                        s = 397;
+                    } else if (_ch >= 97 && _ch <= 122) { // a - z
+                        s = 403;
                         _column++;
                     }
                     else {
@@ -3766,32 +3600,25 @@ namespace dc {
             case 488:
                 switch(_ch) {
                 case 95: // _
-                    s = 397;
-                    _column++;
-                    break;
-                case 101: // e
-                    s = 489;
+                    s = 403;
                     _column++;
                     break;
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
+                        s = 403;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 102 && _ch <= 122) { // f - z
-                        s = 397;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 100) { // a - d
-                        s = 397;
+                    } else if (_ch >= 97 && _ch <= 122) { // a - z
+                        s = 403;
                         _column++;
                     }
                     else {
                         // Yield
                         end_line = _line;
                         end_column = _column;
-                        token = dc::TokenType::Identifier;
+                        token = dc::TokenType::Int8;
                         return true;
                     }
                 }
@@ -3799,25 +3626,25 @@ namespace dc {
             case 489:
                 switch(_ch) {
                 case 95: // _
-                    s = 397;
+                    s = 403;
                     _column++;
                     break;
-                case 115: // s
+                case 52: // 4
                     s = 490;
                     _column++;
                     break;
                 default:
-                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
+                    if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 116 && _ch <= 122) { // t - z
-                        s = 397;
+                    } else if (_ch >= 53 && _ch <= 57) { // 5 - 9
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
+                    } else if (_ch >= 48 && _ch <= 51) { // 0 - 3
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 97 && _ch <= 114) { // a - r
-                        s = 397;
+                    } else if (_ch >= 97 && _ch <= 122) { // a - z
+                        s = 403;
                         _column++;
                     }
                     else {
@@ -3832,32 +3659,25 @@ namespace dc {
             case 490:
                 switch(_ch) {
                 case 95: // _
-                    s = 397;
-                    _column++;
-                    break;
-                case 112: // p
-                    s = 491;
+                    s = 403;
                     _column++;
                     break;
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
+                        s = 403;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 113 && _ch <= 122) { // q - z
-                        s = 397;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 111) { // a - o
-                        s = 397;
+                    } else if (_ch >= 97 && _ch <= 122) { // a - z
+                        s = 403;
                         _column++;
                     }
                     else {
                         // Yield
                         end_line = _line;
                         end_column = _column;
-                        token = dc::TokenType::Identifier;
+                        token = dc::TokenType::Int64;
                         return true;
                     }
                 }
@@ -3865,29 +3685,25 @@ namespace dc {
             case 491:
                 switch(_ch) {
                 case 95: // _
-                    s = 397;
-                    _column++;
-                    break;
-                case 97: // a
-                    s = 492;
+                    s = 403;
                     _column++;
                     break;
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
+                        s = 403;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 98 && _ch <= 122) { // b - z
-                        s = 397;
+                    } else if (_ch >= 97 && _ch <= 122) { // a - z
+                        s = 403;
                         _column++;
                     }
                     else {
                         // Yield
                         end_line = _line;
                         end_column = _column;
-                        token = dc::TokenType::Identifier;
+                        token = dc::TokenType::Int32;
                         return true;
                     }
                 }
@@ -3895,32 +3711,25 @@ namespace dc {
             case 492:
                 switch(_ch) {
                 case 95: // _
-                    s = 397;
-                    _column++;
-                    break;
-                case 99: // c
-                    s = 493;
+                    s = 403;
                     _column++;
                     break;
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
-                        _column++;
-                    } else if (_ch >= 100 && _ch <= 122) { // d - z
-                        s = 397;
+                        s = 403;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 97 && _ch <= 98) { // a - b
-                        s = 397;
+                    } else if (_ch >= 97 && _ch <= 122) { // a - z
+                        s = 403;
                         _column++;
                     }
                     else {
                         // Yield
                         end_line = _line;
                         end_column = _column;
-                        token = dc::TokenType::Identifier;
+                        token = dc::TokenType::Int16;
                         return true;
                     }
                 }
@@ -3928,25 +3737,25 @@ namespace dc {
             case 493:
                 switch(_ch) {
                 case 95: // _
-                    s = 397;
+                    s = 403;
                     _column++;
                     break;
-                case 101: // e
+                case 111: // o
                     s = 494;
                     _column++;
                     break;
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 112 && _ch <= 122) { // p - z
+                        s = 403;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 102 && _ch <= 122) { // f - z
-                        s = 397;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 100) { // a - d
-                        s = 397;
+                    } else if (_ch >= 97 && _ch <= 110) { // a - n
+                        s = 403;
                         _column++;
                     }
                     else {
@@ -3960,26 +3769,33 @@ namespace dc {
                 break;
             case 494:
                 switch(_ch) {
+                case 114: // r
+                    s = 495;
+                    _column++;
+                    break;
                 case 95: // _
-                    s = 397;
+                    s = 403;
                     _column++;
                     break;
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 115 && _ch <= 122) { // s - z
+                        s = 403;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 97 && _ch <= 122) { // a - z
-                        s = 397;
+                    } else if (_ch >= 97 && _ch <= 113) { // a - q
+                        s = 403;
                         _column++;
                     }
                     else {
                         // Yield
                         end_line = _line;
                         end_column = _column;
-                        token = dc::TokenType::Namespace;
+                        token = dc::TokenType::Identifier;
                         return true;
                     }
                 }
@@ -3987,29 +3803,25 @@ namespace dc {
             case 495:
                 switch(_ch) {
                 case 95: // _
-                    s = 397;
+                    s = 403;
                     _column++;
                     break;
                 case 116: // t
-                    s = 504;
-                    _column++;
-                    break;
-                case 97: // a
-                    s = 505;
+                    s = 496;
                     _column++;
                     break;
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 115) { // a - s
+                        s = 403;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
-                        _column++;
-                    } else if (_ch >= 98 && _ch <= 115) { // b - s
-                        s = 397;
+                        s = 403;
                         _column++;
                     } else if (_ch >= 117 && _ch <= 122) { // u - z
-                        s = 397;
+                        s = 403;
                         _column++;
                     }
                     else {
@@ -4024,62 +3836,51 @@ namespace dc {
             case 496:
                 switch(_ch) {
                 case 95: // _
-                    s = 397;
-                    _column++;
-                    break;
-                case 114: // r
-                    s = 497;
-                    _column++;
-                    break;
-                case 97: // a
-                    s = 498;
+                    s = 403;
                     _column++;
                     break;
                 default:
-                    if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 115 && _ch <= 122) { // s - z
-                        s = 397;
-                        _column++;
-                    } else if (_ch >= 98 && _ch <= 113) { // b - q
-                        s = 397;
+                    } else if (_ch >= 97 && _ch <= 122) { // a - z
+                        s = 403;
                         _column++;
                     }
                     else {
                         // Yield
                         end_line = _line;
                         end_column = _column;
-                        token = dc::TokenType::Identifier;
+                        token = dc::TokenType::Import;
                         return true;
                     }
                 }
                 break;
             case 497:
                 switch(_ch) {
-                case 95: // _
-                    s = 397;
+                case 109: // m
+                    s = 498;
                     _column++;
                     break;
-                case 105: // i
-                    s = 501;
+                case 95: // _
+                    s = 403;
                     _column++;
                     break;
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
-                        _column++;
-                    } else if (_ch >= 106 && _ch <= 122) { // j - z
-                        s = 397;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 104) { // a - h
-                        s = 397;
+                        s = 403;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 110 && _ch <= 122) { // n - z
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 108) { // a - l
+                        s = 403;
                         _column++;
                     }
                     else {
@@ -4094,25 +3895,25 @@ namespace dc {
             case 498:
                 switch(_ch) {
                 case 95: // _
-                    s = 397;
+                    s = 403;
                     _column++;
                     break;
-                case 114: // r
+                case 101: // e
                     s = 499;
                     _column++;
                     break;
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
-                        _column++;
-                    } else if (_ch >= 115 && _ch <= 122) { // s - z
-                        s = 397;
+                        s = 403;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 97 && _ch <= 113) { // a - q
-                        s = 397;
+                    } else if (_ch >= 102 && _ch <= 122) { // f - z
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 100) { // a - d
+                        s = 403;
                         _column++;
                     }
                     else {
@@ -4127,25 +3928,25 @@ namespace dc {
             case 499:
                 switch(_ch) {
                 case 95: // _
-                    s = 397;
+                    s = 403;
                     _column++;
                     break;
-                case 116: // t
+                case 115: // s
                     s = 500;
                     _column++;
                     break;
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 97 && _ch <= 115) { // a - s
-                        s = 397;
+                    } else if (_ch >= 116 && _ch <= 122) { // t - z
+                        s = 403;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 117 && _ch <= 122) { // u - z
-                        s = 397;
+                    } else if (_ch >= 97 && _ch <= 114) { // a - r
+                        s = 403;
                         _column++;
                     }
                     else {
@@ -4160,25 +3961,32 @@ namespace dc {
             case 500:
                 switch(_ch) {
                 case 95: // _
-                    s = 397;
+                    s = 403;
+                    _column++;
+                    break;
+                case 112: // p
+                    s = 501;
                     _column++;
                     break;
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
+                        s = 403;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 97 && _ch <= 122) { // a - z
-                        s = 397;
+                    } else if (_ch >= 113 && _ch <= 122) { // q - z
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 111) { // a - o
+                        s = 403;
                         _column++;
                     }
                     else {
                         // Yield
                         end_line = _line;
                         end_column = _column;
-                        token = dc::TokenType::Start;
+                        token = dc::TokenType::Identifier;
                         return true;
                     }
                 }
@@ -4186,25 +3994,22 @@ namespace dc {
             case 501:
                 switch(_ch) {
                 case 95: // _
-                    s = 397;
+                    s = 403;
                     _column++;
                     break;
-                case 110: // n
+                case 97: // a
                     s = 502;
                     _column++;
                     break;
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
-                        _column++;
-                    } else if (_ch >= 111 && _ch <= 122) { // o - z
-                        s = 397;
+                        s = 403;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 97 && _ch <= 109) { // a - m
-                        s = 397;
+                    } else if (_ch >= 98 && _ch <= 122) { // b - z
+                        s = 403;
                         _column++;
                     }
                     else {
@@ -4219,25 +4024,25 @@ namespace dc {
             case 502:
                 switch(_ch) {
                 case 95: // _
-                    s = 397;
+                    s = 403;
                     _column++;
                     break;
-                case 103: // g
+                case 99: // c
                     s = 503;
                     _column++;
                     break;
                 default:
-                    if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 97 && _ch <= 102) { // a - f
-                        s = 397;
+                    } else if (_ch >= 100 && _ch <= 122) { // d - z
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 104 && _ch <= 122) { // h - z
-                        s = 397;
+                    } else if (_ch >= 97 && _ch <= 98) { // a - b
+                        s = 403;
                         _column++;
                     }
                     else {
@@ -4252,25 +4057,32 @@ namespace dc {
             case 503:
                 switch(_ch) {
                 case 95: // _
-                    s = 397;
+                    s = 403;
+                    _column++;
+                    break;
+                case 101: // e
+                    s = 504;
                     _column++;
                     break;
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
+                        s = 403;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 97 && _ch <= 122) { // a - z
-                        s = 397;
+                    } else if (_ch >= 102 && _ch <= 122) { // f - z
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 100) { // a - d
+                        s = 403;
                         _column++;
                     }
                     else {
                         // Yield
                         end_line = _line;
                         end_column = _column;
-                        token = dc::TokenType::StringKeyword;
+                        token = dc::TokenType::Identifier;
                         return true;
                     }
                 }
@@ -4278,25 +4090,25 @@ namespace dc {
             case 504:
                 switch(_ch) {
                 case 95: // _
-                    s = 397;
+                    s = 403;
                     _column++;
                     break;
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
+                        s = 403;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
+                        s = 403;
                         _column++;
                     } else if (_ch >= 97 && _ch <= 122) { // a - z
-                        s = 397;
+                        s = 403;
                         _column++;
                     }
                     else {
                         // Yield
                         end_line = _line;
                         end_column = _column;
-                        token = dc::TokenType::Set;
+                        token = dc::TokenType::Namespace;
                         return true;
                     }
                 }
@@ -4304,25 +4116,29 @@ namespace dc {
             case 505:
                 switch(_ch) {
                 case 95: // _
-                    s = 397;
+                    s = 403;
                     _column++;
                     break;
-                case 108: // l
-                    s = 506;
+                case 116: // t
+                    s = 514;
+                    _column++;
+                    break;
+                case 97: // a
+                    s = 515;
                     _column++;
                     break;
                 default:
-                    if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 97 && _ch <= 107) { // a - k
-                        s = 397;
+                    } else if (_ch >= 98 && _ch <= 115) { // b - s
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 109 && _ch <= 122) { // m - z
-                        s = 397;
+                    } else if (_ch >= 117 && _ch <= 122) { // u - z
+                        s = 403;
                         _column++;
                     }
                     else {
@@ -4337,25 +4153,29 @@ namespace dc {
             case 506:
                 switch(_ch) {
                 case 95: // _
-                    s = 397;
+                    s = 403;
                     _column++;
                     break;
-                case 101: // e
+                case 114: // r
                     s = 507;
                     _column++;
                     break;
+                case 97: // a
+                    s = 508;
+                    _column++;
+                    break;
                 default:
-                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
+                    if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
+                    } else if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 102 && _ch <= 122) { // f - z
-                        s = 397;
+                    } else if (_ch >= 115 && _ch <= 122) { // s - z
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 97 && _ch <= 100) { // a - d
-                        s = 397;
+                    } else if (_ch >= 98 && _ch <= 113) { // b - q
+                        s = 403;
                         _column++;
                     }
                     else {
@@ -4370,25 +4190,25 @@ namespace dc {
             case 507:
                 switch(_ch) {
                 case 95: // _
-                    s = 397;
+                    s = 403;
                     _column++;
                     break;
-                case 100: // d
-                    s = 508;
+                case 105: // i
+                    s = 511;
                     _column++;
                     break;
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 101 && _ch <= 122) { // e - z
-                        s = 397;
+                    } else if (_ch >= 106 && _ch <= 122) { // j - z
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 97 && _ch <= 99) { // a - c
-                        s = 397;
+                    } else if (_ch >= 97 && _ch <= 104) { // a - h
+                        s = 403;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
+                        s = 403;
                         _column++;
                     }
                     else {
@@ -4403,25 +4223,32 @@ namespace dc {
             case 508:
                 switch(_ch) {
                 case 95: // _
-                    s = 397;
+                    s = 403;
+                    _column++;
+                    break;
+                case 114: // r
+                    s = 509;
                     _column++;
                     break;
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 115 && _ch <= 122) { // s - z
+                        s = 403;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 97 && _ch <= 122) { // a - z
-                        s = 397;
+                    } else if (_ch >= 97 && _ch <= 113) { // a - q
+                        s = 403;
                         _column++;
                     }
                     else {
                         // Yield
                         end_line = _line;
                         end_column = _column;
-                        token = dc::TokenType::Sealed;
+                        token = dc::TokenType::Identifier;
                         return true;
                     }
                 }
@@ -4429,7 +4256,7 @@ namespace dc {
             case 509:
                 switch(_ch) {
                 case 95: // _
-                    s = 397;
+                    s = 403;
                     _column++;
                     break;
                 case 116: // t
@@ -4438,16 +4265,16 @@ namespace dc {
                     break;
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
+                        s = 403;
                         _column++;
                     } else if (_ch >= 97 && _ch <= 115) { // a - s
-                        s = 397;
+                        s = 403;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
+                        s = 403;
                         _column++;
                     } else if (_ch >= 117 && _ch <= 122) { // u - z
-                        s = 397;
+                        s = 403;
                         _column++;
                     }
                     else {
@@ -4461,59 +4288,52 @@ namespace dc {
                 break;
             case 510:
                 switch(_ch) {
-                case 117: // u
-                    s = 511;
-                    _column++;
-                    break;
                 case 95: // _
-                    s = 397;
+                    s = 403;
                     _column++;
                     break;
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
+                        s = 403;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 118 && _ch <= 122) { // v - z
-                        s = 397;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 116) { // a - t
-                        s = 397;
+                    } else if (_ch >= 97 && _ch <= 122) { // a - z
+                        s = 403;
                         _column++;
                     }
                     else {
                         // Yield
                         end_line = _line;
                         end_column = _column;
-                        token = dc::TokenType::Identifier;
+                        token = dc::TokenType::Start;
                         return true;
                     }
                 }
                 break;
             case 511:
                 switch(_ch) {
-                case 114: // r
-                    s = 512;
+                case 95: // _
+                    s = 403;
                     _column++;
                     break;
-                case 95: // _
-                    s = 397;
+                case 110: // n
+                    s = 512;
                     _column++;
                     break;
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 115 && _ch <= 122) { // s - z
-                        s = 397;
+                    } else if (_ch >= 111 && _ch <= 122) { // o - z
+                        s = 403;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 97 && _ch <= 113) { // a - q
-                        s = 397;
+                    } else if (_ch >= 97 && _ch <= 109) { // a - m
+                        s = 403;
                         _column++;
                     }
                     else {
@@ -4528,25 +4348,25 @@ namespace dc {
             case 512:
                 switch(_ch) {
                 case 95: // _
-                    s = 397;
+                    s = 403;
                     _column++;
                     break;
-                case 110: // n
+                case 103: // g
                     s = 513;
                     _column++;
                     break;
                 default:
-                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
+                    if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 111 && _ch <= 122) { // o - z
-                        s = 397;
+                    } else if (_ch >= 97 && _ch <= 102) { // a - f
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 97 && _ch <= 109) { // a - m
-                        s = 397;
+                    } else if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
+                    } else if (_ch >= 104 && _ch <= 122) { // h - z
+                        s = 403;
                         _column++;
                     }
                     else {
@@ -4561,25 +4381,25 @@ namespace dc {
             case 513:
                 switch(_ch) {
                 case 95: // _
-                    s = 397;
+                    s = 403;
                     _column++;
                     break;
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
+                        s = 403;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
+                        s = 403;
                         _column++;
                     } else if (_ch >= 97 && _ch <= 122) { // a - z
-                        s = 397;
+                        s = 403;
                         _column++;
                     }
                     else {
                         // Yield
                         end_line = _line;
                         end_column = _column;
-                        token = dc::TokenType::Return;
+                        token = dc::TokenType::StringKeyword;
                         return true;
                     }
                 }
@@ -4587,32 +4407,25 @@ namespace dc {
             case 514:
                 switch(_ch) {
                 case 95: // _
-                    s = 397;
-                    _column++;
-                    break;
-                case 112: // p
-                    s = 515;
+                    s = 403;
                     _column++;
                     break;
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
+                        s = 403;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 113 && _ch <= 122) { // q - z
-                        s = 397;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 111) { // a - o
-                        s = 397;
+                    } else if (_ch >= 97 && _ch <= 122) { // a - z
+                        s = 403;
                         _column++;
                     }
                     else {
                         // Yield
                         end_line = _line;
                         end_column = _column;
-                        token = dc::TokenType::Identifier;
+                        token = dc::TokenType::Set;
                         return true;
                     }
                 }
@@ -4620,25 +4433,25 @@ namespace dc {
             case 515:
                 switch(_ch) {
                 case 95: // _
-                    s = 397;
+                    s = 403;
                     _column++;
                     break;
-                case 101: // e
+                case 108: // l
                     s = 516;
                     _column++;
                     break;
                 default:
-                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
+                    if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
+                    } else if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 102 && _ch <= 122) { // f - z
-                        s = 397;
+                    } else if (_ch >= 97 && _ch <= 107) { // a - k
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 97 && _ch <= 100) { // a - d
-                        s = 397;
+                    } else if (_ch >= 109 && _ch <= 122) { // m - z
+                        s = 403;
                         _column++;
                     }
                     else {
@@ -4653,51 +4466,58 @@ namespace dc {
             case 516:
                 switch(_ch) {
                 case 95: // _
-                    s = 397;
+                    s = 403;
+                    _column++;
+                    break;
+                case 101: // e
+                    s = 517;
                     _column++;
                     break;
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
+                        s = 403;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 97 && _ch <= 122) { // a - z
-                        s = 397;
+                    } else if (_ch >= 102 && _ch <= 122) { // f - z
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 100) { // a - d
+                        s = 403;
                         _column++;
                     }
                     else {
                         // Yield
                         end_line = _line;
                         end_column = _column;
-                        token = dc::TokenType::Type;
+                        token = dc::TokenType::Identifier;
                         return true;
                     }
                 }
                 break;
             case 517:
                 switch(_ch) {
-                case 114: // r
-                    s = 524;
+                case 95: // _
+                    s = 403;
                     _column++;
                     break;
-                case 95: // _
-                    s = 397;
+                case 100: // d
+                    s = 518;
                     _column++;
                     break;
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 115 && _ch <= 122) { // s - z
-                        s = 397;
+                    } else if (_ch >= 101 && _ch <= 122) { // e - z
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 99) { // a - c
+                        s = 403;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 113) { // a - q
-                        s = 397;
+                        s = 403;
                         _column++;
                     }
                     else {
@@ -4712,32 +4532,25 @@ namespace dc {
             case 518:
                 switch(_ch) {
                 case 95: // _
-                    s = 397;
-                    _column++;
-                    break;
-                case 116: // t
-                    s = 519;
+                    s = 403;
                     _column++;
                     break;
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 115) { // a - s
-                        s = 397;
+                        s = 403;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 117 && _ch <= 122) { // u - z
-                        s = 397;
+                    } else if (_ch >= 97 && _ch <= 122) { // a - z
+                        s = 403;
                         _column++;
                     }
                     else {
                         // Yield
                         end_line = _line;
                         end_column = _column;
-                        token = dc::TokenType::Identifier;
+                        token = dc::TokenType::Sealed;
                         return true;
                     }
                 }
@@ -4745,25 +4558,25 @@ namespace dc {
             case 519:
                 switch(_ch) {
                 case 95: // _
-                    s = 397;
+                    s = 403;
                     _column++;
                     break;
-                case 114: // r
+                case 116: // t
                     s = 520;
                     _column++;
                     break;
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 115 && _ch <= 122) { // s - z
-                        s = 397;
+                    } else if (_ch >= 97 && _ch <= 115) { // a - s
+                        s = 403;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 97 && _ch <= 113) { // a - q
-                        s = 397;
+                    } else if (_ch >= 117 && _ch <= 122) { // u - z
+                        s = 403;
                         _column++;
                     }
                     else {
@@ -4777,26 +4590,26 @@ namespace dc {
                 break;
             case 520:
                 switch(_ch) {
-                case 95: // _
-                    s = 397;
+                case 117: // u
+                    s = 521;
                     _column++;
                     break;
-                case 105: // i
-                    s = 521;
+                case 95: // _
+                    s = 403;
                     _column++;
                     break;
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
-                        _column++;
-                    } else if (_ch >= 106 && _ch <= 122) { // j - z
-                        s = 397;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 104) { // a - h
-                        s = 397;
+                        s = 403;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 118 && _ch <= 122) { // v - z
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 116) { // a - t
+                        s = 403;
                         _column++;
                     }
                     else {
@@ -4810,26 +4623,26 @@ namespace dc {
                 break;
             case 521:
                 switch(_ch) {
-                case 95: // _
-                    s = 397;
+                case 114: // r
+                    s = 522;
                     _column++;
                     break;
-                case 110: // n
-                    s = 522;
+                case 95: // _
+                    s = 403;
                     _column++;
                     break;
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 111 && _ch <= 122) { // o - z
-                        s = 397;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 109) { // a - m
-                        s = 397;
+                    } else if (_ch >= 115 && _ch <= 122) { // s - z
+                        s = 403;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 113) { // a - q
+                        s = 403;
                         _column++;
                     }
                     else {
@@ -4844,25 +4657,25 @@ namespace dc {
             case 522:
                 switch(_ch) {
                 case 95: // _
-                    s = 397;
+                    s = 403;
                     _column++;
                     break;
-                case 103: // g
+                case 110: // n
                     s = 523;
                     _column++;
                     break;
                 default:
-                    if (_ch >= 97 && _ch <= 102) { // a - f
-                        s = 397;
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 111 && _ch <= 122) { // o - z
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 109) { // a - m
+                        s = 403;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
-                        _column++;
-                    } else if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
-                        _column++;
-                    } else if (_ch >= 104 && _ch <= 122) { // h - z
-                        s = 397;
+                        s = 403;
                         _column++;
                     }
                     else {
@@ -4877,25 +4690,25 @@ namespace dc {
             case 523:
                 switch(_ch) {
                 case 95: // _
-                    s = 397;
+                    s = 403;
                     _column++;
                     break;
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
+                        s = 403;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
+                        s = 403;
                         _column++;
                     } else if (_ch >= 97 && _ch <= 122) { // a - z
-                        s = 397;
+                        s = 403;
                         _column++;
                     }
                     else {
                         // Yield
                         end_line = _line;
                         end_column = _column;
-                        token = dc::TokenType::WString;
+                        token = dc::TokenType::Return;
                         return true;
                     }
                 }
@@ -4903,25 +4716,25 @@ namespace dc {
             case 524:
                 switch(_ch) {
                 case 95: // _
-                    s = 397;
+                    s = 403;
                     _column++;
                     break;
-                case 100: // d
+                case 112: // p
                     s = 525;
                     _column++;
                     break;
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
-                        _column++;
-                    } else if (_ch >= 101 && _ch <= 122) { // e - z
-                        s = 397;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 99) { // a - c
-                        s = 397;
+                        s = 403;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 113 && _ch <= 122) { // q - z
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 111) { // a - o
+                        s = 403;
                         _column++;
                     }
                     else {
@@ -4936,51 +4749,25 @@ namespace dc {
             case 525:
                 switch(_ch) {
                 case 95: // _
-                    s = 397;
+                    s = 403;
+                    _column++;
+                    break;
+                case 101: // e
+                    s = 526;
                     _column++;
                     break;
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
+                        s = 403;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 97 && _ch <= 122) { // a - z
-                        s = 397;
+                    } else if (_ch >= 102 && _ch <= 122) { // f - z
+                        s = 403;
                         _column++;
-                    }
-                    else {
-                        // Yield
-                        end_line = _line;
-                        end_column = _column;
-                        token = dc::TokenType::Word;
-                        return true;
-                    }
-                }
-                break;
-            case 526:
-                switch(_ch) {
-                case 95: // _
-                    s = 397;
-                    _column++;
-                    break;
-                case 111: // o
-                    s = 532;
-                    _column++;
-                    break;
-                default:
-                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
-                        _column++;
-                    } else if (_ch >= 112 && _ch <= 122) { // p - z
-                        s = 397;
-                        _column++;
-                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 110) { // a - n
-                        s = 397;
+                    } else if (_ch >= 97 && _ch <= 100) { // a - d
+                        s = 403;
                         _column++;
                     }
                     else {
@@ -4992,28 +4779,54 @@ namespace dc {
                     }
                 }
                 break;
-            case 527:
+            case 526:
                 switch(_ch) {
                 case 95: // _
-                    s = 397;
-                    _column++;
-                    break;
-                case 108: // l
-                    s = 528;
+                    s = 403;
                     _column++;
                     break;
                 default:
-                    if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 109 && _ch <= 122) { // m - z
-                        s = 397;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
+                    } else if (_ch >= 97 && _ch <= 122) { // a - z
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 97 && _ch <= 107) { // a - k
-                        s = 397;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Type;
+                        return true;
+                    }
+                }
+                break;
+            case 527:
+                switch(_ch) {
+                case 114: // r
+                    s = 534;
+                    _column++;
+                    break;
+                case 95: // _
+                    s = 403;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 115 && _ch <= 122) { // s - z
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 113) { // a - q
+                        s = 403;
                         _column++;
                     }
                     else {
@@ -5028,25 +4841,25 @@ namespace dc {
             case 528:
                 switch(_ch) {
                 case 95: // _
-                    s = 397;
+                    s = 403;
                     _column++;
                     break;
-                case 111: // o
+                case 116: // t
                     s = 529;
                     _column++;
                     break;
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 112 && _ch <= 122) { // p - z
-                        s = 397;
+                    } else if (_ch >= 97 && _ch <= 115) { // a - s
+                        s = 403;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 97 && _ch <= 110) { // a - n
-                        s = 397;
+                    } else if (_ch >= 117 && _ch <= 122) { // u - z
+                        s = 403;
                         _column++;
                     }
                     else {
@@ -5061,22 +4874,25 @@ namespace dc {
             case 529:
                 switch(_ch) {
                 case 95: // _
-                    s = 397;
+                    s = 403;
                     _column++;
                     break;
-                case 97: // a
+                case 114: // r
                     s = 530;
                     _column++;
                     break;
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 115 && _ch <= 122) { // s - z
+                        s = 403;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 98 && _ch <= 122) { // b - z
-                        s = 397;
+                    } else if (_ch >= 97 && _ch <= 113) { // a - q
+                        s = 403;
                         _column++;
                     }
                     else {
@@ -5091,25 +4907,25 @@ namespace dc {
             case 530:
                 switch(_ch) {
                 case 95: // _
-                    s = 397;
+                    s = 403;
                     _column++;
                     break;
-                case 116: // t
+                case 105: // i
                     s = 531;
                     _column++;
                     break;
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 97 && _ch <= 115) { // a - s
-                        s = 397;
+                    } else if (_ch >= 106 && _ch <= 122) { // j - z
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 104) { // a - h
+                        s = 403;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
-                        _column++;
-                    } else if (_ch >= 117 && _ch <= 122) { // u - z
-                        s = 397;
+                        s = 403;
                         _column++;
                     }
                     else {
@@ -5124,25 +4940,32 @@ namespace dc {
             case 531:
                 switch(_ch) {
                 case 95: // _
-                    s = 397;
+                    s = 403;
+                    _column++;
+                    break;
+                case 110: // n
+                    s = 532;
                     _column++;
                     break;
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 111 && _ch <= 122) { // o - z
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 109) { // a - m
+                        s = 403;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 122) { // a - z
-                        s = 397;
+                        s = 403;
                         _column++;
                     }
                     else {
                         // Yield
                         end_line = _line;
                         end_column = _column;
-                        token = dc::TokenType::DFloat;
+                        token = dc::TokenType::Identifier;
                         return true;
                     }
                 }
@@ -5150,25 +4973,25 @@ namespace dc {
             case 532:
                 switch(_ch) {
                 case 95: // _
-                    s = 397;
+                    s = 403;
                     _column++;
                     break;
-                case 114: // r
+                case 103: // g
                     s = 533;
                     _column++;
                     break;
                 default:
-                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
-                        _column++;
-                    } else if (_ch >= 115 && _ch <= 122) { // s - z
-                        s = 397;
+                    if (_ch >= 97 && _ch <= 102) { // a - f
+                        s = 403;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
+                        s = 403;
                         _column++;
-                    } else if (_ch >= 97 && _ch <= 113) { // a - q
-                        s = 397;
+                    } else if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 104 && _ch <= 122) { // h - z
+                        s = 403;
                         _column++;
                     }
                     else {
@@ -5183,25 +5006,51 @@ namespace dc {
             case 533:
                 switch(_ch) {
                 case 95: // _
-                    s = 397;
-                    _column++;
-                    break;
-                case 100: // d
-                    s = 534;
+                    s = 403;
                     _column++;
                     break;
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
-                        _column++;
-                    } else if (_ch >= 101 && _ch <= 122) { // e - z
-                        s = 397;
+                        s = 403;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 122) { // a - z
+                        s = 403;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::WString;
+                        return true;
+                    }
+                }
+                break;
+            case 534:
+                switch(_ch) {
+                case 95: // _
+                    s = 403;
+                    _column++;
+                    break;
+                case 100: // d
+                    s = 535;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 101 && _ch <= 122) { // e - z
+                        s = 403;
                         _column++;
                     } else if (_ch >= 97 && _ch <= 99) { // a - c
-                        s = 397;
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 403;
                         _column++;
                     }
                     else {
@@ -5213,21 +5062,301 @@ namespace dc {
                     }
                 }
                 break;
-            case 534:
+            case 535:
                 switch(_ch) {
                 case 95: // _
-                    s = 397;
+                    s = 403;
                     _column++;
                     break;
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
+                        s = 403;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
+                        s = 403;
                         _column++;
                     } else if (_ch >= 97 && _ch <= 122) { // a - z
-                        s = 397;
+                        s = 403;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Word;
+                        return true;
+                    }
+                }
+                break;
+            case 536:
+                switch(_ch) {
+                case 95: // _
+                    s = 403;
+                    _column++;
+                    break;
+                case 111: // o
+                    s = 542;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 112 && _ch <= 122) { // p - z
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 110) { // a - n
+                        s = 403;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 537:
+                switch(_ch) {
+                case 95: // _
+                    s = 403;
+                    _column++;
+                    break;
+                case 108: // l
+                    s = 538;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 109 && _ch <= 122) { // m - z
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 107) { // a - k
+                        s = 403;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 538:
+                switch(_ch) {
+                case 95: // _
+                    s = 403;
+                    _column++;
+                    break;
+                case 111: // o
+                    s = 539;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 112 && _ch <= 122) { // p - z
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 110) { // a - n
+                        s = 403;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 539:
+                switch(_ch) {
+                case 95: // _
+                    s = 403;
+                    _column++;
+                    break;
+                case 97: // a
+                    s = 540;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 98 && _ch <= 122) { // b - z
+                        s = 403;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 540:
+                switch(_ch) {
+                case 95: // _
+                    s = 403;
+                    _column++;
+                    break;
+                case 116: // t
+                    s = 541;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 115) { // a - s
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 117 && _ch <= 122) { // u - z
+                        s = 403;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 541:
+                switch(_ch) {
+                case 95: // _
+                    s = 403;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 122) { // a - z
+                        s = 403;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::DFloat;
+                        return true;
+                    }
+                }
+                break;
+            case 542:
+                switch(_ch) {
+                case 95: // _
+                    s = 403;
+                    _column++;
+                    break;
+                case 114: // r
+                    s = 543;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 115 && _ch <= 122) { // s - z
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 113) { // a - q
+                        s = 403;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 543:
+                switch(_ch) {
+                case 95: // _
+                    s = 403;
+                    _column++;
+                    break;
+                case 100: // d
+                    s = 544;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 101 && _ch <= 122) { // e - z
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 99) { // a - c
+                        s = 403;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 544:
+                switch(_ch) {
+                case 95: // _
+                    s = 403;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 403;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 122) { // a - z
+                        s = 403;
                         _column++;
                     }
                     else {
@@ -5239,7 +5368,7 @@ namespace dc {
                     }
                 }
                 break;
-            case 537:
+            case 547:
                 switch(_ch) {
                 case 10: // {backslash}n
                     token = dc::TokenType::Char;
@@ -5259,7 +5388,7 @@ namespace dc {
                     _ch = _stm.get();
                     return true;
                 case 120: // x
-                    s = 565;
+                    s = 575;
                     _column++;
                     break;
                 case 97: // a
@@ -5377,7 +5506,7 @@ namespace dc {
                     }
                 }
                 break;
-            case 549:
+            case 559:
                 switch(_ch) {
                 case 10: // {backslash}n
                     token = dc::TokenType::Char;
@@ -5397,7 +5526,7 @@ namespace dc {
                     _ch = _stm.get();
                     return true;
                 case 120: // x
-                    s = 554;
+                    s = 564;
                     _column++;
                     break;
                 case 97: // a
@@ -5515,17 +5644,17 @@ namespace dc {
                     }
                 }
                 break;
-            case 554:
+            case 564:
                 switch(_ch) {
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 555;
+                        s = 565;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 70) { // A - F
-                        s = 555;
+                        s = 565;
                         _column++;
                     } else if (_ch >= 97 && _ch <= 102) { // a - f
-                        s = 555;
+                        s = 565;
                         _column++;
                     }
                     else {
@@ -5533,129 +5662,6 @@ namespace dc {
                         end_line = _line;
                         end_column = _column;
                         token = dc::TokenType::Error;
-                        return true;
-                    }
-                }
-                break;
-            case 555:
-                switch(_ch) {
-                default:
-                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 556;
-                        _column++;
-                    } else if (_ch >= 65 && _ch <= 70) { // A - F
-                        s = 556;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 102) { // a - f
-                        s = 556;
-                        _column++;
-                    }
-                    else {
-                        // Yield
-                        end_line = _line;
-                        end_column = _column;
-                        token = dc::TokenType::Error;
-                        return true;
-                    }
-                }
-                break;
-            case 556:
-                switch(_ch) {
-                default:
-                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 557;
-                        _column++;
-                    } else if (_ch >= 65 && _ch <= 70) { // A - F
-                        s = 557;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 102) { // a - f
-                        s = 557;
-                        _column++;
-                    }
-                    else {
-                        // Yield
-                        end_line = _line;
-                        end_column = _column;
-                        token = dc::TokenType::Error;
-                        return true;
-                    }
-                }
-                break;
-            case 557:
-                switch(_ch) {
-                default:
-                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        token = dc::TokenType::Char;
-                        value += _ch;
-                        _column++;
-                        end_line = _line;
-                        end_column = _column;
-                        _ch = _stm.get();
-                        return true;
-                    } else if (_ch >= 65 && _ch <= 70) { // A - F
-                        token = dc::TokenType::Char;
-                        value += _ch;
-                        _column++;
-                        end_line = _line;
-                        end_column = _column;
-                        _ch = _stm.get();
-                        return true;
-                    } else if (_ch >= 97 && _ch <= 102) { // a - f
-                        token = dc::TokenType::Char;
-                        value += _ch;
-                        _column++;
-                        end_line = _line;
-                        end_column = _column;
-                        _ch = _stm.get();
-                        return true;
-                    }
-                    else {
-                        // Yield
-                        end_line = _line;
-                        end_column = _column;
-                        token = dc::TokenType::Error;
-                        return true;
-                    }
-                }
-                break;
-            case 558:
-                switch(_ch) {
-                default:
-                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 34;
-                        _column++;
-                    }
-                    else {
-                        // Yield
-                        end_line = _line;
-                        end_column = _column;
-                        token = dc::TokenType::Number;
-                        return true;
-                    }
-                }
-                break;
-            case 562:
-                switch(_ch) {
-                case 95: // _
-                    s = 24;
-                    _column++;
-                    break;
-                default:
-                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 24;
-                        _column++;
-                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 24;
-                        _column++;
-                    } else if (_ch >= 97 && _ch <= 122) { // a - z
-                        s = 24;
-                        _column++;
-                    }
-                    else {
-                        // Yield
-                        end_line = _line;
-                        end_column = _column;
-                        token = dc::TokenType::Identifier;
                         return true;
                     }
                 }
@@ -5708,14 +5714,29 @@ namespace dc {
                 switch(_ch) {
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 568;
+                        token = dc::TokenType::Char;
+                        value += _ch;
                         _column++;
+                        end_line = _line;
+                        end_column = _column;
+                        _ch = _stm.get();
+                        return true;
                     } else if (_ch >= 65 && _ch <= 70) { // A - F
-                        s = 568;
+                        token = dc::TokenType::Char;
+                        value += _ch;
                         _column++;
+                        end_line = _line;
+                        end_column = _column;
+                        _ch = _stm.get();
+                        return true;
                     } else if (_ch >= 97 && _ch <= 102) { // a - f
-                        s = 568;
+                        token = dc::TokenType::Char;
+                        value += _ch;
                         _column++;
+                        end_line = _line;
+                        end_column = _column;
+                        _ch = _stm.get();
+                        return true;
                     }
                     else {
                         // Yield
@@ -5730,6 +5751,114 @@ namespace dc {
                 switch(_ch) {
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 34;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Number;
+                        return true;
+                    }
+                }
+                break;
+            case 572:
+                switch(_ch) {
+                case 95: // _
+                    s = 24;
+                    _column++;
+                    break;
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 24;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 90) { // A - Z
+                        s = 24;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 122) { // a - z
+                        s = 24;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Identifier;
+                        return true;
+                    }
+                }
+                break;
+            case 575:
+                switch(_ch) {
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 576;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 70) { // A - F
+                        s = 576;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 102) { // a - f
+                        s = 576;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Error;
+                        return true;
+                    }
+                }
+                break;
+            case 576:
+                switch(_ch) {
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 577;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 70) { // A - F
+                        s = 577;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 102) { // a - f
+                        s = 577;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Error;
+                        return true;
+                    }
+                }
+                break;
+            case 577:
+                switch(_ch) {
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
+                        s = 578;
+                        _column++;
+                    } else if (_ch >= 65 && _ch <= 70) { // A - F
+                        s = 578;
+                        _column++;
+                    } else if (_ch >= 97 && _ch <= 102) { // a - f
+                        s = 578;
+                        _column++;
+                    }
+                    else {
+                        // Yield
+                        end_line = _line;
+                        end_column = _column;
+                        token = dc::TokenType::Error;
+                        return true;
+                    }
+                }
+                break;
+            case 578:
+                switch(_ch) {
+                default:
+                    if (_ch >= 48 && _ch <= 57) { // 0 - 9
                         token = dc::TokenType::Char;
                         value += _ch;
                         _column++;
@@ -5763,10 +5892,10 @@ namespace dc {
                     }
                 }
                 break;
-            case 569:
+            case 579:
                 switch(_ch) {
                 case 13: // {backslash}r
-                    s = 335;
+                    s = 341;
                     _column = 1;
                     break;
                 case 2147483647: // <eod>
@@ -5787,29 +5916,29 @@ namespace dc {
                     _ch = _stm.get();
                     return true;
                 case 47: // /
-                    s = 570;
+                    s = 580;
                     _column++;
                     break;
                 default:
                     if (_ch >= 48 && _ch <= 2147483646) { // 0 - <end>
-                        s = 335;
+                        s = 341;
                         _column++;
                     } else if (_ch >= 0 && _ch <= 9) { // <start> - {backslash}t
-                        s = 335;
+                        s = 341;
                         _column++;
                     } else if (_ch >= 11 && _ch <= 12) { // {backslash}v - {backslash}f
-                        s = 335;
+                        s = 341;
                         _column++;
                     } else if (_ch >= 14 && _ch <= 46) { // {backslash}x14 - .
-                        s = 335;
+                        s = 341;
                         _column++;
                     }
                 }
                 break;
-            case 570:
+            case 580:
                 switch(_ch) {
                 case 13: // {backslash}r
-                    s = 367;
+                    s = 373;
                     _column = 1;
                     break;
                 case 2147483647: // <eod>
@@ -5821,7 +5950,7 @@ namespace dc {
                     _ch = _stm.get();
                     return true;
                 case 47: // /
-                    s = 346;
+                    s = 352;
                     _column++;
                     break;
                 case 10: // {backslash}n
@@ -5835,21 +5964,21 @@ namespace dc {
                     return true;
                 default:
                     if (_ch >= 48 && _ch <= 2147483646) { // 0 - <end>
-                        s = 367;
+                        s = 373;
                         _column++;
                     } else if (_ch >= 0 && _ch <= 9) { // <start> - {backslash}t
-                        s = 367;
+                        s = 373;
                         _column++;
                     } else if (_ch >= 11 && _ch <= 12) { // {backslash}v - {backslash}f
-                        s = 367;
+                        s = 373;
                         _column++;
                     } else if (_ch >= 14 && _ch <= 46) { // {backslash}x14 - .
-                        s = 367;
+                        s = 373;
                         _column++;
                     }
                 }
                 break;
-            case 571:
+            case 581:
                 switch(_ch) {
                 case 2147483647: // <eod>
                     token = dc::TokenType::Error;
@@ -5878,7 +6007,7 @@ namespace dc {
                     _ch = _stm.get();
                     return true;
                 case 42: // *
-                    s = 572;
+                    s = 582;
                     _column++;
                     break;
                 case 13: // {backslash}r
@@ -5933,7 +6062,7 @@ namespace dc {
                     }
                 }
                 break;
-            case 572:
+            case 582:
                 switch(_ch) {
                 case 47: // /
                     token = dc::TokenType::Comment;
@@ -5962,7 +6091,7 @@ namespace dc {
                     _ch = _stm.get();
                     return true;
                 case 42: // *
-                    s = 572;
+                    s = 582;
                     _column++;
                     break;
                 case 13: // {backslash}r
@@ -6024,28 +6153,28 @@ namespace dc {
                     }
                 }
                 break;
-            case 573:
+            case 583:
                 switch(_ch) {
                 case 117: // u
-                    s = 574;
+                    s = 584;
                     _column++;
                     break;
                 case 95: // _
-                    s = 397;
+                    s = 403;
                     _column++;
                     break;
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
+                        s = 403;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
+                        s = 403;
                         _column++;
                     } else if (_ch >= 118 && _ch <= 122) { // v - z
-                        s = 397;
+                        s = 403;
                         _column++;
                     } else if (_ch >= 97 && _ch <= 116) { // a - t
-                        s = 397;
+                        s = 403;
                         _column++;
                     }
                     else {
@@ -6057,28 +6186,28 @@ namespace dc {
                     }
                 }
                 break;
-            case 574:
+            case 584:
                 switch(_ch) {
                 case 95: // _
-                    s = 397;
+                    s = 403;
                     _column++;
                     break;
                 case 109: // m
-                    s = 575;
+                    s = 585;
                     _column++;
                     break;
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
+                        s = 403;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
+                        s = 403;
                         _column++;
                     } else if (_ch >= 110 && _ch <= 122) { // n - z
-                        s = 397;
+                        s = 403;
                         _column++;
                     } else if (_ch >= 97 && _ch <= 108) { // a - l
-                        s = 397;
+                        s = 403;
                         _column++;
                     }
                     else {
@@ -6090,21 +6219,21 @@ namespace dc {
                     }
                 }
                 break;
-            case 575:
+            case 585:
                 switch(_ch) {
                 case 95: // _
-                    s = 397;
+                    s = 403;
                     _column++;
                     break;
                 default:
                     if (_ch >= 48 && _ch <= 57) { // 0 - 9
-                        s = 397;
+                        s = 403;
                         _column++;
                     } else if (_ch >= 65 && _ch <= 90) { // A - Z
-                        s = 397;
+                        s = 403;
                         _column++;
                     } else if (_ch >= 97 && _ch <= 122) { // a - z
-                        s = 397;
+                        s = 403;
                         _column++;
                     }
                     else {

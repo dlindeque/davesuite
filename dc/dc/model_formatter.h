@@ -21,6 +21,7 @@ namespace dc
 		std::string _compile_filename;
 		std::string _path;
 
+		auto process(DocumentAstProcessor &processor) const -> bool;
 		auto write_cpp(DocumentAstProcessor &processor) const -> bool;
 		auto write_h(DocumentAstProcessor &processor) const -> bool;
 	public:
@@ -29,6 +30,7 @@ namespace dc
 		{}
 
 		inline auto operator()(DocumentAstProcessor &processor) const -> bool {
+			if (!process(processor)) return false;
 			bool ok = write_cpp(processor);
 			ok &= write_h(processor);
 			return ok;
