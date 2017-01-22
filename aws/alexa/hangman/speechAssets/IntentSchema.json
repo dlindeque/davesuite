@@ -1,0 +1,37 @@
+{
+  "intents": [
+    {
+      "intent": "GuessedLetterIntent",
+      "slots": [
+        {
+          "name": "letter",
+          "type": "LIST_OF_LETTERS"
+        }
+      ]
+    },
+    {
+      "intent": "RestartIntent",
+      "slots": []
+    },
+    {
+      "intent": "CurrentStateIntent",
+      "slots": []
+    },
+    {
+      "intent": "AMAZON.HelpIntent",
+      "slots": []
+    },
+    {
+      "intent": "AMAZON.StartOverIntent",
+      "slots": []
+    },
+    {
+      "intent": "AMAZON.StopIntent",
+      "slots": []
+    },
+    {
+      "intent": "AMAZON.CancelIntent",
+      "slots": []
+    }
+  ]
+}

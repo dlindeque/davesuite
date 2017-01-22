@@ -1,0 +1,32 @@
+GuessedLetterIntent {letter}
+GuessedLetterIntent my letter is {letter}
+GuessedLetterIntent I'm going for {letter}
+GuessedLetterIntent let it be {letter}
+GuessedLetterIntent let's try {letter}
+GuessedLetterIntent let us try {letter}
+GuessedLetterIntent let me try {letter}
+GuessedLetterIntent try {letter}
+GuessedLetterIntent what about {letter}
+GuessedLetterIntent is it {letter}
+GuessedLetterIntent it's {letter}
+GuessedLetterIntent it is {letter}
+GuessedLetterIntent my next letter is {letter}
+GuessedLetterIntent my next guess is {letter}
+GuessedLetterIntent my guess is {letter}
+GuessedLetterIntent my letter is {letter}
+RestartIntent new word
+RestartIntent I give up
+RestartIntent start a new word
+RestartIntent begin a new word
+RestartIntent new game
+RestartIntent start a new game
+RestartIntent start new game
+RestartIntent begin a new game
+RestartIntent begin new game
+CurrentStateIntent what is the current state
+CurrentStateIntent what's the word
+CurrentStateIntent what is the word
+CurrentStateIntent what's the state
+CurrentStateIntent what is the state
+CurrentStateIntent what's going on
+CurrentStateIntent what is going on
