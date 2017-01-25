@@ -1,0 +1,34 @@
+AnswerIntent {answer}
+AnswerIntent my answer is {answer}
+AnswerIntent I'm going for {answer}
+AnswerIntent let it be {answer}
+AnswerIntent let's try {answer}
+AnswerIntent let us try {answer}
+AnswerIntent let me try {answer}
+AnswerIntent try {answer}
+AnswerIntent what about {answer}
+AnswerIntent is it {answer}
+AnswerIntent it's {answer}
+AnswerIntent it is {answer}
+AnswerIntent my next answer is {answer}
+AnswerIntent my next guess is {answer}
+AnswerIntent my guess is {answer}
+AnswerIntent my answer is {answer}
+RestartIntent new test
+RestartIntent I give up
+RestartIntent start a new test
+RestartIntent begin a new test
+RestartIntent new game
+RestartIntent start a new game
+RestartIntent start new game
+RestartIntent begin a new game
+RestartIntent begin new game
+CurrentStateIntent what is the current state
+CurrentStateIntent what's the test
+CurrentStateIntent what is the test
+CurrentStateIntent what's the state
+CurrentStateIntent what is the state
+CurrentStateIntent what's going on
+CurrentStateIntent what is going on
+CurrentStateIntent what's the question
+CurrentStateIntent what is the question

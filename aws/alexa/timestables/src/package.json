@@ -1,0 +1,27 @@
+{
+  "name": "dave-times-tables",
+  "version": "1.0.0",
+  "description": "Simple implementation of the times tables test for Alexa",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dlindeque/davesuite/aws/alexa/timestables.git"
+  },
+  "keywords": [
+    "Alexa",
+    "game",
+    "skill"
+  ],
+  "author": "Dave",
+  "license": "All rights reserved until further notice.",
+  "bugs": {
+    "url": "https://github.com/dlindeque/davesuite/aws/alexa/timestables/issues"
+  },
+  "homepage": "https://github.com/dlindeque/davesuite/aws/alexa/timestables#readme",
+  "dependencies": {
+    "alexa-sdk": "^1.0.6"
+  }
+}
