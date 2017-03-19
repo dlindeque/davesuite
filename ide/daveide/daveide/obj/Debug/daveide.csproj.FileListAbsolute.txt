@@ -1,0 +1,14 @@
+C:\Repos\davesuite\ide\daveide\daveide\bin\Debug\daveide.exe.config
+C:\Repos\davesuite\ide\daveide\daveide\bin\Debug\daveide.exe
+C:\Repos\davesuite\ide\daveide\daveide\bin\Debug\daveide.pdb
+C:\Repos\davesuite\ide\daveide\daveide\obj\Debug\daveide.csprojResolveAssemblyReference.cache
+C:\Repos\davesuite\ide\daveide\daveide\obj\Debug\MainWindow.g.cs
+C:\Repos\davesuite\ide\daveide\daveide\obj\Debug\App.g.cs
+C:\Repos\davesuite\ide\daveide\daveide\obj\Debug\daveide_MarkupCompile.cache
+C:\Repos\davesuite\ide\daveide\daveide\obj\Debug\daveide_MarkupCompile.lref
+C:\Repos\davesuite\ide\daveide\daveide\obj\Debug\MainWindow.baml
+C:\Repos\davesuite\ide\daveide\daveide\obj\Debug\daveide.g.resources
+C:\Repos\davesuite\ide\daveide\daveide\obj\Debug\daveide.Properties.Resources.resources
+C:\Repos\davesuite\ide\daveide\daveide\obj\Debug\daveide.csproj.GenerateResource.Cache
+C:\Repos\davesuite\ide\daveide\daveide\obj\Debug\daveide.exe
+C:\Repos\davesuite\ide\daveide\daveide\obj\Debug\daveide.pdb

@@ -1,0 +1,6 @@
+C:\Repos\davesuite\ide\ConsoleApplication1\ConsoleApplication1\bin\Debug\ConsoleApplication1.exe.config
+C:\Repos\davesuite\ide\ConsoleApplication1\ConsoleApplication1\bin\Debug\ConsoleApplication1.exe
+C:\Repos\davesuite\ide\ConsoleApplication1\ConsoleApplication1\bin\Debug\ConsoleApplication1.pdb
+C:\Repos\davesuite\ide\ConsoleApplication1\ConsoleApplication1\obj\Debug\ConsoleApplication1.csprojResolveAssemblyReference.cache
+C:\Repos\davesuite\ide\ConsoleApplication1\ConsoleApplication1\obj\Debug\ConsoleApplication1.exe
+C:\Repos\davesuite\ide\ConsoleApplication1\ConsoleApplication1\obj\Debug\ConsoleApplication1.pdb

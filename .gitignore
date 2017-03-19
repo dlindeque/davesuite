@@ -22,3 +22,8 @@
 /dslib/Debug
 *.opensdf
 *.sdf
+*.ipch
+*.tlog
+*.idb
+*.db
+*.opendb

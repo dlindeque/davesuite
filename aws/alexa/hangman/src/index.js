@@ -657,6 +657,7 @@ function getCurrentCardState(attributes) {
             rsp = rsp + " " + ch.toUpperCase();
         }
     }
+    return rsp;
 }
 
 function spellWord(word) {

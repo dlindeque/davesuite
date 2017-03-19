@@ -1,0 +1,20 @@
+﻿<Window x:Class="daveide.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:daveide"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="571.406" Width="1127.716">
+    <DockPanel LastChildFill="True">
+        <TextBlock DockPanel.Dock="Left" Text="Hello world"/>
+
+        <TextBlock DockPanel.Dock="Bottom">Bottom</TextBlock>
+
+        <TextBlock DockPanel.Dock="Right">Right</TextBlock>
+
+        <TextBlock DockPanel.Dock="Top">Top</TextBlock>
+
+        <TextBlock>Center</TextBlock>
+    </DockPanel>
+</Window>
